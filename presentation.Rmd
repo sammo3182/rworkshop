@@ -1,0 +1,165 @@
+---
+title: "Hello, R!"
+author: "Yue Hu"
+output:
+  ioslides_presentation:
+    self_contained: no
+    logo: image/logo.gif
+    transition: faster
+    widescreen: yes
+    slidy_presentation:
+    incremental: yes
+---
+# Preface
+
+## What's R?
+"R is a programming language and software environment...blah, blah, blah..."
+
+<div class="centered">
+![graph](https://p.gr-assets.com/540x540/fit/hostedimages/1407441871/10720336.gif)
+</div>
+
+* So, what is it (in plain English)?
+    + A *programming language* maintained by statisticians
+    + An alternative to a bunch of softwares
+
+
+## Why do you want to use R? {.columns-2}
+* It's popular!
+* It's developing!
+* It's free!!
+
+Tip:
+<div class="notes">
+* It's multi-lingual!
+```{r}
+"Hello 你好 こんにちは здравствуйте"
+```
+</div>
+
+
+<img src="https://r4stats.files.wordpress.com/2012/04/fig_7a_scholarlyimpactbig6.png" height="450"/>
+Source: http://r4stats.com/
+
+## What can you do with R?
+
+* Do statistics as STATA, SAS, SPSS, EXCEL,...
+* Scrap data from websites as Python, Java,...
+* Create presentation slides, documents, webpages as MS Word, Powerpoint, TexMaker, Dreamweaver,...
+* Solve math problems as Matlab, Mathematica, ...
+* An observation in the "useR" conference (2015):
+    
+    " I saw how R and Hadoop is used to make the <span style="color:red">Tribal Wars game</span> engaging for 150M players; R is used to <span style="color:red">teach high schoolers</span> to code, as their first programming language; R is used to help <span style="color:red">veterinarians</span> identify lameness in horses using 3-d accelerometers ..."
+
+
+## When you may not want to work with R,
+### When you are in a hurry,
+* <div class="centered">
+  <img src=image/LearningCurve2.png height="400"/>
+  </div> Source: NYU Data Services.
+
+
+
+## Software and Package Installations {.columns-2}
+### Software installation
+[![R](https://www.r-project.org/Rlogo.png)](https://www.r-project.org/)
+
+[![Rstudio](https://www.rstudio.com/wp-content/uploads/2014/03/blue-250.png)](https://www.rstudio.com/products/rstudio/download/preview/)
+
+Tips:
+<div class="notes">
+- Install R before Rstudio; so does in updating.
+- Using the [Rstudio preview](https://www.rstudio.com/products/rstudio/download/preview/).
+</div>
+
+
+### Package installation and loading
+
+Type the following codes in the console of R/Rstudio:
+
+`install.packages(package name)`
+`install_github("repositary/package name")`
+
+[An example](https://github.com/sammo3182/interplot)
+
+Load the package
+`library(package name)`
+`require(package name)`
+
+
+## Wrap Up
+* R can do a lot of statistical and non-statistical things.
+* R is free, so free to try.
+* Installation includes three steps: 
+    + install R; 
+    + install Rstudio (optional); 
+    + install packages (optional). 
+
+# Start the Journey
+## Set the working directory
+* Always check or set the working directory first
+    + `getwd()`
+    + `setwd("E:/R workshop/rworkshop")`
+
+   
+## Create a vector/variable/item/stuff
+```{r}
+1:10  # numeric
+c("R", "workshop") # character
+3 == 5  # logical
+factor(1:3, levels = 1:3, labels = c("low", "medium", "high"))  # factor
+```
+
+## Create a set of data
+```{r}
+matrix(1:4, ncol = 2)  # matrix
+data.frame(x = 1:2, y = 3:4)  # data.frame
+```
+
+## Two special data sets
+```{r}
+list(c("one", "two"), c(3, 4))
+```
+----
+```{r}
+array(c(1:4,5:8), dim = c(2, 2, 3))
+```
+
+
+## Save them for later
+```{r eval = F}
+x <- 1:10
+x_matrix <- data.frame(x = 1:2, y = 3:4)
+x.list <- list(x, x_matrix)
+```
+
+
+
+
+## Input/Output Data
+
+## Clean the Data
+
+## Descriptive Analysis
+
+## Wrap Up
+
+# Hypothesis Tests
+## Binary Tests
+
+## Linear Regression
+
+## Wrap Up
+
+# Presenting Your Results
+## Table outputs
+
+## Graphs
+
+## Slides
+
+## Wrap Up
+
+# Version Control
+
+
