@@ -11,25 +11,39 @@ output:
     incremental: yes
 ---
 # Preface
+## What are covered
+* A overview of R
+* Data manipulation (input/output, row/column selections, etc.)
+* Descriptive and binary hypotheses (summary, correlation, t-test, etc.)
+* Multiple regression (OLS, GLS, MLM, etc.)
+* Presentation (table, graph)
+* Version control and something other nonstatistical applications (github, rmarkdown)
 
+
+
+
+# An Overview of R
 ## What's R?
-"R is a programming language and software environment...blah, blah, blah..."
+* R is a programming language
 
-<div class="centered">
-![graph](https://p.gr-assets.com/540x540/fit/hostedimages/1407441871/10720336.gif)
-</div>
+* R is developed and maintained by statisticians.
 
-* So, what is it (in plain English)?
-    + A *programming language* maintained by statisticians
-    + An alternative to a bunch of softwares
+* R is a <span style="color:purple">weird</span> programming language
+    + Weird for users of typical statistical software (such as STATA)
+        + obejct-oriented programming (OOP).
+    + Weird for programmers: unconsistent and strict codings
+        + The debate of assignment operator (`=` vs. `<-`)
+        + `library("interplot")` == `library(interplot)`
+* So, why do we still learn that, given its weirdness?
 
 
 ## Why do you want to use R? {.columns-2}
 * It's popular!
 * It's developing!
-* It's free!!
+    + R is very compatible with new techniques
+    + e.g., Network analysis, spatial analysis with GIS, and text analysis with big data.
+* It's free!! (Tip)
 
-Tip:
 <div class="notes">
 * It's multi-lingual!
 ```{r}
@@ -49,18 +63,40 @@ Source: http://r4stats.com/
 * Solve math problems as Matlab, Mathematica, ...
 * An observation in the "useR" conference (2015):
     
-    " I saw how R and Hadoop is used to make the <span style="color:red">Tribal Wars game</span> engaging for 150M players; R is used to <span style="color:red">teach high schoolers</span> to code, as their first programming language; R is used to help <span style="color:red">veterinarians</span> identify lameness in horses using 3-d accelerometers ..."
+    " I saw how R and Hadoop is used to make the <span style="color:purple">Tribal Wars game</span> engaging for 150M players; R is used to <span style="color:purple">teach high schoolers</span> to code, as their first programming language; R is used to help <span style="color:purple">veterinarians</span> identify lameness in horses using 3-d accelerometers ..."
 
 
-## When you may not want to work with R,
-### When you are in a hurry,
+## When you may not want to work with R, {.build}
+When you do not understand exactly what you are doing...or you don't care,
+```{r eval=FALSE}
+# Calculate predicted probability in STATA
+logit protest age edu church
+prgen church, gen(p_church) rest(mean) ci level(95)
+```
+
+
+```{r eval=FALSE}
+# Calculate predicted probability in R
+m1 <- glm(protest ~ age + edu + church, data = ess, family = "binomial")
+church <- with(ess, data.frame(age = weighted.mean(age, na.rm = T, w = dweight),
+                               edu = weighted.mean(edu, na.rm = T, w = dweight), 
+                               church = 0:1)) 
+church_pp <- cbind(church, predict(m1, newdata = church.fake, type = "link", se = TRUE))
+church_pp <- within(church_pp, {
+    pp <- plogis(fit)*100
+    lb <- plogis(fit - (1.96 * se.fit))*100
+    ub <- plogis(fit + (1.96 * se.fit))*100
+})
+```
+
+----
+When you don't have much time to learn it,
+
 * <div class="centered">
   <img src=image/LearningCurve2.png height="400"/>
   </div> Source: NYU Data Services.
 
-
-
-## Software and Package Installations {.columns-2}
+## Software and package installations {.columns-2}
 ### Software installation
 [![R](https://www.r-project.org/Rlogo.png)](https://www.r-project.org/)
 
@@ -68,8 +104,8 @@ Source: http://r4stats.com/
 
 Tips:
 <div class="notes">
-- Install R before Rstudio; so does in updating.
-- Using the [Rstudio preview](https://www.rstudio.com/products/rstudio/download/preview/).
+Install R before Rstudio; so does in updating.
+Using the [Rstudio preview](https://www.rstudio.com/products/rstudio/download/preview/).
 </div>
 
 
@@ -77,77 +113,459 @@ Tips:
 
 Type the following codes in the console of R/Rstudio:
 
-`install.packages(package name)`
-`install_github("repositary/package name")`
+`install.packages(<package name>)`
+`install_github("<repositary/package name>")`
 
 [An example](https://github.com/sammo3182/interplot)
 
 Load the package
-`library(package name)`
-`require(package name)`
+
+`library(<package name>)`
+`require(<package name>)`
+
+## RStudio{.flexbox .vcenter}
+<img src="image/rstudio.png" height="500" width = "900" />
 
 
 ## Wrap Up
-* R can do a lot of statistical and non-statistical things.
-* R is free, so free to try.
+* R is a programming language that can do a lot of statistical and non-statistical things.
+
 * Installation includes three steps: 
     + install R; 
-    + install Rstudio (optional); 
-    + install packages (optional). 
+    + install Rstudio/packages (optional); 
 
-# Start the Journey
-## Set the working directory
-* Always check or set the working directory first
+* Next: Let's Start the Journey
+    + <div class="centered">![journey](http://i.imgur.com/PbLQzSi.gif)</div>
+
+# Do Statistics with R
+## Set where to locate the data and store the results
+* Always check or set the <span style="color:purple">working directory</span> first
     + `getwd()`
     + `setwd("E:/R workshop/rworkshop")`
+* Or click, click, click, and click in Rstudio
+    + <img src=image/setwd.png />
+ 
 
-   
-## Create a vector/variable/item/stuff
+## Vector {.smaller}
 ```{r}
-1:10  # numeric
+1:10  # numeric (integer/double)
 c("R", "workshop") # character
 3 == 5  # logical
-factor(1:3, levels = 1:3, labels = c("low", "medium", "high"))  # factor
+factor(1:3, levels = 1:3, labels = c("low", "medium", "high"))  # factor (Tip)
 ```
 
-## Create a set of data
+<div class="notes">
+The `factor` is a R *function*. Ususally, the first component ("`1:3`") of a R function is the  <span style="color:purple">object</span>, the target this function is going to work on. The rest components ("`levels = 1:3, labels = c("low", "medium", "high")`") are <span style="color:purple">arguments</span>, with which setting the special conditions the object is dealt.
+
+If you are not sure about the utility of certain arguments, ask R for help by `?`, e.g.,
+```{r eval=FALSE}
+?factor
+```
+
+</div>
+
+
+## Dataset {.smaller}
 ```{r}
 matrix(1:4, ncol = 2)  # matrix
 data.frame(x = 1:2, y = 3:4)  # data.frame
+list(c("one", "two"), c(3, 4)) # 2-D list
 ```
 
-## Two special data sets
-```{r}
-list(c("one", "two"), c(3, 4))
-```
 ----
 ```{r}
-array(c(1:4,5:8), dim = c(2, 2, 3))
+array(c(1:4,5:8), dim = c(2, 2, 3)) # 3-D or n-D "list""
 ```
 
 
-## Save them for later
+## Save data to an object
+```{r}
+x <- rep(c(.01, .05, .1), times = 2) # repeat 1:5 for twice
+df <- data.frame(x = 1:1, y = 3:4)
+list <- list(x, df)
+
+list # == print(list)
+```
+
+## Attributes of an object {.smaller .build}
+* Structure
+```{r}
+str(df)
+```
+* Unique values (Tip)
+```{r}
+unique(df$x)
+```
+<div class="notes">
+What is the `$`?  It is used to call specific columns a data.frame. 
+
+To call the components in a vector, we use "[]"
+```{r}
+x[3]
+```
+
+To call the components in a list, we use "[[]]"
+```{r}
+list[[2]]
+```
+
+</div>
+
+* Names
+```{r}
+names(df)
+```
+
+----
+Length
+```{r}
+length(x)
+```
+
+Class
+```{r}
+class(x);typeof(x)  # ; is used to write two commands in one line
+```
+
+## Detect the atrributes
+Using `is.`
+```{r}
+is.numeric(x)
+is.na(x) # detect if x includes missing values
+```
+
+
+## Do math in R
+```{r eval=FALSE}
+# basic math
+x + (1 - 2) * 3 / 4
+
+# advanced math
+x^2;sqrt(x);log(x);exp(x)
+
+# matrix algebra
+z <- matrix(1:4, ncol = 2)
+z + z - z
+z %*% z  # inner multiplication 
+z %o% z  # outter multiplication
+
+# logical evaluation
+x == z; x != Z
+x & z; x | z
+x > z; x <= z
+```
+
+## Wrap up
+* Set the working directory first: `setwd()`
+* Four types of data: numeric, character, logical, factor
+* Four types of datasets: matrix, data.frame, list, array
+* Save the things into an object by `<-`, e.g., `list <- list(x, df)`
+    + Objects have attributes (`str()`, `length()`, `names()`, etc.)
+    + Detect the attributes with `is.`, e.g., `is.numeric(x)`
+* Do math in R
+* Next: let's have a look at the data, first.
+    + <div class="centered">
+    <img src=https://powerofus.force.com/servlet/rtaImage?eid=ka080000000D4YB&feoid=00N800000059i9I&refid=0EM800000000Tnw height = 150 width = 350/>
+    </div>
+
+# Data Analysis
+## Input data {.build}
+* R can read almost all types of datasets.
+```{r eval=FALSE}
+load("<FileName>.RData")
+
+df_txt <- read.table("<FileName>.txt")
+df_csv <- read.csv("<FileName>.csv")
+
+```
+* Some data are already embedded in R. To call them, use `data()`, e.g.
+```{r eval=FALSE}
+data(mtcars)
+```
+
+
+## Input data with packages{.smaller}
+```{r eval=FALSE}
+# Excel sheets
+library(readxl)
+df_excel <- read_excel("<FileName>.xls");read_excel("<FileName>.xlsx") 
+
+# SPSS/STATA/SAS
+library(foreign)
+df_spss <- read.spss("<FileName>.sav")
+df_stata <- read.dta("<FileName>.dta") 
+df_sas <- read.sas7bdat("<FileName>.sas7bdat")  
+
+# JavaScript Object Notation 
+library(rjson)
+df_json <- fromJSON(file = "<FileName>.json" )
+
+# XML/Html
+df_xml <- xmlTreeParse("<url>")
+df_html <- readHTMLTable(url, which=3)
+
+```
+More instructions are avaliable in this [blog](http://blog.datacamp.com/r-data-import-tutorial/).
+
+
+## Output data {.build}
+* Save in a R dataset (`.RData`) Tip
 ```{r eval = F}
-x <- 1:10
-x_matrix <- data.frame(x = 1:2, y = 3:4)
-x.list <- list(x, x_matrix)
+save(object, file = "./Data/mydata.Rdata")
+```
+<div class="notes">
+In R, the directory are written with `/`.
+</div>
+
+* Save as `.csv`
+```{r eval = F}
+write.csv(object, file = "mydata.csv")
+```
+
+
+## Manipulate the data{.build}
+* let's call a dataset first,
+```{r}
+data(mtcars)
+```
+* How many variables and what are they?
+```{r}
+ncol(mtcars);names(mtcars)
+```
+
+## Have a look at the data{.build}
+
+```{r}
+head(mtcars) # show the first six lines of mtcars
+
+```
+
+## Look at a speicific area in a dataset
+
+In a dataset or matrix, a special row and column can be specified by `data[col#,row#]` or `data["colName","rowName"]`. 
+
+So, for example, to select the first two rows of the third and fourth columns:
+```{r}
+mtcars[1:2,3:4] # show first and the second rows of the third and forth columns
+```
+
+## Row/column selection{.small .build}
+
+* Select an entire row or column (Tip:  The <span style="color:red">comma</span>!)
+```{r eval=FALSE}
+mtcars[,"mpg"] # show the column "mpg"
+```
+
+* Select components of a selected row or column
+```{r}
+mtcars[,"mpg"][3]  # show the third component of the column "mpg"
+```
+Select with speical conditions
+```{r}
+mtcars[mtcars$mpg < 20,][1,] # show the first rows which mpg are below 5.
+```
+
+
+* Create new rows/columns
+```{r}
+mtcars$id <- seq(1:nrow(mtcars))
+names(mtcars)
+```
+
+
+## Descriptive analysis {.smaller}
+For a dataset or a numeric vector
+```{r}
+summary(mtcars)
+```
+One can use `mean`, `sd`, `max`, `min`, etc. to extract specific descriptive statistics.
+
+## Descriptive analysis (continue) {.smaller .build}
+* For categorical vectors
+```{r}
+table(mtcars$Species)
+```
+
+* For observation number and variable number
+```{r}
+nrow(mtcars)  # observation (N)
+ncol(mtcars)  # variable number
+```
+
+## Data manipulation{.build}
+* Create a variable into the dataset (Tip)
+
+```{r}
+mtcars$newvar <- rbinom(32, 1, .5)  #create a random binomial variable 
+
+mtcars$newvar <- c(1:nrow(mtcars)) # create an "ID" variable
+```
+
+<div class="notes">
+Obviously, variables can be immediately overwrite without any specific setting. 
+
+It is convenient but also <span style="color:purple">risky</span>.
+</div>
+
+* Remove a variable from the dataset
+
+```{r}
+mtcars$newvar <- NULL
+```
+
+* Remove an independent varialbe, result, function, or data from the environment
+
+```{r}
+rm(x)
+```
+
+----
+
+Recode a variable: e.g., numeric to binary, mpg > mean, 1, otherwise 0
+
+```{r}
+# Method I
+mtcars$newvar[mtcars$mpg > mean(mtcars$mpg)] <- 1
+mtcars$newvar[mtcars$mpg <= mean(mtcars$mpg)] <- 0
+
+# Method II
+mtcars$newvar <- ifelse(mtcars$mpg > mean(mtcars$mpg), 1, 0) # overwrite the NAs
+mtcars$newvar <- ifelse(is.na(mtcars$mpg), NA,
+                      ifelse(mtcars$mpg > mean(mtcars$mpg), 1, 0))
+
+```
+
+Label: Only nominal variables can have labels
+```{r}
+mtcars$newvar <- factor(mtcars$gear, levels = 3:5, labels = c("3-gear", "4-gear", "5-gear"))
+table(mtcars$newvar)
 ```
 
 
 
+## Wrap Up 
+* Input/output: `load()`/`read.`series and `save()`/`write.`series
+* A glimpse of data: `head()` or `data.frame[col#, row#]`
+* Description: `summary()`, `table()`, `ncol()`, `nrow()`, 
+    + More specific: `mean`, `sd`, `max`, `min`, etc.
+* Manipulation: 
+    + create: `mtcars$newvar <- c(1:nrow(mtcars))`
+    + Remove: `mtcars$newvar <- NULL`; `rm()`
+    + Recode: `recodevar[<condition>] <- <new value>`
+    + lable: using the `label` argument of `factor`.
 
-## Input/Output Data
+----
 
-## Clean the Data
+Next: the core task---hypothesis testing!
 
-## Descriptive Analysis
-
-## Wrap Up
+<div class="centered">
+![core](http://i.imgur.com/VanhgtK.gif)
+</div>
 
 # Hypothesis Tests
-## Binary Tests
+## Binary Tests: Difference of mean
+$H_{0}: \bar{# of cylinders} = \bar{# of forward gears},\ \alpha = .05$
 
-## Linear Regression
+```{r}
+t.test(mtcars$cyl, mtcars$gears) 
+```
+
+----
+
+`t.test` offers arguments `alternative`, `mu`, `paired`, and `conf.level` for users to change in two-tail/one-tail test, parameter mean, independent/paired comparison, and $\alpha$.
+
+```{r eval=FALSE}
+# one side, cyl > gear, alpha = .01
+t.test(mtcars$cyl, mtcars$gear,
+       alternative = "greater", conf.level = .99)     
+       ) 
+
+# comparing with the parameter (true value)
+t.test(mtcars$cyl, mu = 6)   # the true mean is 6.
+
+```
+
+
+
+## Binary Tests: Correlation
+$H_{0}: \rho_{(cyl,gear)} = 0,\ \alpha = .05$
+
+```{r}
+cor.test(mtcars$cyl, mtcars$gear)
+```
+
+----
+
+`cor.test` offers various arguments overlaping with `t.test` for more specific settings. Moreover, users can use the `method` argument to set the method to calculate the correlations, "Pearson", "Kendall", or "Spearman." (Tip)
+
+```{r}
+cor.test(mtcars$cyl, mtcars$gear, method = "kendall")
+```
+
+<div class="notes">
+Do I have to type the `mtcars$` every time? 
+
+* No you don't.
+    + It offers a potential for cross-dataset operation, though.
+    + Use `within()`: e.g., `within(mtcars, cor.test(cyl, gear))`
+    + Use `attach()` (not recommonded)
+</div>
+
+
+----
+
+We can get the correlation matrix, too:
+```{r}
+cor(mtcars[,1:4])
+```
+
+## Binary Tests: ANOVA{.smaller}
+One way or two way ANOVA: (Tip)
+
+```{r}
+aov_one <- aov(cyl ~ gear, data = mtcars) #one-way
+
+aov_two <- aov(cyl ~ gear + am, data = mtcars) #two-way
+
+summary(aov_one); summary(aov_two)
+```
+
+<div class="notes">
+Sometimes, `summary` offers more organized results than `print`:
+
+```{r}
+aov_one #print it
+summary(aov_one) #summarize it
+```
+
+</div>
+
+## Wrap up
+* T-test: `t.test(x, y = NULL, alternative = c("two.sided", "less", "greater"), mu = 0, paired = FALSE, var.equal = FALSE, conf.level = 0.95, ...)`
+
+* Correlation: `cor.test(x, y, alternative = c("two.sided", "less", "greater"), method = c("pearson", "kendall", "spearman"), exact = NULL, conf.level = 0.95, continuity = FALSE, ...) `
+
+* ANOVA: `aov(formula, data = NULL, ...)`
+
+----
+
+* Next: more commads are coming: multiple regressions~
+    + <div class="centered">
+    ![core](http://i.123g.us/c/bus_appreciate/card/101834.gif)
+    </div>
+
+
+## Multiple Regression{.build}
+* OLS
+
+```{r}
+lm_1 <- lm(mpg ~ cyl + hp + wt, data = mtcars)
+summary(lm_1)
+```  
+  
+* Non-linear regression
+
+
 
 ## Wrap Up
 
