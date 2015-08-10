@@ -78,7 +78,7 @@ output:
 
 [![Rstudio](https://www.rstudio.com/wp-content/uploads/2014/03/blue-250.png)](https://www.rstudio.com/products/rstudio/download/preview/)
 
-<span style="color:green">Tip</span>s:
+<span style="color:green">Tip</span>:
 <div class="notes">
 Install R before Rstudio; so does in updating.
 Using the [Rstudio preview](https://www.rstudio.com/products/rstudio/download/preview/).
@@ -120,11 +120,12 @@ Click the apps: Load the package
  
 
 ## Vector {.smaller}
+(<span style="color:green">Tip</span>)
 ```{r}
 1:10  # numeric (integer/double)
 c("R", "workshop") # character
 3 == 5  # logical
-factor(1:3, levels = 1:3, labels = c("low", "medium", "high"))  # factor (<span style="color:green">Tip</span>)
+factor(1:3, levels = 1:3, labels = c("low", "medium", "high"))  # factor 
 ```
 
 <div class="notes">
@@ -159,6 +160,15 @@ list <- list(x, df)
 
 list # == print(list)
 ```
+
+----
+
+Basic rules for object name:
+
+* Start with numbers (WRONG: `1stday`)
+* No special signs except for `.` and `-` (WRONG: `M&M`)
+* Case sensitivity (`X != x`)
+
 
 ## Attributes of an object {.smaller .build}
 * Structure
@@ -237,10 +247,14 @@ x > z; x <= z
     + Objects have attributes (`str()`, `length()`, `names()`, etc.)
     + Detect the attributes with `is.`, e.g., `is.numeric(x)`
 * Do math in R
-* Next: let's have a look at the data, first.
-    + <div class="centered">
-    <img src=https://powerofus.force.com/servlet/rtaImage?eid=ka080000000D4YB&feoid=00N800000059i9I&refid=0EM800000000Tnw height = 150 width = 350/>
-    </div>
+
+----
+
+Next: let's have a look at the data, first.
+
+<div class="centered">
+<img src=https://powerofus.force.com/servlet/rtaImage?eid=ka080000000D4YB&feoid=00N800000059i9I&refid=0EM800000000Tnw />
+</div>
 
 # Data Analysis
 ## Input data {.build}
@@ -476,7 +490,7 @@ cor.test(mtcars$cyl, mtcars$gear)
 
 ----
 
-`cor.test` offers various arguments overlapping with `t.test` for more specific settings. Moreover, users can use the `method` argument to set the method to calculate the correlations, "Pearson", "Kendall", or "Spearman." (<span style="color:green">Tip</span>)
+`cor.test` offers various arguments as in `t.test` for more specific settings. Moreover, users can use the `method` argument to set the method to calculate the correlations, "Pearson", "Kendall", or "Spearman." (<span style="color:green">Tip</span>)
 
 ```{r}
 cor.test(mtcars$cyl, mtcars$gear, method = "kendall")
@@ -617,7 +631,7 @@ qqPlot(lm_ols)  #qq plot for studentized resid
 ```
 
 
-## Post-estimate diagnoses: Heteroscedasticity{.build}
+## Post-estimate diagnoses: CLRM Properties{.build}
 * Heteroscedasticity 
 
 ```{r}
@@ -788,7 +802,7 @@ hist
 dev.off()
 ```
 
-<span style="color:purple">Tip</span>
+<span style="color:green">Tip</span>
 <div class="notes">
 Sometimes, RStudio may distort the graphic output.In this case, try to <span style="color:purple">zoom</span> or <span style="color:purple">export</span> it. 
 </div>

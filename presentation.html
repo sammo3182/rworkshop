@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hello, R!</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="generator" content="pandoc" />
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <link rel="stylesheet" media="all" href="presentation_files/ioslides-13.5.1/fonts/fonts.css">
+
+  <link rel="stylesheet" media="all" href="presentation_files/ioslides-13.5.1/theme/css/default.css">
+  <link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="presentation_files/ioslides-13.5.1/theme/css/phone.css">
+
+  <base target="_blank">
+
+  <script type="text/javascript">
+    var SLIDE_CONFIG = {
+      // Slide settings
+      settings: {
+                title: 'Hello, R!',
+                        useBuilds: true,
+        usePrettify: true,
+        enableSlideAreas: true,
+        enableTouch: true,
+                favIcon: 'presentation_files/logo.gif',
+              },
+
+      // Author information
+      presenters: [
+            {
+        name:  'Yue Hu' ,
+        company: '',
+        gplus: '',
+        twitter: '',
+        www: '',
+        github: ''
+      },
+            ]
+    };
+  </script>
+
+  <style type="text/css">
+
+    b, strong {
+      font-weight: bold;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    slides > slide {
+      -webkit-transition: all 0.2s ease-in-out;
+      -moz-transition: all 0.2s ease-in-out;
+      -o-transition: all 0.2s ease-in-out;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .auto-fadein {
+      -webkit-transition: opacity 0.6s ease-in;
+      -webkit-transition-delay: 0.2s;
+      -moz-transition: opacity 0.6s ease-in 0.2s;
+      -o-transition: opacity 0.6s ease-in 0.2s;
+      transition: opacity 0.6s ease-in 0.2s;
+      opacity: 0;
+    }
+
+    slides > slide:not(.nobackground):before {
+      font-size: 12pt;
+      content: "";
+      position: absolute;
+      bottom: 20px;
+      left: 60px;
+      background: url(presentation_files/logo.gif) no-repeat 0 50%;
+      -webkit-background-size: 30px 30px;
+      -moz-background-size: 30px 30px;
+      -o-background-size: 30px 30px;
+      background-size: 30px 30px;
+      padding-left: 40px;
+      height: 30px;
+      line-height: 1.9;
+    }
+  </style>
+
+
+
+</head>
+
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="title-slide segue nobackground">
+        <aside class="gdbar"><img src="presentation_files/logo.gif"></aside>
+        <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+          </hgroup>
+  </slide>
+
+<slide class='segue dark nobackground'><hgroup class = 'auto-fadein'><h2>Preface</h2></hgroup><article  id="preface">
+
+</article></slide><slide class=''><hgroup><h2>What are covered</h2></hgroup><article  id="what-are-covered">
+
+<ul class = 'build'>
+<li>A overview of R</li>
+<li>Data manipulation (input/output, row/column selections, etc.)</li>
+<li>Descriptive and binary hypotheses (summary, correlation, t-test, etc.)</li>
+<li>Multiple regression (OLS, GLS, MLM, etc.)</li>
+<li>Presentation (table, graph)</li>
+<li>Version control (if we have time)</li>
+</ul>
+
+</article></slide><slide class='segue dark nobackground'><hgroup class = 'auto-fadein'><h2>An Overview of R</h2></hgroup><article  id="an-overview-of-r">
+
+</article></slide><slide class=''><hgroup><h2>What&#39;s R?</h2></hgroup><article  id="whats-r">
+
+<ul class = 'build'>
+<li><p>R is a programming language</p></li>
+<li><p>R is developed and maintained by statisticians.</p></li>
+<li>R is a <span style="color:purple">
+weird</span> programming language
+
+<ul class = 'build'>
+<li>Weird for users of typical statistical software (such as STATA)
+
+<ul class = 'build'>
+<li>object-oriented programming (OOP).</li>
+</ul></li>
+<li>Weird for programmers: inconsistent and strict coding
+
+<ul class = 'build'>
+<li>The debate of assignment operator (<code>=</code> vs. <code>&lt;-</code>)</li>
+<li><code>library(&quot;interplot&quot;)</code> == <code>library(interplot)</code></li>
+</ul></li>
+</ul></li>
+<li><p>So, why do we still learn that, given its weirdness?</p></li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Why do you want to use R?</h2></hgroup><article  id="why-do-you-want-to-use-r" class="columns-2 build">
+
+<ul class = 'build'>
+<li>It&#39;s free!!</li>
+<li>It&#39;s developing!
+
+<ul class = 'build'>
+<li>R is very compatible with new techniques</li>
+<li>e.g., Network analysis, spatial analysis with GIS, and text analysis with big data.</li>
+</ul></li>
+<li>It&#39;s multi-lingual!</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>&quot;Hello 你好 안녕하세요 здравствуйте&quot;</pre>
+
+<ul class = 'build'>
+<li>It&#39;s popular!</li>
+</ul>
+
+<p><img src="http://revolution-computing.typepad.com/.a/6a010534b1db25970b01a3fc45e6fc970b-pi" height="400" width="450"/> <a href='http://www.oreilly.com/data/free/stratasurvey.csp' title=''>Magoulas &amp; King, 2014, <em>Data Science Salary Survey</em>.</a></p>
+
+</article></slide><slide class=''><hgroup><h2>What can you do with R?</h2></hgroup><article  id="what-can-you-do-with-r">
+
+<ul class = 'build'>
+<li>Do statistics as STATA, SAS, SPSS, EXCEL,&#8230;</li>
+<li>Scrape data from websites as Python, Java,&#8230;</li>
+<li>Create presentation slides, documents, webpages as MS Word, Powerpoint, TexMaker, Dreamweaver,&#8230;</li>
+<li>Solve math problems as Matlab, Mathematica, &#8230;</li>
+<li><p>An observation in the &quot;useR&quot; conference (2015):</p>
+
+<p>&quot; I saw how R and Hadoop is used to make the <span style="color:purple">
+Tribal Wars game</span> engaging for 150M players; R is used to <span style="color:purple">
+teach high schoolers</span> to code, as their first programming language; R is used to help <span style="color:purple">
+veterinarians</span> identify lameness in horses using 3-d accelerometers &#8230;&quot;</p></li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>When you don&#39;t have much time to learn it,</h2></hgroup><article  id="when-you-dont-have-much-time-to-learn-it">
+
+<div class="centered">
+<img src=image/LearningCurve2.png height="400"/></div>
+
+<p>Source: NYU Data Services.</p>
+
+</article></slide><slide class=''><hgroup><h2>Software and package installations</h2></hgroup><article  id="software-and-package-installations" class="columns-2">
+
+<h3>Software installation</h3>
+
+<p><a href='https://www.r-project.org/' title=''><img src='https://www.r-project.org/Rlogo.png' title=''/></a></p>
+
+<p><a href='https://www.rstudio.com/products/rstudio/download/preview/' title=''><img src='https://www.rstudio.com/wp-content/uploads/2014/03/blue-250.png' title=''/></a></p>
+
+<span style="color:green">
+Tip</span>:
+
+<aside class='note'><section>Install R before Rstudio; so does in updating. Using the <a href='https://www.rstudio.com/products/rstudio/download/preview/' title=''>Rstudio preview</a>.</section></aside>
+
+<h3>Package installation and loading</h3>
+
+<p>Packages are &quot;<span style="color:purple">
+Apps</span>&quot; for your R system. You can use R without them, but if you want fun, install them ~</p>
+
+<p><code>install.packages(&lt;package name&gt;)</code> <code>install_github(&quot;&lt;repositary/package name&gt;&quot;)</code></p>
+
+<p><a href='https://github.com/sammo3182/interplot' title=''>An example</a></p>
+
+<p>Click the apps: Load the package</p>
+
+<p><code>library(&lt;package name&gt;)</code> <code>require(&lt;package name&gt;)</code></p>
+
+</article></slide><slide class=''><hgroup><h2>RStudio</h2></hgroup><article  id="rstudio" class="flexbox vcenter">
+
+<p><img src="image/rstudio.png" height="500" width = "900" /></p>
+
+</article></slide><slide class=''><hgroup><h2>Wrap Up</h2></hgroup><article  id="wrap-up">
+
+<ul class = 'build'>
+<li><p>R is a programming language that can do a lot of statistical and non-statistical things.</p></li>
+<li><p>Install R, RStudio (optional), and packages (optional)</p></li>
+<li>Next: Let&#39;s Start the Journey
+
+<ul class = 'build'>
+<li><div class="centered">
+<img src='http://i.imgur.com/PbLQzSi.gif' title=''/></div></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class='segue dark nobackground'><hgroup class = 'auto-fadein'><h2>Do Statistics with R</h2></hgroup><article  id="do-statistics-with-r">
+
+</article></slide><slide class=''><hgroup><h2>Set where to locate the data and store the results</h2></hgroup><article  id="set-where-to-locate-the-data-and-store-the-results">
+
+<ul class = 'build'>
+<li>Always check or set the <span style="color:purple">
+working directory</span> first
+
+<ul class = 'build'>
+<li><code>getwd()</code></li>
+<li><code>setwd(&quot;E:/R workshop/rworkshop&quot;)</code></li>
+</ul></li>
+<li>Or click, click, click, and click in Rstudio
+
+<ul class = 'build'>
+<li><img src=image/setwd.png /></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Vector</h2></hgroup><article  id="vector" class="smaller">
+
+<p>(<span style="color:green">
+Tip</span>)</p>
+
+<pre class = 'prettyprint lang-r'>1:10  # numeric (integer/double)</pre>
+
+<pre >##  [1]  1  2  3  4  5  6  7  8  9 10</pre>
+
+<pre class = 'prettyprint lang-r'>c(&quot;R&quot;, &quot;workshop&quot;) # character</pre>
+
+<pre >## [1] &quot;R&quot;        &quot;workshop&quot;</pre>
+
+<pre class = 'prettyprint lang-r'>3 == 5  # logical</pre>
+
+<pre >## [1] FALSE</pre>
+
+<pre class = 'prettyprint lang-r'>factor(1:3, levels = 1:3, labels = c(&quot;low&quot;, &quot;medium&quot;, &quot;high&quot;))  # factor </pre>
+
+<pre >## [1] low    medium high  
+## Levels: low medium high</pre>
+
+<aside class='note'><section><p>The <code>factor</code> is a R <em>function</em>. Ususally, the first component (&quot;<code>1:3</code>&quot;) of a R function is the <span style="color:purple">
+object</span>, the target this function is going to work on. The rest components (&quot;<code>levels = 1:3, labels = c(&quot;low&quot;, &quot;medium&quot;, &quot;high&quot;)</code>&quot;) are <span style="color:purple">
+arguments</span>, with which setting the special conditions the object is dealt.</p>
+
+<p>If you are not sure about the utility of certain arguments, ask R for help by <code>?</code>, e.g.,</p>
+
+<pre class = 'prettyprint lang-r'>?factor</pre></section></aside>
+
+</article></slide><slide class=''><hgroup><h2>Dataset</h2></hgroup><article  id="dataset" class="smaller">
+
+<pre class = 'prettyprint lang-r'>matrix(1:4, ncol = 2)  # matrix</pre>
+
+<pre >##      [,1] [,2]
+## [1,]    1    3
+## [2,]    2    4</pre>
+
+<pre class = 'prettyprint lang-r'>data.frame(x = 1:2, y = 3:4)  # data.frame</pre>
+
+<pre >##   x y
+## 1 1 3
+## 2 2 4</pre>
+
+<pre class = 'prettyprint lang-r'>list(c(&quot;one&quot;, &quot;two&quot;), c(3, 4)) # 2-D list</pre>
+
+<pre >## [[1]]
+## [1] &quot;one&quot; &quot;two&quot;
+## 
+## [[2]]
+## [1] 3 4</pre>
+
+</article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
+
+<pre class = 'prettyprint lang-r'>array(c(1:4,5:8), dim = c(2, 2, 3)) # 3-D or n-D &quot;list&quot;&quot;</pre>
+
+<pre >## , , 1
+## 
+##      [,1] [,2]
+## [1,]    1    3
+## [2,]    2    4
+## 
+## , , 2
+## 
+##      [,1] [,2]
+## [1,]    5    7
+## [2,]    6    8
+## 
+## , , 3
+## 
+##      [,1] [,2]
+## [1,]    1    3
+## [2,]    2    4</pre>
+
+</article></slide><slide class=''><hgroup><h2>Save data to an object</h2></hgroup><article  id="save-data-to-an-object">
+
+<pre class = 'prettyprint lang-r'>x &lt;- rep(c(.01, .05, .1), times = 2) # repeat 1:5 for twice
+df &lt;- data.frame(x = 1:1, y = 3:4)
+list &lt;- list(x, df)
+
+list # == print(list)</pre>
+
+<pre >## [[1]]
+## [1] 0.01 0.05 0.10 0.01 0.05 0.10
+## 
+## [[2]]
+##   x y
+## 1 1 3
+## 2 1 4</pre>
+
+</article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
+
+<p>Basic rules for object name:</p>
+
+<ul class = 'build'>
+<li>Start with numbers (WRONG: <code>1stday</code>)</li>
+<li>No special signs except for <code>.</code> and <code>-</code> (WRONG: <code>M&amp;M</code>)</li>
+<li>Case sensitivity (<code>X != x</code>)</li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Attributes of an object</h2></hgroup><article  id="attributes-of-an-object" class="smaller build">
+
+<ul class = 'build'>
+<li>Structure</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>str(df)</pre>
+
+<pre >## &#39;data.frame&#39;:    2 obs. of  2 variables:
+##  $ x: int  1 1
+##  $ y: int  3 4</pre>
+
+<ul class = 'build'>
+<li>Unique values (<span style="color:green">
+Tip</span>)</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>unique(df$x)</pre>
+
+<pre >## [1] 1</pre>
+
+<aside class='note'><section><p>What is the <code>$</code>? It is used to call specific columns a data.frame.</p>
+
+<p>To call the components in a vector, we use &quot;[]&quot;</p>
+
+<pre class = 'prettyprint lang-r'>x[3]</pre>
+
+<pre >## [1] 0.1</pre>
+
+<p>To call the components in a list, we use &quot;[[]]&quot;</p>
+
+<pre class = 'prettyprint lang-r'>list[[2]]</pre>
+
+<pre >##   x y
+## 1 1 3
+## 2 1 4</pre></section></aside>
+
+<ul class = 'build'>
+<li>Names</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>names(df)</pre>
+
+<pre >## [1] &quot;x&quot; &quot;y&quot;</pre>
+
+</article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
+
+<p>Length</p>
+
+<pre class = 'prettyprint lang-r'>length(x)</pre>
+
+<pre >## [1] 6</pre>
+
+<p>Class</p>
+
+<pre class = 'prettyprint lang-r'>class(x);typeof(x)  # ; is used to write two commands in one line</pre>
+
+<pre >## [1] &quot;numeric&quot;</pre>
+
+<pre >## [1] &quot;double&quot;</pre>
+
+</article></slide><slide class=''><hgroup><h2>Detect the attributes</h2></hgroup><article  id="detect-the-attributes">
+
+<p>Using <code>is.</code></p>
+
+<pre class = 'prettyprint lang-r'>is.numeric(x)</pre>
+
+<pre >## [1] TRUE</pre>
+
+<pre class = 'prettyprint lang-r'>is.na(x) # detect if x includes missing values</pre>
+
+<pre >## [1] FALSE FALSE FALSE FALSE FALSE FALSE</pre>
+
+</article></slide><slide class=''><hgroup><h2>Do math in R</h2></hgroup><article  id="do-math-in-r">
+
+<pre class = 'prettyprint lang-r'># basic math
+x + (1 - 2) * 3 / 4
+
+# advanced math
+x^2;sqrt(x);log(x);exp(x)
+
+# matrix algebra
+z &lt;- matrix(1:4, ncol = 2)
+z + z - z
+z %*% z  # inner mul&lt;span style=&quot;color:green&quot;&gt;Tip&lt;/span&gt;lication 
+z %o% z  # outter mul&lt;span style=&quot;color:green&quot;&gt;Tip&lt;/span&gt;lication
+
+# logical evaluation
+x == z; x != Z
+x &amp; z; x | z
+x &gt; z; x &lt;= z</pre>
+
+</article></slide><slide class=''><hgroup><h2>Wrap up</h2></hgroup><article  id="wrap-up-1">
+
+<ul class = 'build'>
+<li>Set the working directory first: <code>setwd()</code></li>
+<li>Four types of data: numeric, character, logical, factor</li>
+<li>Four types of datasets: matrix, data.frame, list, array</li>
+<li>Save the things into an object by <code>&lt;-</code>, e.g., <code>list &lt;- list(x, df)</code>
+
+<ul class = 'build'>
+<li>Objects have attributes (<code>str()</code>, <code>length()</code>, <code>names()</code>, etc.)</li>
+<li>Detect the attributes with <code>is.</code>, e.g., <code>is.numeric(x)</code></li>
+</ul></li>
+<li>Do math in R</li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
+
+<p>Next: let&#39;s have a look at the data, first.</p>
+
+<div class="centered">
+<img src=https://powerofus.force.com/servlet/rtaImage?eid=ka080000000D4YB&feoid=00N800000059i9I&refid=0EM800000000Tnw /></div>
+
+</article></slide><slide class='segue dark nobackground'><hgroup class = 'auto-fadein'><h2>Data Analysis</h2></hgroup><article  id="data-analysis">
+
+</article></slide><slide class=''><hgroup><h2>Input data</h2></hgroup><article  id="input-data" class="build">
+
+<ul class = 'build'>
+<li>R can read almost all types of datasets.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>load(&quot;&lt;FileName&gt;.RData&quot;)
+
+df_txt &lt;- read.table(&quot;&lt;FileName&gt;.txt&quot;)
+df_csv &lt;- read.csv(&quot;&lt;FileName&gt;.csv&quot;)</pre>
+
+<ul class = 'build'>
+<li>Some data are already embedded in R. To call them, use <code>data()</code>, e.g.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>data(mtcars)</pre>
+
+</article></slide><slide class=''><hgroup><h2>Input data with packages</h2></hgroup><article  id="input-data-with-packages" class="smaller">
+
+<pre class = 'prettyprint lang-r'># Excel sheets
+library(readxl)
+df_excel &lt;- read_excel(&quot;&lt;FileName&gt;.xls&quot;);read_excel(&quot;&lt;FileName&gt;.xlsx&quot;) 
+
+# SPSS/STATA/SAS
+library(foreign)
+df_spss &lt;- read.spss(&quot;&lt;FileName&gt;.sav&quot;)
+df_stata &lt;- read.dta(&quot;&lt;FileName&gt;.dta&quot;) 
+df_sas &lt;- read.sas7bdat(&quot;&lt;FileName&gt;.sas7bdat&quot;)  
+
+# JavaScript Object Notation 
+library(rjson)
+df_json &lt;- fromJSON(file = &quot;&lt;FileName&gt;.json&quot; )
+
+# XML/Html
+df_xml &lt;- xmlTreeParse(&quot;&lt;url&gt;&quot;)
+df_html &lt;- readHTMLTable(url, which=3)</pre>
+
+<p>More instructions are available in this <a href='http://blog.datacamp.com/r-data-import-tutorial/' title=''>blog</a>.</p>
+
+</article></slide><slide class=''><hgroup><h2>Output data</h2></hgroup><article  id="output-data" class="build">
+
+<ul class = 'build'>
+<li>Save in a R dataset (<code>.RData</code>) <span style="color:green">
+Tip</span></li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>save(object, file = &quot;./Data/mydata.Rdata&quot;)</pre>
+
+<aside class='note'><section>In R, the directory are written with <code>/</code>.</section></aside>
+
+<ul class = 'build'>
+<li>Save as <code>.csv</code></li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>write.csv(object, file = &quot;mydata.csv&quot;)</pre>
+
+</article></slide><slide class=''><hgroup><h2>Manipulate the data</h2></hgroup><article  id="manipulate-the-data" class="build">
+
+<ul class = 'build'>
+<li>let&#39;s call a dataset first,</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>data(mtcars)</pre>
+
+<ul class = 'build'>
+<li>How many variables and what are they?</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>ncol(mtcars);names(mtcars)</pre>
+
+<pre >## [1] 11</pre>
+
+<pre >##  [1] &quot;mpg&quot;  &quot;cyl&quot;  &quot;disp&quot; &quot;hp&quot;   &quot;drat&quot; &quot;wt&quot;   &quot;qsec&quot; &quot;vs&quot;   &quot;am&quot;   &quot;gear&quot;
+## [11] &quot;carb&quot;</pre>
+
+</article></slide><slide class=''><hgroup><h2>Have a look at the data</h2></hgroup><article  id="have-a-look-at-the-data" class="build">
+
+<pre class = 'prettyprint lang-r'>head(mtcars) # show the first six lines of mtcars</pre>
+
+<pre >##                    mpg cyl disp  hp drat    wt  qsec vs am gear carb
+## Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+## Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+## Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+## Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
+## Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
+## Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1</pre>
+
+</article></slide><slide class=''><hgroup><h2>Look at a specific area in a dataset</h2></hgroup><article  id="look-at-a-specific-area-in-a-dataset">
+
+<p>In a dataset or matrix, a special row and column can be specified by <code>data[col#,row#]</code> or <code>data[&quot;colName&quot;,&quot;rowName&quot;]</code>.</p>
+
+<p>So, for example, to select the first two rows of the third and fourth columns:</p>
+
+<pre class = 'prettyprint lang-r'>mtcars[1:2,3:4] # show first and the second rows of the third and fourth columns</pre>
+
+<pre >##               disp  hp
+## Mazda RX4      160 110
+## Mazda RX4 Wag  160 110</pre>
+
+</article></slide><slide class=''><hgroup><h2>Row/column selection</h2></hgroup><article  id="rowcolumn-selection" class="small build">
+
+<ul class = 'build'>
+<li>Select an entire row or column (<span style="color:green">
+Tip</span>: The <span style="color:red">
+comma</span>!)</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>mtcars[,&quot;mpg&quot;] # show the column &quot;mpg&quot;</pre>
+
+<ul class = 'build'>
+<li>Select components of a selected row or column</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>mtcars[,&quot;mpg&quot;][3]  # show the third component of the column &quot;mpg&quot;</pre>
+
+<pre >## [1] 22.8</pre>
+
+</article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
+
+<p>Select with special conditions</p>
+
+<pre class = 'prettyprint lang-r'>mtcars[mtcars$mpg &lt; 20,][1,] # show the first rows which mpg are below 5.</pre>
+
+<pre >##                    mpg cyl disp  hp drat   wt  qsec vs am gear carb
+## Hornet Sportabout 18.7   8  360 175 3.15 3.44 17.02  0  0    3    2</pre>
+
+<p>Create new rows/columns</p>
+
+<pre class = 'prettyprint lang-r'>mtcars$id &lt;- seq(1:nrow(mtcars))
+names(mtcars)</pre>
+
+<pre >##  [1] &quot;mpg&quot;  &quot;cyl&quot;  &quot;disp&quot; &quot;hp&quot;   &quot;drat&quot; &quot;wt&quot;   &quot;qsec&quot; &quot;vs&quot;   &quot;am&quot;   &quot;gear&quot;
+## [11] &quot;carb&quot; &quot;id&quot;</pre>
+
+</article></slide><slide class=''><hgroup><h2>Descriptive analysis</h2></hgroup><article  id="descriptive-analysis" class="smaller">
+
+<p>For a dataset or a numeric vector</p>
+
+<pre class = 'prettyprint lang-r'>summary(mtcars)</pre>
+
+<pre >##       mpg             cyl             disp             hp       
+##  Min.   :10.40   Min.   :4.000   Min.   : 71.1   Min.   : 52.0  
+##  1st Qu.:15.43   1st Qu.:4.000   1st Qu.:120.8   1st Qu.: 96.5  
+##  Median :19.20   Median :6.000   Median :196.3   Median :123.0  
+##  Mean   :20.09   Mean   :6.188   Mean   :230.7   Mean   :146.7  
+##  3rd Qu.:22.80   3rd Qu.:8.000   3rd Qu.:326.0   3rd Qu.:180.0  
+##  Max.   :33.90   Max.   :8.000   Max.   :472.0   Max.   :335.0  
+##       drat             wt             qsec             vs        
+##  Min.   :2.760   Min.   :1.513   Min.   :14.50   Min.   :0.0000  
+##  1st Qu.:3.080   1st Qu.:2.581   1st Qu.:16.89   1st Qu.:0.0000  
+##  Median :3.695   Median :3.325   Median :17.71   Median :0.0000  
+##  Mean   :3.597   Mean   :3.217   Mean   :17.85   Mean   :0.4375  
+##  3rd Qu.:3.920   3rd Qu.:3.610   3rd Qu.:18.90   3rd Qu.:1.0000  
+##  Max.   :4.930   Max.   :5.424   Max.   :22.90   Max.   :1.0000  
+##        am              gear            carb             id       
+##  Min.   :0.0000   Min.   :3.000   Min.   :1.000   Min.   : 1.00  
+##  1st Qu.:0.0000   1st Qu.:3.000   1st Qu.:2.000   1st Qu.: 8.75  
+##  Median :0.0000   Median :4.000   Median :2.000   Median :16.50  
+##  Mean   :0.4062   Mean   :3.688   Mean   :2.812   Mean   :16.50  
+##  3rd Qu.:1.0000   3rd Qu.:4.000   3rd Qu.:4.000   3rd Qu.:24.25  
+##  Max.   :1.0000   Max.   :5.000   Max.   :8.000   Max.   :32.00</pre>
+
+<p>One can use <code>mean</code>, <code>sd</code>, <code>max</code>, <code>min</code>, etc. to extract specific descriptive statistics.</p>
+
+</article></slide><slide class=''><hgroup><h2>Descriptive analysis (continue)</h2></hgroup><article  id="descriptive-analysis-continue" class="smaller build">
+
+<ul class = 'build'>
+<li>For categorical vectors</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>table(mtcars$cyl)</pre>
+
+<pre >## 
+##  4  6  8 
+## 11  7 14</pre>
+
+<ul class = 'build'>
+<li>For observation number and variable number</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>nrow(mtcars)  # observation (N)</pre>
+
+<pre >## [1] 32</pre>
+
+<pre class = 'prettyprint lang-r'>ncol(mtcars)  # variable number</pre>
+
+<pre >## [1] 12</pre>
+
+</article></slide><slide class=''><hgroup><h2>Data manipulation</h2></hgroup><article  id="data-manipulation" class="build">
+
+<ul class = 'build'>
+<li>Create a variable into the dataset (<span style="color:green">
+Tip</span>)</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>mtcars$newvar &lt;- rbinom(32, 1, .5)  #create a random binomial variable 
+
+mtcars$newvar &lt;- c(1:nrow(mtcars)) # create an &quot;ID&quot; variable</pre>
+
+<aside class='note'><section><p>Obviously, variables can be immediately overwrite without any specific setting.</p>
+
+It is convenient but also <span style="color:purple">
+risky</span>.</section></aside>
+
+<ul class = 'build'>
+<li>Remove a variable from the dataset</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>mtcars$newvar &lt;- NULL</pre>
+
+<ul class = 'build'>
+<li>Remove variable, result, function, or data from the environment</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>rm(x)</pre>
+
+</article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
+
+<p>Recode a variable: e.g., numeric to binary, mpg &gt; mean, 1, otherwise 0</p>
+
+<pre class = 'prettyprint lang-r'># Method I
+mtcars$newvar[mtcars$mpg &gt; mean(mtcars$mpg)] &lt;- 1
+mtcars$newvar[mtcars$mpg &lt;= mean(mtcars$mpg)] &lt;- 0
+
+# Method II
+mtcars$newvar &lt;- ifelse(mtcars$mpg &gt; mean(mtcars$mpg), 1, 0) # overwrite the NAs
+mtcars$newvar &lt;- ifelse(is.na(mtcars$mpg), NA,
+                      ifelse(mtcars$mpg &gt; mean(mtcars$mpg), 1, 0))</pre>
+
+<p>Label: Only nominal variables can have labels</p>
+
+<pre class = 'prettyprint lang-r'>mtcars$newvar &lt;- factor(mtcars$gear, levels = 3:5, labels = c(&quot;3-gear&quot;, &quot;4-gear&quot;, &quot;5-gear&quot;))
+table(mtcars$newvar)</pre>
+
+<pre >## 
+## 3-gear 4-gear 5-gear 
+##     15     12      5</pre>
+
+</article></slide><slide class=''><hgroup><h2>Wrap Up</h2></hgroup><article  id="wrap-up-2">
+
+<ul class = 'build'>
+<li>Input/output: <code>load()</code>/<code>read.</code>series and <code>save()</code>/<code>write.</code>series</li>
+<li>A glimpse of data: <code>head()</code> or <code>data.frame[col#, row#]</code></li>
+<li>Description: <code>summary()</code>, <code>table()</code>, <code>ncol()</code>, <code>nrow()</code>,
+
+<ul class = 'build'>
+<li>More specific: <code>mean</code>, <code>sd</code>, <code>max</code>, <code>min</code>, etc.</li>
+</ul></li>
+<li>Manipulation:
+
+<ul class = 'build'>
+<li>create: <code>mtcars$newvar &lt;- c(1:nrow(mtcars))</code></li>
+<li>Remove: <code>mtcars$newvar &lt;- NULL</code>; <code>rm()</code></li>
+<li>Recode: <code>recodevar[&lt;condition&gt;] &lt;- &lt;new value&gt;</code></li>
+<li>label: using the <code>label</code> argument of <code>factor</code>.</li>
+</ul></li>
+<li>There are also <a href='http://www.r-bloggers.com/r-tutorial-on-the-apply-family-of-functions/' title=''><code>apply</code> family</a> functions for with batching management of data.</li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
+
+<p>Next: the core task comes&#8212;hypothesis testing!</p>
+
+<div class="centered">
+<img src='http://i.imgur.com/VanhgtK.gif' title=''/></div>
+
+</article></slide><slide class='segue dark nobackground'><hgroup class = 'auto-fadein'><h2>Hypothesis Tests</h2></hgroup><article  id="hypothesis-tests">
+
+</article></slide><slide class=''><hgroup><h2>Binary Tests: Difference of mean</h2></hgroup><article  id="binary-tests-difference-of-mean">
+
+<p>\(H_{0}: \bar{cylinders} = \bar{gears},\ \alpha = .05\)</p>
+
+<pre class = 'prettyprint lang-r'>t.test(mtcars$cyl, mtcars$gears) </pre>
+
+<pre >## 
+##  One Sample t-test
+## 
+## data:  mtcars$cyl
+## t = 19.599, df = 31, p-value &lt; 2.2e-16
+## alternative hypothesis: true mean is not equal to 0
+## 95 percent confidence interval:
+##  5.543607 6.831393
+## sample estimates:
+## mean of x 
+##    6.1875</pre>
+
+</article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
+
+<p><code>t.test</code> offers arguments <code>alternative</code>, <code>mu</code>, <code>paired</code>, and <code>conf.level</code> for users to change in two-tail/one-tail test, parameter mean, independent/paired comparison, and \(\alpha\).</p>
+
+<pre class = 'prettyprint lang-r'># one side, cyl &gt; gear, alpha = .01
+t.test(mtcars$cyl, mtcars$gear,
+       alternative = &quot;greater&quot;, conf.level = .99)     
+       ) 
+
+# comparing with the parameter (true value)
+t.test(mtcars$cyl, mu = 6)   # the true mean is 6.</pre>
+
+</article></slide><slide class=''><hgroup><h2>Binary Tests: Correlation</h2></hgroup><article  id="binary-tests-correlation">
+
+<p>\(H_{0}: \rho_{(cyl,gear)} = 0,\ \alpha = .05\)</p>
+
+<pre class = 'prettyprint lang-r'>cor.test(mtcars$cyl, mtcars$gear)</pre>
+
+<pre >## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  mtcars$cyl and mtcars$gear
+## t = -3.1011, df = 30, p-value = 0.004173
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.7180260 -0.1738615
+## sample estimates:
+##        cor 
+## -0.4926866</pre>
+
+</article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
+
+<p><code>cor.test</code> offers various arguments as in <code>t.test</code> for more specific settings. Moreover, users can use the <code>method</code> argument to set the method to calculate the correlations, &quot;Pearson&quot;, &quot;Kendall&quot;, or &quot;Spearman.&quot; (<span style="color:green">
+Tip</span>)</p>
+
+<pre class = 'prettyprint lang-r'>cor.test(mtcars$cyl, mtcars$gear, method = &quot;kendall&quot;)</pre>
+
+<pre >## Warning in cor.test.default(mtcars$cyl, mtcars$gear, method = &quot;kendall&quot;):
+## Cannot compute exact p-value with ties</pre>
+
+<pre >## 
+##  Kendall&#39;s rank correlation tau
+## 
+## data:  mtcars$cyl and mtcars$gear
+## z = -3.1551, p-value = 0.001604
+## alternative hypothesis: true tau is not equal to 0
+## sample estimates:
+##        tau 
+## -0.5125435</pre>
+
+<aside class='note'><section><p>Do I have to type the <code>mtcars$</code> every time?</p>
+
+<ul class = 'build'>
+<li>No you don&#39;t.
+
+<ul class = 'build'>
+<li>It offers a potential for cross-dataset operation, though.</li>
+<li>Use <code>within()</code>: e.g., <code>within(mtcars, cor.test(cyl, gear))</code></li>
+<li>Use <code>attach()</code> (not recommonded)</li>
+</ul></li>
+</ul></section></aside>
+
+</article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
+
+<p>We can get the correlation matrix, too:</p>
+
+<pre class = 'prettyprint lang-r'>cor(mtcars[,1:4])</pre>
+
+<pre >##             mpg        cyl       disp         hp
+## mpg   1.0000000 -0.8521620 -0.8475514 -0.7761684
+## cyl  -0.8521620  1.0000000  0.9020329  0.8324475
+## disp -0.8475514  0.9020329  1.0000000  0.7909486
+## hp   -0.7761684  0.8324475  0.7909486  1.0000000</pre>
+
+</article></slide><slide class=''><hgroup><h2>Binary Tests: ANOVA</h2></hgroup><article  id="binary-tests-anova" class="smaller">
+
+<p>One way or two way ANOVA: (<span style="color:green">
+Tip</span>)</p>
+
+<pre class = 'prettyprint lang-r'>aov_one &lt;- aov(cyl ~ gear, data = mtcars) #one-way
+
+aov_two &lt;- aov(cyl ~ gear + am, data = mtcars) #two-way
+
+summary(aov_one); summary(aov_two)</pre>
+
+<pre >##             Df Sum Sq Mean Sq F value  Pr(&gt;F)   
+## gear         1  24.00  24.001   9.617 0.00417 **
+## Residuals   30  74.87   2.496                   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</pre>
+
+<pre >##             Df Sum Sq Mean Sq F value  Pr(&gt;F)   
+## gear         1  24.00  24.001   9.907 0.00379 **
+## am           1   4.62   4.620   1.907 0.17786   
+## Residuals   29  70.25   2.423                   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</pre>
+
+<aside class='note'><section><p>Sometimes, <code>summary</code> offers more organized results than <code>print</code>:</p>
+
+<pre class = 'prettyprint lang-r'>aov_one #print it</pre>
+
+<pre >## Call:
+##    aov(formula = cyl ~ gear, data = mtcars)
+## 
+## Terms:
+##                     gear Residuals
+## Sum of Squares  24.00093  74.87407
+## Deg. of Freedom        1        30
+## 
+## Residual standard error: 1.579811
+## Estimated effects may be unbalanced</pre>
+
+<pre class = 'prettyprint lang-r'>summary(aov_one) #summarize it</pre>
+
+<pre >##             Df Sum Sq Mean Sq F value  Pr(&gt;F)   
+## gear         1  24.00  24.001   9.617 0.00417 **
+## Residuals   30  74.87   2.496                   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</pre></section></aside>
+
+</article></slide><slide class=''><hgroup><h2>Wrap up</h2></hgroup><article  id="wrap-up-3">
+
+<ul class = 'build'>
+<li><p>T-test: <code>t.test(x, y = NULL, alternative = c(&quot;two.sided&quot;, &quot;less&quot;, &quot;greater&quot;), mu = 0, paired = FALSE, conf.level = 0.95, ...)</code></p></li>
+<li><p>Correlation: <code>cor.test(x, y, alternative = c(&quot;two.sided&quot;, &quot;less&quot;, &quot;greater&quot;), method = c(&quot;pearson&quot;, &quot;kendall&quot;, &quot;spearman&quot;), conf.level = 0.95, continuity = FALSE, ...)</code></p></li>
+<li><p>ANOVA: <code>aov(formula, data = NULL, ...)</code></p></li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
+
+<p>Next: more commands are coming: multiple regressions~</p>
+
+<ul class = 'build'>
+<li><div class="centered">
+<img src='http://i.123g.us/c/bus_appreciate/card/101834.gif' title=''/></div></li>
+</ul>
+
+</article></slide><slide class='segue dark nobackground'><hgroup class = 'auto-fadein'><h2>Multiple Regression</h2></hgroup><article  id="multiple-regression">
+
+</article></slide><slide class=''><hgroup><h2>Ordinary Linear Regression</h2></hgroup><article  id="ordinary-linear-regression" class="build">
+
+<ul class = 'build'>
+<li>we are detecting the contributions of the cylinders, horsepower, and weight of the care (Xs) to the mileage (Y):</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>lm_ols &lt;- lm(mpg ~ cyl + hp + wt, data = mtcars)</pre>
+
+</article></slide><slide class=''><hgroup><h2>The result</h2></hgroup><article  id="the-result" class="smaller">
+
+<pre class = 'prettyprint lang-r'>summary(lm_ols)</pre>
+
+<pre >## 
+## Call:
+## lm(formula = mpg ~ cyl + hp + wt, data = mtcars)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -3.9290 -1.5598 -0.5311  1.1850  5.8986 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 38.75179    1.78686  21.687  &lt; 2e-16 ***
+## cyl         -0.94162    0.55092  -1.709 0.098480 .  
+## hp          -0.01804    0.01188  -1.519 0.140015    
+## wt          -3.16697    0.74058  -4.276 0.000199 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.512 on 28 degrees of freedom
+## Multiple R-squared:  0.8431, Adjusted R-squared:  0.8263 
+## F-statistic: 50.17 on 3 and 28 DF,  p-value: 2.184e-11</pre>
+
+</article></slide><slide class=''><hgroup><h2>Nonlinear transition</h2></hgroup><article  id="nonlinear-transition">
+
+<p>ln, square, exponential, or inverse</p>
+
+<pre class = 'prettyprint lang-r'>lm_tran &lt;- lm(log(mpg) ~ I(cyl^2) + exp(hp) + I(1/wt), data = mtcars)</pre>
+
+<p>Of course, if you want, you can create special variables that equal <code>log(mpg)</code>, <code>cyl^2</code>, or <code>exp(hp)</code>, and use them to do the regression.</p>
+
+</article></slide><slide class=''><hgroup><h2>The result</h2></hgroup><article  id="the-result-1" class="smaller">
+
+<pre class = 'prettyprint lang-r'>summary(lm_tran)</pre>
+
+<pre >## 
+## Call:
+## lm(formula = log(mpg) ~ I(cyl^2) + exp(hp) + I(1/wt), data = mtcars)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.27532 -0.06730 -0.01030  0.08334  0.24674 
+## 
+## Coefficients:
+##                Estimate  Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   2.770e+00   1.633e-01  16.958 2.92e-16 ***
+## I(cyl^2)     -6.282e-03   1.664e-03  -3.775 0.000765 ***
+## exp(hp)     -8.547e-148  4.283e-147  -0.200 0.843268    
+## I(1/wt)       1.308e+00   3.022e-01   4.329 0.000173 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.1271 on 28 degrees of freedom
+## Multiple R-squared:  0.8354, Adjusted R-squared:  0.8178 
+## F-statistic: 47.38 on 3 and 28 DF,  p-value: 4.26e-11</pre>
+
+</article></slide><slide class=''><hgroup><h2>Break the factor variable</h2></hgroup><article  id="break-the-factor-variable">
+
+<p>If we want to include a categorical variable into the regression, R will break it into binary variables for you.</p>
+
+<pre class = 'prettyprint lang-r'>mtcars$gear_f &lt;- factor(mtcars$gear, levels = 3:5, labels = c(&quot;3-gear&quot;, &quot;4-gear&quot;, &quot;5-gear&quot;))
+
+lm_f &lt;- lm(mpg ~ cyl + hp + wt + gear_f, data = mtcars)</pre>
+
+</article></slide><slide class=''><hgroup><h2>The result</h2></hgroup><article  id="the-result-2" class="smaller">
+
+<pre class = 'prettyprint lang-r'>summary(lm_f)</pre>
+
+<pre >## 
+## Call:
+## lm(formula = mpg ~ cyl + hp + wt + gear_f, data = mtcars)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -3.4107 -1.7394 -0.6204  1.2435  5.9357 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  37.67538    3.49111  10.792 4.24e-11 ***
+## cyl          -0.80485    0.68114  -1.182  0.24805    
+## hp           -0.02116    0.01712  -1.236  0.22757    
+## wt           -3.03971    0.88754  -3.425  0.00205 ** 
+## gear_f4-gear  0.46155    1.49468   0.309  0.75994    
+## gear_f5-gear  0.67475    2.11262   0.319  0.75198    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.6 on 26 degrees of freedom
+## Multiple R-squared:  0.844,  Adjusted R-squared:  0.814 
+## F-statistic: 28.12 on 5 and 26 DF,  p-value: 1.04e-09</pre>
+
+</article></slide><slide class=''><hgroup><h2>Interaction</h2></hgroup><article  id="interaction">
+
+<p>Two ways to write the model</p>
+
+<pre class = 'prettyprint lang-r'>lm_in &lt;- lm(mpg ~ cyl + hp * wt, data = mtcars)
+lm_in2 &lt;- lm(mpg ~ cyl + hp + wt + hp:wt, data = mtcars)</pre>
+
+</article></slide><slide class=''><hgroup><h2>The result</h2></hgroup><article  id="the-result-3" class="smaller">
+
+<pre class = 'prettyprint lang-r'>summary(lm_in)</pre>
+
+<pre >## 
+## Call:
+## lm(formula = mpg ~ cyl + hp * wt, data = mtcars)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -3.3917 -1.6444 -0.6117  1.4213  4.5530 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 49.490987   3.663514  13.509 1.58e-13 ***
+## cyl         -0.365239   0.508620  -0.718  0.47887    
+## hp          -0.108394   0.029775  -3.640  0.00114 ** 
+## wt          -7.627489   1.521056  -5.015 2.93e-05 ***
+## hp:wt        0.025837   0.007992   3.233  0.00322 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.172 on 27 degrees of freedom
+## Multiple R-squared:  0.8869, Adjusted R-squared:  0.8702 
+## F-statistic: 52.94 on 4 and 27 DF,  p-value: 2.156e-12</pre>
+
+</article></slide><slide class=''><hgroup><h2>Post-estimate diagnoses: Residural</h2></hgroup><article  id="post-estimate-diagnoses-residural">
+
+<pre class = 'prettyprint lang-r'>res_long &lt;- mtcars$mpg - predict(lm_ols)
+res_short &lt;- resid(lm_ols)
+
+plot(lm_ols, which = 1) # residural vs. fitted plot</pre>
+
+<p><img src="presentation_files/figure-html/unnamed-chunk-52-1.png" title="" alt="" width="720" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=''><hgroup><h2>Post-estimate diagnoses: Outliers</h2></hgroup><article  id="post-estimate-diagnoses-outliers">
+
+<pre class = 'prettyprint lang-r'>library(car) # Bonferonni p-value for most extreme obs
+
+outlierTest(lm_ols)</pre>
+
+<pre >## 
+## No Studentized residuals with Bonferonni p &lt; 0.05
+## Largest |rstudent|:
+##                rstudent unadjusted p-value Bonferonni p
+## Toyota Corolla 2.749837           0.010508      0.33625</pre>
+
+</article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
+
+<pre class = 'prettyprint lang-r'>qqPlot(lm_ols)  #qq plot for studentized resid </pre>
+
+<p><img src="presentation_files/figure-html/unnamed-chunk-54-1.png" title="" alt="" width="720" /></p>
+
+</article></slide><slide class=''><hgroup><h2>Post-estimate diagnoses: CLRM Properties</h2></hgroup><article  id="post-estimate-diagnoses-clrm-properties" class="build">
+
+<ul class = 'build'>
+<li>Heteroscedasticity</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>ncvTest(lm_ols) </pre>
+
+<pre >## Non-constant Variance Score Test 
+## Variance formula: ~ fitted.values 
+## Chisquare = 2.882097    Df = 1     p = 0.08956928</pre>
+
+<ul class = 'build'>
+<li>Multicollinearity</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>vif(lm_ols) </pre>
+
+<pre >##      cyl       hp       wt 
+## 4.757456 3.258481 2.580486</pre>
+
+</article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
+
+<p>Autocoorelation</p>
+
+<pre class = 'prettyprint lang-r'>durbinWatsonTest(lm_ols)</pre>
+
+<pre >##  lag Autocorrelation D-W Statistic p-value
+##    1        0.146151       1.64407    0.22
+##  Alternative hypothesis: rho != 0</pre>
+
+</article></slide><slide class=''><hgroup><h2>Logit</h2></hgroup><article  id="logit">
+
+<p>The process to run a logit is largely the same as running an OLS, except for the function name and certain arguments.</p>
+
+<pre class = 'prettyprint lang-r'>logit &lt;- glm(vs ~ cyl + hp + wt, data = mtcars, family = &quot;binomial&quot;)</pre>
+
+</article></slide><slide class=''><hgroup><h2>The result</h2></hgroup><article  id="the-result-4" class="smaller">
+
+<pre class = 'prettyprint lang-r'>summary(logit)</pre>
+
+<pre >## 
+## Call:
+## glm(formula = vs ~ cyl + hp + wt, family = &quot;binomial&quot;, data = mtcars)
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -2.41745  -0.12944  -0.00758   0.24675   1.24429  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)  
+## (Intercept)  9.95269    4.38923   2.268   0.0234 *
+## cyl         -2.16258    1.50997  -1.432   0.1521  
+## hp          -0.05270    0.03552  -1.484   0.1379  
+## wt           2.97179    1.90352   1.561   0.1185  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 43.860  on 31  degrees of freedom
+## Residual deviance: 12.698  on 28  degrees of freedom
+## AIC: 20.698
+## 
+## Number of Fisher Scoring iterations: 7</pre>
+
+</article></slide><slide class=''><hgroup><h2>Interpretation: Margin</h2></hgroup><article  id="interpretation-margin">
+
+<ul class = 'build'>
+<li>Marginal effect</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>library(mfx)
+logit_m &lt;- logitmfx(vs ~ cyl + hp + wt, data = mtcars) 
+logit_m</pre>
+
+<pre >## Call:
+## logitmfx(formula = vs ~ cyl + hp + wt, data = mtcars)
+## 
+## Marginal Effects:
+##          dF/dx  Std. Err.       z   P&gt;|z|  
+## cyl -0.3028436  0.2629609 -1.1517 0.24946  
+## hp  -0.0073793  0.0043738 -1.6872 0.09157 .
+## wt   0.4161633  0.2899976  1.4351 0.15127  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</pre>
+
+</article></slide><slide class=''><hgroup><h2>Interpretation: Predicted probability</h2></hgroup><article  id="interpretation-predicted-probability">
+
+<p>Predicted Probability when <code>cyl</code> changes from 4 to 6.</p>
+
+<pre class = 'prettyprint lang-r'># Step 1: creat an aggregate data 
+mtcars_fake &lt;- with(mtcars, data.frame(cyl = 4:6, hp = mean(hp), wt = mean(wt)))
+# Step 2: predict based on the new data
+logit_pp4 &lt;- cbind(mtcars_fake,predict(logit, newdata = mtcars_fake, type = &quot;link&quot;, se = TRUE))
+# Step 3: convert to probability 
+logit_pp4 &lt;- within(logit_pp4, {pp &lt;- plogis(fit) 
+                                lb &lt;- plogis(fit - 1.96 * se.fit)
+                                ub &lt;- plogis(fit + 1.96 * se.fit)})
+logit_pp4[,7:9]</pre>
+
+<pre >##          ub         lb        pp
+## 1 0.9999189 0.04100710 0.9582577
+## 2 0.9899843 0.06589691 0.7253227
+## 3 0.7048727 0.03719288 0.2329796</pre>
+
+</article></slide><slide class=''><hgroup><h2>Wrap Up</h2></hgroup><article  id="wrap-up-4">
+
+<ul class = 'build'>
+<li>OLS: <code>lm(Y ~ X, data = data)</code>
+
+<ul class = 'build'>
+<li>Non-linear transformations: <code>I(X^2)</code>, <code>exp(X)</code>, <code>log(X)</code>.</li>
+<li>Using factor variable: R will handle that for you.</li>
+<li>Interaction: <code>lm(Y ~ X * Z, data = data)</code>.</li>
+<li>Post-estimate diagnoses: <code>resid()</code>, <code>outlierTest()</code>, <code>qqPlot()</code>, <code>ncvTest()</code>, <code>vif()</code>, <code>durbinWatsonTest()</code></li>
+</ul></li>
+<li>Logit: <code>glm(Y ~ X, data = data, family = &quot;binomial&quot;)</code>
+
+<ul class = 'build'>
+<li>Margins: using <code>mfx::logitmfx</code></li>
+<li>Predict probabilty:
+
+<ul class = 'build'>
+<li>Step 1: create an aggregate data</li>
+<li>Step 2: predict the log odds</li>
+<li>Step 3: transfer to probability</li>
+</ul></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
+
+<p>Next: How to effectively present the results?</p>
+
+<div class="centered">
+<img src='http://media.giphy.com/media/HQjYmJ2OGSNeE/giphy.gif' title=''/></div>
+
+</article></slide><slide class='segue dark nobackground'><hgroup class = 'auto-fadein'><h2>Presenting Techniques</h2></hgroup><article  id="presenting-techniques">
+
+</article></slide><slide class=''><hgroup><h2>Tabling</h2></hgroup><article  id="tabling">
+
+<p>There are over twenty packages for <a href='http://conjugateprior.org/2013/03/r-to-latex-packages-coverage/' title=''>table presentation</a> in R. My favoriate three are <code>stargazer</code>, <code>xtable</code>, and <code>texreg</code>.</p>
+
+<p>(Sorry, but all of them are for <strong>Latex</strong> output)</p>
+
+<ul class = 'build'>
+<li><code>stargazer</code>: good for summary table and regular regression results</li>
+<li><code>texreg</code>: when some results can&#39;t be presented by <code>stargazer</code>, try <code>texreg</code> (e.g., MLM results.)</li>
+<li><code>xtable</code>: the most extensively compatible package, but need more settings to get a pretty output, most of which <code>stargazer</code> and <code>texreg</code> can automatically do for you.</li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>An example</h2></hgroup><article  id="an-example" class="smaller">
+
+<pre class = 'prettyprint lang-r'>library(stargazer)
+stargazer(lm_ols, align = T)</pre>
+
+<pre >## 
+## % Table created by stargazer v.5.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+## % Date and time: Mon, Aug 10, 2015 - 2:34:36 PM
+## % Requires LaTeX packages: dcolumn 
+## \begin{table}[!htbp] \centering 
+##   \caption{} 
+##   \label{} 
+## \begin{tabular}{@{\extracolsep{5pt}}lD{.}{.}{-3} } 
+## \\[-1.8ex]\hline 
+## \hline \\[-1.8ex] 
+##  &amp; \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
+## \cline{2-2} 
+## \\[-1.8ex] &amp; \multicolumn{1}{c}{mpg} \\ 
+## \hline \\[-1.8ex] 
+##  cyl &amp; -0.942^{*} \\ 
+##   &amp; (0.551) \\ 
+##   &amp; \\ 
+##  hp &amp; -0.018 \\ 
+##   &amp; (0.012) \\ 
+##   &amp; \\ 
+##  wt &amp; -3.167^{***} \\ 
+##   &amp; (0.741) \\ 
+##   &amp; \\ 
+##  Constant &amp; 38.752^{***} \\ 
+##   &amp; (1.787) \\ 
+##   &amp; \\ 
+## \hline \\[-1.8ex] 
+## Observations &amp; \multicolumn{1}{c}{32} \\ 
+## R$^{2}$ &amp; \multicolumn{1}{c}{0.843} \\ 
+## Adjusted R$^{2}$ &amp; \multicolumn{1}{c}{0.826} \\ 
+## Residual Std. Error &amp; \multicolumn{1}{c}{2.512 (df = 28)} \\ 
+## F Statistic &amp; \multicolumn{1}{c}{50.171$^{***}$ (df = 3; 28)} \\ 
+## \hline 
+## \hline \\[-1.8ex] 
+## \textit{Note:}  &amp; \multicolumn{1}{r}{$^{*}$p$&lt;$0.1; $^{**}$p$&lt;$0.05; $^{***}$p$&lt;$0.01} \\ 
+## \end{tabular} 
+## \end{table}</pre>
+
+</article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
+
+<p>Present in PDF</p>
+
+<div class="centered">
+<img src=image/table.png height="400"/></div>
+
+<ul class = 'build'>
+<li>For the users of MS Word, click <a href='http://www.r-statistics.com/2010/05/exporting-r-output-to-ms-word-with-r2wd-an-example-session/' title=''>here</a>.</li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Plotting</h2></hgroup><article  id="plotting">
+
+<p>Three types of graphic presenting approaches in R:</p>
+
+<ul class = 'build'>
+<li>Basic plots: <code>plot()</code>.</li>
+<li>Lattice plots: e.g., <code>ggplot()</code>.</li>
+<li>Interactive plots: <code>shiny()</code>. (save for later)
+
+<ul class = 'build'>
+<li><div class="centered">
+<img src="http://i.stack.imgur.com/qZObK.png" height="300"/></div></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Basic plot</h2></hgroup><article  id="basic-plot">
+
+<p>Pro:</p>
+
+<ul class = 'build'>
+<li>Embedded in R</li>
+<li>Good tool for <span style="color:purple">
+data exploration</span>.</li>
+<li><span style="color:purple">
+Spatial</span> analysis and <span style="color:purple">
+3-D</span> plots.</li>
+</ul>
+
+<p>Con:</p>
+
+<ul class = 'build'>
+<li>Not very pretty</li>
+<li>Not very flexible</li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>An example: create a histogram</h2></hgroup><article  id="an-example-create-a-histogram">
+
+<pre class = 'prettyprint lang-r'>hist(mtcars$mpg)</pre>
+
+<p><img src="presentation_files/figure-html/unnamed-chunk-63-1.png" title="" alt="" width="720" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=''><hgroup><h2>Adding some customizations</h2></hgroup><article  id="adding-some-customizations">
+
+<pre class = 'prettyprint lang-r'>hist(mtcars$mpg, freq = F,  # plot the density rather than frequency
+     breaks = 10,  # change the number of bins
+     col = &quot;purple&quot;, # change the color of the bins 
+     xlab=&quot;Miles Per Gallon&quot;,   # adding the x-axis label
+    main=&quot;Histogram&quot;)  # adding a title</pre>
+
+<p><img src="presentation_files/figure-html/unnamed-chunk-64-1.png" title="" alt="" width="720" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=''><hgroup><h2>Adding a normal curve</h2></hgroup><article  id="adding-a-normal-curve" class="smaller">
+
+<pre class = 'prettyprint lang-r'>hist&lt;-hist(mtcars$mpg, breaks=10, col=&quot;purple&quot;, xlab=&quot;Miles Per Gallon&quot;, 
+    main=&quot;Histogram with Normal Curve&quot;) 
+
+xfit&lt;-seq(min(mtcars$mpg),max(mtcars$mpg),length=40) 
+yfit&lt;-dnorm(xfit,mean=mean(mtcars$mpg),sd=sd(mtcars$mpg)) 
+yfit &lt;- yfit*diff(hist$mids[1:2])*length(mtcars$mpg) 
+lines(xfit, yfit, col=&quot;blue&quot;, lwd=2)</pre>
+
+<p><img src="presentation_files/figure-html/unnamed-chunk-65-1.png" title="" alt="" width="720" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=''><hgroup><h2>Saving the plot</h2></hgroup><article  id="saving-the-plot" class="build">
+
+<ul class = 'build'>
+<li>Compatible format:<code>.jpg</code>, <code>.png</code>, <code>.wmf</code>, <code>.pdf</code>, <code>.bmp</code>, and <code>postscript</code>.</li>
+<li>Process:
+
+<ol class = 'build'>
+<li>call the graphic device</li>
+<li>plot</li>
+<li>close the device</li>
+</ol></li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>jpeg(&quot;histgraph.jpg&quot;)
+hist
+dev.off()</pre>
+
+<span style="color:green">
+Tip</span>
+
+<aside class='note'><section>Sometimes, RStudio may distort the graphic output.In this case, try to <span style="color:purple">
+zoom</span> or <span style="color:purple">
+export</span> it.</section></aside>
+
+</article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
+
+<p>The device list:</p>
+
+<table class = 'rmdtable'>
+<tr class="header">
+<th align="left">Function</th>
+<th align="left">Output to</th>
+</tr>
+<tr class="odd">
+<td align="left">pdf(&quot;mygraph.pdf&quot;)</td>
+<td align="left">pdf file</td>
+</tr>
+<tr class="even">
+<td align="left">win.metafile(&quot;mygraph.wmf&quot;)</td>
+<td align="left">windows metafile</td>
+</tr>
+<tr class="odd">
+<td align="left">png(&quot;mygraph.png&quot;)</td>
+<td align="left">png file</td>
+</tr>
+<tr class="even">
+<td align="left">jpeg(&quot;mygraph.jpg&quot;)</td>
+<td align="left">jpeg file</td>
+</tr>
+<tr class="odd">
+<td align="left">bmp(&quot;mygraph.bmp&quot;)</td>
+<td align="left">bmp file</td>
+</tr>
+<tr class="even">
+<td align="left">postscript(&quot;mygraph.ps&quot;)</td>
+<td align="left">postscript file</td>
+</tr>
+</table>
+
+</article></slide><slide class=''><hgroup><h2><code>ggplot</code>: the most popular graphic engine in R</h2></hgroup><article  id="ggplot-the-most-popular-graphic-engine-in-r" class="build">
+
+<ul class = 'build'>
+<li>Built by Hadley Wickham based on Leland Wilkinson&#39;s <em>Grammar of Graphics</em>.</li>
+<li>It breaks the plot into components as <span style="color:purple">
+scales</span> and <span style="color:purple">
+layers</span>&#8212;increase the flexibility.</li>
+<li>To use <code>ggplot</code>, one needs to install the package <code>ggplot2</code> first.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>library(ggplot2)</pre>
+
+<ul class = 'build'>
+<li>Then, let&#39;s redo the previous histogram in <code>ggplot</code>.</li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>histogram in <code>ggplot</code></h2></hgroup><article  id="histogram-in-ggplot">
+
+<pre class = 'prettyprint lang-r'>ggplot(mtcars, aes(x=mpg)) + 
+    geom_histogram(aes(y=..density..), 
+                   binwidth=2,
+                   colour=&quot;black&quot;, fill=&quot;purple&quot;) +
+    geom_density(alpha=.2, fill=&quot;blue&quot;)  + # Overlay with transparent density plot
+    theme_bw() + 
+    ggtitle(&quot;histogram with Normal Curve&quot;) + 
+    xlab(&quot;Miles Per Gallon&quot;) + ylab(&quot;Density&quot;)</pre>
+
+<p><img src="presentation_files/figure-html/unnamed-chunk-68-1.png" title="" alt="" width="720" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=''><hgroup><h2>histogram comparison in <code>ggplot</code></h2></hgroup><article  id="histogram-comparison-in-ggplot">
+
+<pre class = 'prettyprint lang-r'>ggplot(mtcars, aes(x=mpg, fill = factor(vs))) +  # Separate cars with V or straight engine
+    geom_histogram(aes(y=..density..), 
+                   binwidth=2, alpha = .5, position = &quot;identity&quot;) +
+    geom_density(alpha=.2)  + # Overlay with transparent density plot
+    theme_bw() + 
+    ggtitle(&quot;histogram with Normal Curve&quot;) + 
+    xlab(&quot;Miles Per Gallon&quot;) + ylab(&quot;Density&quot;)</pre>
+
+<p><img src="presentation_files/figure-html/unnamed-chunk-69-1.png" title="" alt="" width="720" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=''><hgroup><h2>Even fancier</h2></hgroup><article  id="even-fancier">
+
+<p>Taking a third variable (&quot;quarter mile time&quot;) into account:</p>
+
+<p><img src="presentation_files/figure-html/unnamed-chunk-70-1.png" title="" alt="" width="720" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
+
+<p><img src="presentation_files/figure-html/unnamed-chunk-71-1.png" title="" alt="" width="720" style="display: block; margin: auto;" /></p>
+
+<p>The codes to create these graphs are a little more complicated. For those who are interested in creating such a plot, click <a href='http://rforpublichealth.blogspot.com/2014/02/ggplot2-cheatsheet-for-visualizing.html' title=''>here</a>.</p>
+
+</article></slide><slide class=''><hgroup><h2>Save <code class="build">ggplot</code></h2></hgroup><article  id="save-ggplot">
+
+<ul class = 'build'>
+<li><code>ggsave(&lt;plot project&gt;, &quot;&lt;name + type&gt;&quot;)</code>:</li>
+<li>e.g., <code>ggsave(&quot;comp_hist.png&quot;)</code>
+
+<ul class = 'build'>
+<li>When the <code>&lt;plot project&gt;</code> is omitted, R will save the last presented plot.</li>
+<li>There are additional arguments which users can use to adjust the size, path, scale, etc.</li>
+</ul></li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>ggsave(filename = default_name(plot), plot = last_plot(),
+  device = default_device(filename), path = NULL, scale = 1,
+  width = par(&quot;din&quot;)[1], height = par(&quot;din&quot;)[2], units = c(&quot;in&quot;, &quot;cm&quot;,
+  &quot;mm&quot;), dpi = 300, limitsize = TRUE, ...)</pre>
+
+</article></slide><slide class=''><hgroup><h2><code>qplot</code> function</h2></hgroup><article  id="qplot-function" class="build">
+
+<p>The <code>ggplot</code> version of basic plot</p>
+
+<ul class = 'build'>
+<li>Redo the first histogram with <code>qplot</code>:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>qplot(mtcars$mpg) </pre>
+
+<ul class = 'build'>
+<li>Equivalent to:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>ggplot(mtcars, aes(x=mpg)) + geom_histogram() </pre>
+
+<ul class = 'build'>
+<li>Comparing to the basic plot engine:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>hist(mtcars$mpg)</pre>
+
+</article></slide><slide class=''><hgroup><h2>Two special types: estimate plot</h2></hgroup><article  id="two-special-types-estimate-plot" class="smaller">
+
+<p>Plot the comparable coefficients or other estimates (margins, predicted probabilities, etc.) with <code>dotwhisker</code>.</p>
+
+<pre class = 'prettyprint lang-r'>library(dotwhisker)
+library(broom)
+lm_df &lt;- tidy(lm_ols)
+lm_df</pre>
+
+<pre >##          term   estimate  std.error statistic      p.value
+## 1 (Intercept) 38.7517874 1.78686403 21.687038 4.799399e-19
+## 2         cyl -0.9416168 0.55091638 -1.709183 9.848010e-02
+## 3          hp -0.0180381 0.01187625 -1.518838 1.400152e-01
+## 4          wt -3.1669731 0.74057588 -4.276365 1.994765e-04</pre>
+
+</article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
+
+<pre class = 'prettyprint lang-r'>lm_df &lt;- by_2sd(lm_df, mtcars) %&gt;% # rescale the coefficients
+  filter(term != &quot;(Intercept)&quot;) # omit intercept
+dwplot(lm_df)</pre>
+
+<p><img src="presentation_files/figure-html/unnamed-chunk-77-1.png" title="" alt="" width="720" style="display: block; margin: auto;" /></p>
+
+<span style="color:green">
+Tip</span>
+
+<aside class='note'><section><p><code>%&gt;%</code> is a piper connector embedded in <code>dplyr</code> package (which is automatically called by <code>dotwhisker</code> in the example). One can use it to avoid too complicated embedding coding: e.g., You want to see the maximum value of the mileage for carts with 6 cylinders. The regular code can be written as:</p>
+
+<pre class = 'prettyprint lang-r'>max(dplyr::select(filter(mtcars, cyl == 6), mpg))</pre>
+
+<p>With the piper connector, you can write as:</p>
+
+<pre class = 'prettyprint lang-r'>mtcars %&gt;% 
+  filter(cyl == 6) %&gt;% 
+  dplyr::select(mpg) %&gt;% 
+  max</pre></section></aside>
+
+</article></slide><slide class=''><hgroup><h2>Two special types: interaction plot</h2></hgroup><article  id="two-special-types-interaction-plot" class="smaller">
+
+<p>Plot the interactive effects with <code>interplot</code>.</p>
+
+<pre class = 'prettyprint lang-r'>library(interplot)
+summary(lm_in)</pre>
+
+<pre >## 
+## Call:
+## lm(formula = mpg ~ cyl + hp * wt, data = mtcars)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -3.3917 -1.6444 -0.6117  1.4213  4.5530 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 49.490987   3.663514  13.509 1.58e-13 ***
+## cyl         -0.365239   0.508620  -0.718  0.47887    
+## hp          -0.108394   0.029775  -3.640  0.00114 ** 
+## wt          -7.627489   1.521056  -5.015 2.93e-05 ***
+## hp:wt        0.025837   0.007992   3.233  0.00322 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.172 on 27 degrees of freedom
+## Multiple R-squared:  0.8869, Adjusted R-squared:  0.8702 
+## F-statistic: 52.94 on 4 and 27 DF,  p-value: 2.156e-12</pre>
+
+</article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
+
+<pre class = 'prettyprint lang-r'>interplot(m = lm_in, var1 = &quot;hp&quot;, var2 = &quot;wt&quot;) + 
+  xlab(&quot;Automobile Weight (thousands lbs)&quot;) + 
+  ylab(&quot;Estimated Coefficient for \nGross horsepower&quot;)</pre>
+
+<p><img src="presentation_files/figure-html/unnamed-chunk-81-1.png" title="" alt="" width="720" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=''><hgroup><h2>Wrap Up</h2></hgroup><article  id="wrap-up-5">
+
+<ul class = 'build'>
+<li><p>R has a bunch of packages for creating publishing-like tables, e.g., <code>stargazer</code>, <code>xtable</code>, and <code>texreg</code></p></li>
+<li>There are three ways to visualize statistics in R: basic, lattice (<code>ggplot</code>), and interactive.
+
+<ul class = 'build'>
+<li>basic: e.g., <code>hist(&lt;vector&gt;)</code></li>
+<li><code>ggplot</code>: /n e.g., <code>ggplot(&lt;data&gt;, aes(x=&lt;vector&gt;)) + geom_histogram()</code>.</li>
+</ul></li>
+<li>Two special types of plot:
+
+<ul class = 'build'>
+<li>Estimate plot with <a href='https://cran.r-project.org/web/packages/interplot/vignettes/interplot-vignette.html' title=''><code>dotwhisker</code></a>.</li>
+<li>Interaction plot with <a href='https://cran.r-project.org/web/packages/dotwhisker/vignettes/dwplot-vignette.html' title=''><code>interplot</code></a>.</li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Almost the end: the last topic</h2></hgroup><article  id="almost-the-end-the-last-topic">
+
+<div class="centered">
+<img src='http://conservatives4palin.com/wp-content/uploads/2013/06/snob.gif' title=''/></div>
+
+</article></slide><slide class='segue dark nobackground'><hgroup class = 'auto-fadein'><h2>Version Control</h2></hgroup><article  id="version-control">
+
+</article></slide><slide class=''><hgroup><h2>Just a brief introduction</h2></hgroup><article  id="just-a-brief-introduction" class="columns-2 build">
+
+<ul class = 'build'>
+<li>Tried to recall the deleted codes?</li>
+<li>Tried to figure out what changes?</li>
+<li>Saved a lot of replication files?</li>
+<li>Version control can help you:</li>
+</ul>
+
+<div class="center">
+<img src=image/vcontrol2.png /></div>
+
+</article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
+
+Tracking what you&#39;ve changed:
+
+<div class="center">
+<img src=image/vcontrol1.png /></div>
+
+</article></slide><slide class=''><hgroup><h2>Using Git with RStudio</h2></hgroup><article  id="using-git-with-rstudio">
+
+<ul class = 'build'>
+<li>RStudio has associate with the Git and SVN very well.</li>
+<li>Process to use git:
+
+<ul class = 'build'>
+<li>Register a user account in <a href='https://github.com' title=''>https://github.com</a>.</li>
+<li>Connect your account with RStudio following <a href='http://www.molecularecologist.com/2013/11/using-github-with-r-and-rstudio/' title=''>this instruction</a>.</li>
+<li>Create a version-control project in RStudio
+
+<ul class = 'build'>
+<li><img src=image/vcontrol_set.png height = "200" /></li>
+</ul></li>
+<li>Pull and Push</li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>External Sources</h2></hgroup><article  id="external-sources">
+
+<ul class = 'build'>
+<li>Q&amp;A Blogs:
+
+<ul class = 'build'>
+<li><a href='http://stackoverflow.com/questions/tagged/r' title=''>http://stackoverflow.com/questions/tagged/r</a></li>
+<li><a href='https://stat.ethz.ch/mailman/listinfo/r-help' title=''>https://stat.ethz.ch/mailman/listinfo/r-help</a></li>
+</ul></li>
+<li>Graph Blogs:
+
+<ul class = 'build'>
+<li><a href='http://www.cookbook-r.com/Graphs/' title=''>http://www.cookbook-r.com/Graphs/</a></li>
+<li><a href='http://shiny.stat.ubc.ca/r-graph-catalog/' title=''>http://shiny.stat.ubc.ca/r-graph-catalog/</a></li>
+</ul></li>
+<li>Blog for new stuffs: <a href='http://www.r-bloggers.com/' title=''>http://www.r-bloggers.com/</a></li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
+
+<div class="center">
+<img src="http://www.junipercivic.com/images/Berry/thats-all-folks.jpg" height = "550" /></div></article></slide>
+
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<script src="presentation_files/ioslides-13.5.1/js/modernizr.custom.45394.js"></script>
+<script src="presentation_files/ioslides-13.5.1/js/prettify/prettify.js"></script>
+<script src="presentation_files/ioslides-13.5.1/js/prettify/lang-r.js"></script>
+<script src="presentation_files/ioslides-13.5.1/js/prettify/lang-yaml.js"></script>
+<script src="presentation_files/ioslides-13.5.1/js/hammer.js"></script>
+<script src="presentation_files/ioslides-13.5.1/js/slide-controller.js"></script>
+<script src="presentation_files/ioslides-13.5.1/js/slide-deck.js"></script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!-- map slide visiblity events into shiny -->
+<script>
+  (function() {
+    if (window.jQuery) {
+       window.jQuery(document).on('slideleave', function(e) {
+         window.jQuery(e.target).trigger('hidden');
+      });
+       window.jQuery(document).on('slideenter', function(e) {
+         window.jQuery(e.target).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>
