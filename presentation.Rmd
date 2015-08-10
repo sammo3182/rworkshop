@@ -15,7 +15,7 @@ output:
 * A overview of R
 * Data manipulation (input/output, row/column selections, etc.)
 * Descriptive and binary hypotheses (summary, correlation, t-test, etc.)
-* Mul<span style="color:green">Tip</span>le regression (OLS, GLS, MLM, etc.)
+* Multiple regression (OLS, GLS, MLM, etc.)
 * Presentation (table, graph)
 * Version control (if we have time)
 
@@ -30,8 +30,8 @@ output:
 
 * R is a <span style="color:purple">weird</span> programming language
     + Weird for users of typical statistical software (such as STATA)
-        + obejct-oriented programming (OOP).
-    + Weird for programmers: unconsistent and strict codings
+        + object-oriented programming (OOP).
+    + Weird for programmers: inconsistent and strict coding
         + The debate of assignment operator (`=` vs. `<-`)
         + `library("interplot")` == `library(interplot)`
 * So, why do we still learn that, given its weirdness?
@@ -222,7 +222,7 @@ Class
 class(x);typeof(x)  # ; is used to write two commands in one line
 ```
 
-## Detect the atrributes
+## Detect the attributes
 Using `is.`
 ```{r}
 is.numeric(x)
@@ -300,7 +300,7 @@ df_xml <- xmlTreeParse("<url>")
 df_html <- readHTMLTable(url, which=3)
 
 ```
-More instructions are avaliable in this [blog](http://blog.datacamp.com/r-data-import-tutorial/).
+More instructions are available in this [blog](http://blog.datacamp.com/r-data-import-tutorial/).
 
 
 ## Output data {.build}
@@ -335,13 +335,13 @@ head(mtcars) # show the first six lines of mtcars
 
 ```
 
-## Look at a speicific area in a dataset
+## Look at a specific area in a dataset
 
 In a dataset or matrix, a special row and column can be specified by `data[col#,row#]` or `data["colName","rowName"]`. 
 
 So, for example, to select the first two rows of the third and fourth columns:
 ```{r}
-mtcars[1:2,3:4] # show first and the second rows of the third and forth columns
+mtcars[1:2,3:4] # show first and the second rows of the third and fourth columns
 ```
 
 ## Row/column selection{.small .build}
@@ -358,7 +358,7 @@ mtcars[,"mpg"][3]  # show the third component of the column "mpg"
 
 ----
 
-Select with speical conditions
+Select with special conditions
 ```{r}
 mtcars[mtcars$mpg < 20,][1,] # show the first rows which mpg are below 5.
 ```
@@ -411,7 +411,7 @@ It is convenient but also <span style="color:purple">risky</span>.
 mtcars$newvar <- NULL
 ```
 
-* Remove an independent varialbe, result, function, or data from the environment
+* Remove variable, result, function, or data from the environment
 
 ```{r}
 rm(x)
@@ -450,7 +450,7 @@ table(mtcars$newvar)
     + create: `mtcars$newvar <- c(1:nrow(mtcars))`
     + Remove: `mtcars$newvar <- NULL`; `rm()`
     + Recode: `recodevar[<condition>] <- <new value>`
-    + lable: using the `label` argument of `factor`.
+    + label: using the `label` argument of `factor`.
 * There are also [`apply` family](http://www.r-bloggers.com/r-tutorial-on-the-apply-family-of-functions/) functions for with batching management of data.
 
 ----
@@ -497,7 +497,7 @@ cor.test(mtcars$cyl, mtcars$gear)
 
 ----
 
-`cor.test` offers various arguments overlaping with `t.test` for more specific settings. Moreover, users can use the `method` argument to set the method to calculate the correlations, "Pearson", "Kendall", or "Spearman." (<span style="color:green">Tip</span>)
+`cor.test` offers various arguments overlapping with `t.test` for more specific settings. Moreover, users can use the `method` argument to set the method to calculate the correlations, "Pearson", "Kendall", or "Spearman." (<span style="color:green">Tip</span>)
 
 ```{r}
 cor.test(mtcars$cyl, mtcars$gear, method = "kendall")
@@ -550,7 +550,7 @@ summary(aov_one) #summarize it
 
 ----
 
-Next: more commads are coming: multiple regressions~
+Next: more commands are coming: multiple regressions~
 
 + <div class="centered">
 ![core](http://i.123g.us/c/bus_appreciate/card/101834.gif)
@@ -558,7 +558,7 @@ Next: more commads are coming: multiple regressions~
 
 # Multiple Regression
 ## Ordinary Linear Regression{.build}
-* we are detecting the contributions of the cylinders, housepower, and weight of the care (Xs) to the milage (Y): 
+* we are detecting the contributions of the cylinders, horsepower, and weight of the care (Xs) to the mileage (Y): 
     
 ```{r}
 lm_ols <- lm(mpg ~ cyl + hp + wt, data = mtcars)
@@ -578,7 +578,7 @@ ln, square, exponential, or inverse
 lm_tran <- lm(log(mpg) ~ I(cyl^2) + exp(hp) + I(1/wt), data = mtcars)
 ```
 
-Of course, if you want, you can create special variables that equal `log(mpg)`, `cyl^2`, or `exp(hp)`, and use them to doe the regression.
+Of course, if you want, you can create special variables that equal `log(mpg)`, `cyl^2`, or `exp(hp)`, and use them to do the regression.
 
 
 ## The result {.smaller}
@@ -715,15 +715,15 @@ Next: How to effectively present the results?
 ![present](http://media.giphy.com/media/HQjYmJ2OGSNeE/giphy.gif)
 </div>
 
-# Presentationg Techniques
+# Presenting Techniques
 
 ## Tabling
-There are over twenty packages for [table presentation](http://conjugateprior.org/2013/03/r-to-latex-packages-coverage/) in R. My favorate three are `stargazer`, `xtable`, and `texreg`.
+There are over twenty packages for [table presentation](http://conjugateprior.org/2013/03/r-to-latex-packages-coverage/) in R. My favoriate three are `stargazer`, `xtable`, and `texreg`.
 
 (Sorry, but all of them are for **Latex** output)
 
 * `stargazer`: good for summary table and regular regression results
-* `texreg`: when some resutls can't be presented by `stargazer`, try `texreg` (e.g., MLM results.)
+* `texreg`: when some results can't be presented by `stargazer`, try `texreg` (e.g., MLM results.)
 * `xtable`: the most extensively compatible package, but need more settings to get a pretty output, most of which `stargazer` and `texreg` can automatically do for you.
 
 ## An example {.smaller}
@@ -767,7 +767,7 @@ Con:
 * Not very flexible
 
 
-## An example: creat a histgram
+## An example: create a histgram
 
 ```{r fig.align="center"}
 hist(mtcars$mpg)
@@ -776,10 +776,10 @@ hist(mtcars$mpg)
 ## Adding some customizations
 
 ```{r fig.align="center", fig.height=3.5}
-hist(mtcars$mpg, freq = F,  # plot the dencity rather than frequency
+hist(mtcars$mpg, freq = F,  # plot the density rather than frequency
      breaks = 10,  # change the number of bins
      col = "purple", # change the color of the bins 
-     xlab="Miles Per Gallon",   # adding the x-axis lable
+     xlab="Miles Per Gallon",   # adding the x-axis label
   	main="Histogram")  # adding a title
 ```
 
@@ -826,7 +826,7 @@ The device list:
 ## `ggplot`: the most popular graphic engine in R {.build}
 
 + Built by Hadley Wickham based on Leland Wilkinson's *Grammar of Graphics*.
-+ It breaks the plot into compoents as <span style="color:purple">scales</span> and <span style="color:purple">layers</span>---increase the flexibility.
++ It breaks the plot into components as <span style="color:purple">scales</span> and <span style="color:purple">layers</span>---increase the flexibility.
 + To use `ggplot`, one needs to install the package `ggplot2` first.
 
 ```{r message=FALSE}
@@ -954,7 +954,7 @@ hist(mtcars$mpg)
 
 
 ## Two special types: estimate plot{.smaller}
-Plot the compariable coefficents or other estimates (margins, predicted probabilities, etc.) with `dotwhisker`.
+Plot the comparable coefficients or other estimates (margins, predicted probabilities, etc.) with `dotwhisker`.
 
 ```{r message=FALSE}
 library(dotwhisker)
@@ -973,7 +973,7 @@ dwplot(lm_df)
 
 <span style="color:green">Tip</span>
 <div class="notes">
-`%>%` is a piper connector embedded in `dplyr` package (which is automatically called by `dotwhisker` in the example). One can use it to avoid too complicated embedding codings:
+`%>%` is a piper connector embedded in `dplyr` package (which is automatically called by `dotwhisker` in the example). One can use it to avoid too complicated embedding coding:
 e.g., You want to see the maximum value of the mileage for carts with 6 cylinders. The regular code can be written as:
 ```{r eval= FALSE}
 max(dplyr::select(filter(mtcars, cyl == 6), mpg))
@@ -1031,7 +1031,7 @@ interplot(m = lm_in, var1 = "hp", var2 = "wt") +
 
 
 # Version Control
-## Just a breif introduction{.columns-2 .build}
+## Just a brief introduction{.columns-2 .build}
 * Tried to recall the deleted codes?
 * Tried to figure out what changes?
 * Saved a lot of replication files?
