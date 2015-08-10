@@ -3,7 +3,7 @@ title: "Hello, R!"
 author: "Yue Hu"
 output:
   ioslides_presentation:
-    self_contained: no
+    self_contained: yes
     logo: image/logo.gif
     transition: faster
     widescreen: yes
