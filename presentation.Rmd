@@ -53,6 +53,7 @@ output:
 <img src="http://revolution-computing.typepad.com/.a/6a010534b1db25970b01a3fc45e6fc970b-pi" height="400" width="450"/>
 [Magoulas & King, 2014, *Data Science Salary Survey*.](http://www.oreilly.com/data/free/stratasurvey.csp)
 
+
 ## What can you do with R?
 
 * Do statistics as STATA, SAS, SPSS, EXCEL,...
@@ -63,28 +64,6 @@ output:
     
     " I saw how R and Hadoop is used to make the <span style="color:purple">Tribal Wars game</span> engaging for 150M players; R is used to <span style="color:purple">teach high schoolers</span> to code, as their first programming language; R is used to help <span style="color:purple">veterinarians</span> identify lameness in horses using 3-d accelerometers ..."
 
-## When you may not want to work with R: {.build}
-When you do not understand exactly what you are doing...or you don't care,
-```{r eval=FALSE}
-# Calculate predicted probability in STATA
-logit protest age edu church
-prgen church, gen(p_church) rest(mean) ci level(95)
-```
-
-
-```{r eval=FALSE}
-# Calculate predicted probability in R
-m1 <- glm(protest ~ age + edu + church, data = ess, family = "binomial")
-church <- with(ess, data.frame(age = weighted.mean(age, na.rm = T, w = dweight),
-                               edu = weighted.mean(edu, na.rm = T, w = dweight), 
-                               church = 0:1)) 
-church_pp <- cbind(church, predict(m1, newdata = church.fake, type = "link", se = TRUE))
-church_pp <- within(church_pp, {
-    pp <- plogis(fit)*100
-    lb <- plogis(fit - (1.96 * se.fit))*100
-    ub <- plogis(fit + (1.96 * se.fit))*100
-})
-```
 
 
 ## When you don't have much time to learn it,
