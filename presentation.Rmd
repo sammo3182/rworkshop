@@ -56,13 +56,12 @@ output:
 ## What can you do with R?
 
 * Do statistics as STATA, SAS, SPSS, EXCEL,...
-* Scrap data from websites as Python, Java,...
+* Scrape data from websites as Python, Java,...
 * Create presentation slides, documents, webpages as MS Word, Powerpoint, TexMaker, Dreamweaver,...
 * Solve math problems as Matlab, Mathematica, ...
 * An observation in the "useR" conference (2015):
     
     " I saw how R and Hadoop is used to make the <span style="color:purple">Tribal Wars game</span> engaging for 150M players; R is used to <span style="color:purple">teach high schoolers</span> to code, as their first programming language; R is used to help <span style="color:purple">veterinarians</span> identify lameness in horses using 3-d accelerometers ..."
-
 
 ## When you may not want to work with R: {.build}
 When you do not understand exactly what you are doing...or you don't care,
@@ -86,6 +85,7 @@ church_pp <- within(church_pp, {
     ub <- plogis(fit + (1.96 * se.fit))*100
 })
 ```
+
 
 ## When you don't have much time to learn it,
 
@@ -767,7 +767,7 @@ Con:
 * Not very flexible
 
 
-## An example: create a histgram
+## An example: create a histogram
 
 ```{r fig.align="center"}
 hist(mtcars$mpg)
@@ -809,6 +809,11 @@ hist
 dev.off()
 ```
 
+<span style="color:purple">Tip</span>
+<div class="notes">
+Sometimes, RStudio may distort the graphic output.In this case, try to <span style="color:purple">zoom</span> or <span style="color:purple">export</span> it. 
+</div>
+
 ----
 
 The device list:
@@ -832,10 +837,10 @@ The device list:
 ```{r message=FALSE}
 library(ggplot2)
 ```
-+ Then, let's redo the previous histgram in `ggplot`.
++ Then, let's redo the previous histogram in `ggplot`.
 
 
-## Histgram in `ggplot`
+## histogram in `ggplot`
 ```{r fig.align="center", fig.height=2.7}
 ggplot(mtcars, aes(x=mpg)) + 
     geom_histogram(aes(y=..density..), 
@@ -843,19 +848,19 @@ ggplot(mtcars, aes(x=mpg)) +
                    colour="black", fill="purple") +
     geom_density(alpha=.2, fill="blue")  + # Overlay with transparent density plot
     theme_bw() + 
-    ggtitle("Histgram with Normal Curve") + 
+    ggtitle("histogram with Normal Curve") + 
     xlab("Miles Per Gallon") + ylab("Density")
 ```
 
 
-## Histgram comparison in `ggplot`
+## histogram comparison in `ggplot`
 ```{r fig.align="center", fig.height=3}
 ggplot(mtcars, aes(x=mpg, fill = factor(vs))) +  # Separate cars with V or straight engine
     geom_histogram(aes(y=..density..), 
                    binwidth=2, alpha = .5, position = "identity") +
     geom_density(alpha=.2)  + # Overlay with transparent density plot
     theme_bw() + 
-    ggtitle("Histgram with Normal Curve") + 
+    ggtitle("histogram with Normal Curve") + 
     xlab("Miles Per Gallon") + ylab("Density")
 ```
 
@@ -921,7 +926,6 @@ The codes to create these graphs are a little more complicated. For those who ar
 
 * `ggsave(<plot project>, "<name + type>")`:
 * e.g., `ggsave("comp_hist.png")`
-
     + When the `<plot project>` is omitted, R will save the last presented plot. 
     + There are additional arguments which users can use to adjust the size, path, scale, etc.
 
@@ -935,7 +939,7 @@ ggsave(filename = default_name(plot), plot = last_plot(),
 ## `qplot` function {.build}
 The `ggplot` version of basic plot
 
-* Redo the first histgram with `qplot`:
+* Redo the first histogram with `qplot`:
 
 ```{r eval=FALSE}
 qplot(mtcars$mpg) 
@@ -1039,12 +1043,9 @@ interplot(m = lm_in, var1 = "hp", var2 = "wt") +
 
 
 
-
-
 <div class = "center">
 <img src=image/vcontrol2.png />
 </div>
-
 
 ---- 
 
@@ -1063,6 +1064,18 @@ Tracking what you've changed:
     + Create a version-control project in RStudio
         + <img src=image/vcontrol_set.png height = "200" />
     + Pull and Push
+
+
+## External Sources
+* Q&A Blogs: 
+    + http://stackoverflow.com/questions/tagged/r
+    + https://stat.ethz.ch/mailman/listinfo/r-help
+
+* Graph Blogs:
+    + http://www.cookbook-r.com/Graphs/
+    + http://shiny.stat.ubc.ca/r-graph-catalog/
+
+* Blog for new stuffs: http://www.r-bloggers.com/
 
 
 ----
