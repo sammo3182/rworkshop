@@ -66,7 +66,7 @@ output:
 
 
 
-## When you don't have much time to learn it,
+## When you may not want to work with R
 
 <div class="centered">
   <img src=image/LearningCurve2.png height="400"/>
@@ -165,7 +165,7 @@ list # == print(list)
 
 Basic rules for object name:
 
-* Start with numbers (WRONG: `1stday`)
+* Don't start with numbers (WRONG: `1stday`)
 * No special signs except for `.` and `-` (WRONG: `M&M`)
 * Case sensitivity (`X != x`)
 
