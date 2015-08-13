@@ -66,10 +66,6 @@ x > z; x <= z
   
 # Data Analysis
   ## Input data {.build}
-load("<FileName>.RData")
-
-df_txt <- read.table("<FileName>.txt")
-df_csv <- read.csv("<FileName>.csv")
 
 data(mtcars)
 
@@ -129,7 +125,7 @@ t.test(mtcars$cyl, mtcars$gears)
 # one side, cyl > gear, alpha = .01
 t.test(mtcars$cyl, mtcars$gear,
 alternative = "greater", conf.level = .99)     
-) 
+
 
 # comparing with the parameter (true value)
 t.test(mtcars$cyl, mu = 6)   # the true mean is 6.

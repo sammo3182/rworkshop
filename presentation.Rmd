@@ -256,6 +256,8 @@ Next: let's have a look at the data, first.
 <img src=https://powerofus.force.com/servlet/rtaImage?eid=ka080000000D4YB&feoid=00N800000059i9I&refid=0EM800000000Tnw />
 </div>
 
+Or click the "table" sign in the "Envirnoment" tab in RStudio 
+
 # Data Analysis
 ## Input data {.build}
 * R can read almost all types of datasets.
@@ -330,7 +332,7 @@ head(mtcars) # show the first six lines of mtcars
 
 ## Look at a specific area in a dataset
 
-In a dataset or matrix, a special row and column can be specified by `data[col#,row#]` or `data["colName","rowName"]`. 
+In a dataset or matrix, a special row and column can be specified by `data[row#, col#]` or `data["rowName","colName"]`. 
 
 So, for example, to select the first two rows of the third and fourth columns:
 ```{r}
@@ -370,7 +372,7 @@ summary(mtcars)
 ```
 One can use `mean`, `sd`, `max`, `min`, etc. to extract specific descriptive statistics.
 
-## Descriptive analysis (continue) {.smaller .build}
+## Descriptive analysis (continue) {.build}
 * For categorical vectors
 
 ```{r}
@@ -380,7 +382,6 @@ table(mtcars$cyl)
 * For observation number and variable number
 ```{r}
 nrow(mtcars)  # observation (N)
-ncol(mtcars)  # variable number
 ```
 
 ## Data manipulation{.build}
