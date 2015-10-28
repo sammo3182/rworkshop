@@ -1,0 +1,446 @@
+---
+title: "Hello, R!"
+author: "Yue Hu's R Workshop Series II"
+output:
+  ioslides_presentation:
+    self_contained: yes
+    logo: image/logo.gif
+    transition: faster
+    widescreen: yes
+    slidy_presentation:
+    incremental: yes
+---
+# Preface
+## What Are Covered in this Series Workshop
+* A overview of R
+* Data manipulation (input/output, row/column selections, etc.)
+* **Descriptive and binary hypotheses (summary, correlation, t-test, etc.)**
+* **Multiple regression (OLS, GLS, MLM, etc.)**
+* Presentation (table, graph)
+
+
+## Data
+```{r}
+data(mtcars)
+head(mtcars)
+```
+
+****
+```{r message=FALSE}
+library(dplyr)
+glimpse(mtcars)
+```
+
+
+## Descriptive analysis {.smaller}
+For a dataset or a numeric vector
+```{r}
+summary(mtcars)
+```
+One can use `mean`, `sd`, `max`, `min`, etc. to extract specific descriptive statistics.
+
+## Descriptive analysis (continue) {.build}
+`dplyr::summarise` <span style="color:green">Tip</span>
+
+<div class="notes">
+`%>%` is a piper connector embedded in `dplyr` package. One can use it to avoid too complicated embedding coding: e.g., You want to see the maximum value of the mileage for carts with 6 cylinders. The regular code can be written as:
+```{r eval= FALSE}
+max(dplyr::select(filter(mtcars, cyl == 6), mpg))
+```
+With the piper connector, you can write as:
+
+```{r eval = F}
+mtcars %>% 
+  filter(cyl == 6) %>% 
+  dplyr::select(mpg) %>% 
+  max
+```
+
+</div>
+
+```{r}
+mtcars %>% count(gear)
+```
+****
+```{r}
+mtcars %>% group_by(gear) %>% summarise(mean = mean(mpg), maxWeight = max(wt))
+```
+
+
+## Descriptive analysis (continue) {.build}
+* For categorical vectors
+
+```{r}
+table(mtcars$cyl)
+```
+
+* For observation number and variable number
+```{r}
+nrow(mtcars); ncol(mtcars)  # observation (N); variable number
+```
+
+
+
+
+## Data manipulation{.build}
+* Create a variable into the dataset (<span style="color:green">Tip</span>)
+
+```{r}
+mtcars$id <- rbinom(32, 1, .5)  #create a random binomial variable 
+
+mtcars$id <- c(1:nrow(mtcars)) # create an "ID" variable
+mtcars %>% add_rownames("type") # add rowname 
+```
+
+<div class="notes">
+Obviously, variables can be immediately overwrite without any specific setting. 
+
+It is convenient but also <span style="color:purple">risky</span>.
+</div>
+
+****
+
+* Remove a variable from the dataset
+
+```{r}
+mtcars$newvar <- NULL
+```
+
+* Remove variable, result, function, or data from the environment
+
+```{r}
+rm(x)
+```
+
+----
+
+Recode a variable: e.g., numeric to binary, mpg > mean, 1, otherwise 0
+
+```{r}
+# Method I
+mtcars$newvar[mtcars$mpg > mean(mtcars$mpg)] <- 1;mtcars$newvar[mtcars$mpg <= mean(mtcars$mpg)] <- 0
+table(mtcars$newvar)
+
+# Method II
+mtcars$newvar <- ifelse(mtcars$mpg > mean(mtcars$mpg), 1, 0);table(mtcars$newvar)
+mtcars$newvar <- ifelse(is.na(mtcars$mpg), NA,
+                      ifelse(mtcars$mpg > mean(mtcars$mpg), 1, 0))
+```
+
+****
+
+Label: 
+```{r}
+newvar <- setNames(c(1,2,3), c("trial-1", "trial-2", "trial-3"))
+newvar
+mtcars$newvar<- factor(mtcars$gear, levels = 3:5, labels = c("3-gear", "4-gear", "5-gear"))
+table(mtcars$newvar)
+```
+
+
+
+## Wrap Up 
+* Description: `summary()`, `table()`, `ncol()`, `nrow()`, 
+    + More specific: `mean`, `sd`, `max`, `min`, etc.
+    + More manipulation is allowed with `dplyr` functions.
+* Manipulation: 
+    + create: `mtcars$newvar <- c(1:nrow(mtcars))`
+    + Remove: `mtcars$newvar <- NULL`; `rm()`
+    + Recode: `recodevar[<condition>] <- <new value>`
+    + label: using the `label` argument of `factor`.
+* There are also [`apply` family](http://www.r-bloggers.com/r-tutorial-on-the-apply-family-of-functions/) functions for with batching management of data.
+
+
+
+# Hypothesis Tests
+
+## Binary Tests: Difference of mean
+
+$H_{0}: \bar{cylinders} = \bar{gears},\ \alpha = .05$
+
+```{r}
+t.test(mtcars$cyl, mtcars$gears) 
+```
+
+----
+
+`t.test` offers arguments `alternative`, `mu`, `paired`, and `conf.level` for users to change in two-tail/one-tail test, parameter mean, independent/paired comparison, and $\alpha$.
+
+```{r}
+# one side, cyl > gear, alpha = .01
+t.test(mtcars$cyl, mtcars$gear,
+       alternative = "greater", conf.level = .99)     
+```
+
+****
+```{r}
+# comparing with the parameter (true value)
+t.test(mtcars$cyl, mu = 6)   # the true mean is 6.
+```
+
+
+
+## Binary Tests: Correlation
+$H_{0}: \rho_{(cyl,gear)} = 0,\ \alpha = .05$
+
+```{r}
+cor.test(mtcars$cyl, mtcars$gear)
+```
+
+****
+
+`cor.test` offers various arguments as in `t.test` for more specific settings. Moreover, users can use the `method` argument to set the method to calculate the correlations, "Pearson", "Kendall", or "Spearman." (<span style="color:green">Tip</span>)
+
+```{r warning=FALSE}
+cor.test(mtcars$cyl, mtcars$gear, method = "kendall", conf.level = .99)
+# cor.test(~ mtcars$cyl + mtcars$gear, method = "kendall", conf.level = .99)
+```
+
+<div class="notes">
+Do I have to type the `mtcars$` every time? 
+
+* No you don't.
+    + It offers a potential for cross-dataset operation, though.
+    + Use `within()`: e.g., `within(mtcars, cor.test(cyl, gear))`
+    + Use `attach()` (not recommonded)
+</div>
+
+
+----
+
+```{r}
+with(mtcars, cor.test(~ cyl + gear, subset = (vs == 0)))
+```
+
+
+----
+
+We can get the correlation matrix, too:
+```{r}
+cor(mtcars[,1:4])
+```
+
+## Binary Tests: ANOVA{.smaller}
+One way or two way ANOVA: (<span style="color:green">Tip</span>)
+
+```{r}
+aov_one <- aov(cyl ~ gear, data = mtcars) #one-way
+
+aov_two <- aov(cyl ~ gear + wt, data = mtcars) #two-way
+
+summary(aov_one); summary(aov_two)
+```
+
+<div class="notes">
+Sometimes, `summary` offers more organized results than `print`:
+
+```{r}
+aov_one #print it
+summary(aov_one) #summarize it
+```
+
+</div>
+
+## Wrap up
+* T-test: `t.test(x, y = NULL, alternative = c("two.sided", "less", "greater"), mu = 0, paired = FALSE, conf.level = 0.95, ...)`
+
+* Correlation: `cor.test(x, y, alternative = c("two.sided", "less", "greater"), method = c("pearson", "kendall", "spearman"), conf.level = 0.95, continuity = FALSE, ...) `
+
+* ANOVA: `aov(formula, data = NULL, ...)`
+
+----
+
+Next: more commands are coming: multiple regressions~
+
++ <div class="centered">
+![core](http://i.123g.us/c/bus_appreciate/card/101834.gif)
+</div>
+
+# Multiple Regression
+## Ordinary Linear Regression{.build}
+* we are detecting the contributions of the cylinders, horsepower, and weight of the care (Xs) to the mileage (Y): 
+    
+```{r}
+lm_ols <- lm(mpg ~ cyl + hp + wt, data = mtcars)
+``` 
+
+
+## The result {.smaller}
+
+```{r}
+summary(lm_ols)
+```  
+
+  
+## Nonlinear transition
+ln, square, exponential, or inverse
+
+```{r}
+lm_tran <- lm(log(mpg) ~ exp(cyl) + I(1/gear) + wt + I(wt^2), data = mtcars)
+```
+
+Of course, if you want, you can create special variables that equal `log(mpg)`, `cyl^2`, or `exp(hp)`, and add them to the regression model.
+
+
+## The result {.smaller}
+
+```{r}
+summary(lm_tran)
+```
+
+## Break the factor variable
+
+If we want to include a categorical variable into the regression, R will break it into binary variables for you.
+
+```{r}
+mtcars$gear_f <- factor(mtcars$gear, levels = 3:5, labels = c("3-gear", "4-gear", "5-gear"))
+
+lm_f <- lm(mpg ~ cyl + hp + wt + gear_f, data = mtcars)
+
+```
+
+## The result {.smaller}
+
+```{r}
+summary(lm_f)
+```
+
+## Interaction
+Two ways to write the model
+```{r}
+lm_in <- lm(mpg ~ cyl + hp * wt, data = mtcars)
+lm_in2 <- lm(mpg ~ cyl + hp + wt + hp:wt, data = mtcars)
+```
+
+## The result {.smaller}
+```{r}
+summary(lm_in)
+```
+
+## Post-estimate diagnoses: Residural
+  
+```{r fig.height=3.5, fig.align="center"}
+res_long <- mtcars$mpg - predict(lm_ols)
+res_short <- resid(lm_ols)
+
+res_short[1:5]
+```
+
+****
+
+```{r}
+plot(lm_ols, which = 1) # R offer 6 types of plots for post-estimation diagnosis. 
+```
+Use `which` to control for which plot you want to show. The default is to show four.
+
+
+## Post-estimate diagnoses: Outliers
+```{r}
+library(car) # Bonferonni p-value for most extreme obs
+
+outlierTest(lm_ols)
+```
+
+----
+```{r}
+qqPlot(lm_ols)  #qq plot for studentized resid 
+```
+
+
+## Post-estimate diagnoses: CLRM Properties{.build}
+* Heteroscedasticity 
+
+```{r}
+ncvTest(lm_ols) 
+```
+
+* Multicollinearity
+```{r}
+vif(lm_ols) 
+```
+
+----
+
+Autocoorelation
+```{r}
+durbinWatsonTest(lm_ols)
+```
+
+## Logit
+The process to run a logit is largely the same as running an OLS, except for the function name and certain arguments. 
+
+```{r}
+logit <- glm(vs ~ cyl + hp + wt, data = mtcars, family = "binomial")
+```
+
+## The result{.smaller}
+
+```{r}
+summary(logit)
+```
+
+## Interpretation: Margin
+* Marginal effect
+
+```{r message=FALSE}
+library(mfx)
+logit_m <- logitmfx(vs ~ cyl + hp + wt, data = mtcars) 
+logit_m
+```
+
+## Interpretation: Predicted probability
+Predicted Probability when `cyl` changes from 4 to 6.
+```{r}
+# Step 1: creat an aggregate data 
+mtcars_fake <- with(mtcars, data.frame(cyl = 4:6, hp = mean(hp), wt = mean(wt)))
+# Step 2: predict based on the new data
+logit_pp4 <- cbind(mtcars_fake,predict(logit, newdata = mtcars_fake, type = "link", se = TRUE))
+# Step 3: convert to probability 
+logit_pp4 <- within(logit_pp4, {pp <- plogis(fit) 
+                                lb <- plogis(fit - 1.96 * se.fit)
+                                ub <- plogis(fit + 1.96 * se.fit)})
+logit_pp4[,7:9]
+```
+
+
+## Wrap Up
+* OLS: `lm(Y ~ X, data = data)`
+    + Non-linear transformations: `I(X^2)`, `exp(X)`, `log(X)`.
+    + Using factor variable: R will handle that for you.
+    + Interaction: `lm(Y ~ X * Z, data = data)`.
+    + Post-estimate diagnoses: `resid()`, `outlierTest()`, `qqPlot()`, `ncvTest()`, `vif()`, `durbinWatsonTest()`
+* Logit: `glm(Y ~ X, data = data, family = "binomial")`
+    + Margins: using `mfx::logitmfx`
+    + Predict probabilty: 
+        + Step 1: create an aggregate data
+        + Step 2: predict the log odds
+        + Step 3: transfer to probability
+        
+----
+
+Next: How to effectively present the results?
+
+<div class="centered">
+![present](http://media.giphy.com/media/HQjYmJ2OGSNeE/giphy.gif)
+</div>
+
+
+
+## External Sources
+* Q&A Blogs: 
+    + http://stackoverflow.com/questions/tagged/r
+    + https://stat.ethz.ch/mailman/listinfo/r-help
+
+* Graph Blogs:
+    + http://www.cookbook-r.com/Graphs/
+    + http://shiny.stat.ubc.ca/r-graph-catalog/
+
+* Blog for new stuffs: http://www.r-bloggers.com/
+
+
+----
+
+<div class = "center">
+<img src="http://www.junipercivic.com/images/Berry/thats-all-folks.jpg" height = "550" />
+</div>
+

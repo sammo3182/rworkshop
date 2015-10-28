@@ -1,0 +1,390 @@
+---
+title: "Hello, R!"
+author: "Yue Hu's R Workshop Series III"
+output:
+  ioslides_presentation:
+    self_contained: yes
+    logo: image/logo.gif
+    transition: faster
+    widescreen: yes
+    slidy_presentation:
+    incremental: yes
+---
+
+# Preface
+## What Are Covered in this Series Workshop
+* A overview of R
+* Data manipulation (input/output, row/column selections, etc.)
+* Descriptive and binary hypotheses (summary, correlation, t-test, etc.)
+* Multiple regression (OLS, GLS, MLM, etc.)
+* **Presentation (table, graph)**
+
+# Presenting Techniques
+
+## Tabling
+There are over twenty packages for [table presentation](http://conjugateprior.org/2013/03/r-to-latex-packages-coverage/) in R. My favoriate three are `stargazer`, `xtable`, and `texreg`.
+
+(Sorry, but all of them are for **Latex** output)
+
+* `stargazer`: good for summary table and regular regression results
+* `texreg`: when some results can't be presented by `stargazer`, try `texreg` (e.g., MLM results.)
+* `xtable`: the most extensively compatible package, but need more settings to get a pretty output, most of which `stargazer` and `texreg` can automatically do for you.
+
+## An example {.smaller}
+
+```{r message = F}
+library(stargazer)
+stargazer(lm_ols, align = T)
+```
+
+----
+
+Present in PDF
+
+<div class="centered">
+  <img src=image/table.png height="400"/>
+  </div> 
+  
+* For the users of MS Word, click [here](http://www.r-statistics.com/2010/05/exporting-r-output-to-ms-word-with-r2wd-an-example-session/).
+
+## Plotting
+
+Three types of graphic presenting approaches in R:
+
+* Basic plots: `plot()`.
+* Lattice plots: e.g., `ggplot()`.
+* Interactive plots: `shiny()`. (save for later)
+    + <div class="centered">
+  <img src="http://i.stack.imgur.com/qZObK.png" height="300"/>
+  </div> 
+
+## Basic plot
+Pro:
+
+* Embedded in R
+* Good tool for <span style="color:purple">data exploration</span>. 
+* <span style="color:purple">Spatial</span> analysis and <span style="color:purple">3-D</span> plots.
+
+Con:
+
+* Not very pretty
+* Not very flexible
+
+
+## An example: create a histogram
+
+```{r fig.align="center"}
+hist(mtcars$mpg)
+```
+
+## Adding some customizations
+
+```{r fig.align="center", fig.height=3.5}
+hist(mtcars$mpg, freq = F,  # plot the density rather than frequency
+     breaks = 10,  # change the number of bins
+     col = "purple", # change the color of the bins 
+     xlab="Miles Per Gallon",   # adding the x-axis label
+  	main="Histogram")  # adding a title
+```
+
+## Adding a normal curve{.smaller}
+
+```{r fig.align="center", fig.height=3.5}
+hist<-hist(mtcars$mpg, breaks=10, col="purple", xlab="Miles Per Gallon", 
+  	main="Histogram with Normal Curve") 
+
+xfit<-seq(min(mtcars$mpg),max(mtcars$mpg),length=40) 
+yfit<-dnorm(xfit,mean=mean(mtcars$mpg),sd=sd(mtcars$mpg)) 
+yfit <- yfit*diff(hist$mids[1:2])*length(mtcars$mpg) 
+lines(xfit, yfit, col="blue", lwd=2)
+```
+
+
+## Saving the plot{.build}
+* Compatible format:`.jpg`, `.png`, `.wmf`, `.pdf`, `.bmp`, and `postscript`.
+* Process: 
+      1. call the graphic device
+      2. plot
+      3. close the device
+
+```{r eval = F}
+jpeg("histgraph.jpg")
+hist
+dev.off()
+```
+
+<span style="color:green">Tip</span>
+<div class="notes">
+Sometimes, RStudio may distort the graphic output.In this case, try to <span style="color:purple">zoom</span> or <span style="color:purple">export</span> it. 
+</div>
+
+----
+
+The device list:
+
+| Function                    	| Output to        	|
+|-----------------------------	|------------------	|
+| pdf("mygraph.pdf")          	| pdf file         	|
+| win.metafile("mygraph.wmf") 	| windows metafile 	|
+| png("mygraph.png")          	| png file         	|
+| jpeg("mygraph.jpg")         	| jpeg file        	|
+| bmp("mygraph.bmp")          	| bmp file         	|
+| postscript("mygraph.ps")    	| postscript file  	|
+
+
+## `ggplot`: the most popular graphic engine in R {.build}
+
++ Built by Hadley Wickham based on Leland Wilkinson's *Grammar of Graphics*.
++ It breaks the plot into components as <span style="color:purple">scales</span> and <span style="color:purple">layers</span>---increase the flexibility.
++ To use `ggplot`, one needs to install the package `ggplot2` first.
+
+```{r message=FALSE}
+library(ggplot2)
+```
++ Then, let's redo the previous histogram in `ggplot`.
+
+
+## histogram in `ggplot`
+```{r fig.align="center", fig.height=2.7}
+ggplot(mtcars, aes(x=mpg)) + 
+    geom_histogram(aes(y=..density..), 
+                   binwidth=2,
+                   colour="black", fill="purple") +
+    geom_density(alpha=.2, fill="blue")  + # Overlay with transparent density plot
+    theme_bw() + 
+    ggtitle("histogram with Normal Curve") + 
+    xlab("Miles Per Gallon") + ylab("Density")
+```
+
+
+## histogram comparison in `ggplot`
+```{r fig.align="center", fig.height=3}
+ggplot(mtcars, aes(x=mpg, fill = factor(vs))) +  # Separate cars with V or straight engine
+    geom_histogram(aes(y=..density..), 
+                   binwidth=2, alpha = .5, position = "identity") +
+    geom_density(alpha=.2)  + # Overlay with transparent density plot
+    theme_bw() + 
+    ggtitle("histogram with Normal Curve") + 
+    xlab("Miles Per Gallon") + ylab("Density")
+```
+
+## Even fancier
+Taking a third variable ("quarter mile time") into account: 
+
+```{r echo=FALSE, fig.align="center"}
+ggplot(mtcars,aes(mpg,qsec)) + 
+  geom_point() + 
+  geom_rug(col="purple",alpha=.5) +
+  xlab("Miles Per Gallon") + ylab("1/4 Mile Time") + 
+  theme_bw()
+```
+
+
+----
+
+```{r echo=FALSE, fig.align="center"}
+library(gridExtra)
+#placeholder plot - prints nothing at all
+empty <- ggplot()+geom_point(aes(1,1), colour="white") +
+     theme(                              
+       plot.background = element_blank(), 
+       panel.grid.major = element_blank(), 
+       panel.grid.minor = element_blank(), 
+       panel.border = element_blank(), 
+       panel.background = element_blank(),
+       axis.title.x = element_blank(),
+       axis.title.y = element_blank(),
+       axis.text.x = element_blank(),
+       axis.text.y = element_blank(),
+       axis.ticks = element_blank()
+     )
+
+#scatterplot of x and y variables
+scatter <- ggplot(mtcars,aes(mpg, qsec)) + 
+  geom_point(aes(color=factor(vs))) + 
+  xlab("Miles Per Gallon") + ylab("Density") + 
+  scale_color_manual(values = c("orange", "purple")) + 
+  theme(legend.position=c(1,1),legend.justification=c(1,1)) 
+
+#marginal density of x - plot on top
+plot_top <- ggplot(mtcars, aes(mpg, fill=factor(vs))) + 
+  geom_density(alpha=.5) + 
+  scale_fill_manual(values = c("orange", "purple")) + 
+  theme(legend.position = "none")
+
+#marginal density of y - plot on the right
+plot_right <- ggplot(mtcars, aes(qsec, fill=factor(vs))) + 
+  geom_density(alpha=.5) + 
+  coord_flip() + 
+  scale_fill_manual(values = c("orange", "purple")) + 
+  theme(legend.position = "none") 
+
+#arrange the plots together, with appropriate height and width for each row and column
+grid.arrange(plot_top, empty, scatter, plot_right, ncol=2, nrow=2, widths=c(4, 1), heights=c(1, 4))
+```
+
+The codes to create these graphs are a little more complicated. For those who are interested in creating such a plot, click [here](http://rforpublichealth.blogspot.com/2014/02/ggplot2-cheatsheet-for-visualizing.html).
+
+
+## Save `ggplot` {.build}
+
+* `ggsave(<plot project>, "<name + type>")`:
+* e.g., `ggsave("comp_hist.png")`
+    + When the `<plot project>` is omitted, R will save the last presented plot. 
+    + There are additional arguments which users can use to adjust the size, path, scale, etc.
+
+```{r eval = F}
+ggsave(filename = default_name(plot), plot = last_plot(),
+  device = default_device(filename), path = NULL, scale = 1,
+  width = par("din")[1], height = par("din")[2], units = c("in", "cm",
+  "mm"), dpi = 300, limitsize = TRUE, ...)
+```
+
+## `qplot` function {.build}
+The `ggplot` version of basic plot
+
+* Redo the first histogram with `qplot`:
+
+```{r eval=FALSE}
+qplot(mtcars$mpg) 
+```
+
+* Equivalent to:
+
+```{r eval=FALSE}
+ggplot(mtcars, aes(x=mpg)) + geom_histogram() 
+```
+
+* Comparing to the basic plot engine: 
+```{r eval=FALSE}
+hist(mtcars$mpg)
+```
+
+
+## Two special types: estimate plot{.smaller}
+Plot the comparable coefficients or other estimates (margins, predicted probabilities, etc.) with `dotwhisker`.
+
+```{r message=FALSE}
+library(dotwhisker)
+library(broom)
+lm_df <- tidy(lm_ols)
+lm_df
+```
+
+----
+
+```{r message=F, fig.align="center", fig.height=4}
+lm_df <- by_2sd(lm_df, mtcars) %>% # rescale the coefficients
+  filter(term != "(Intercept)") # omit intercept
+dwplot(lm_df)
+```
+
+<span style="color:green">Tip</span>
+<div class="notes">
+`%>%` is a piper connector embedded in `dplyr` package (which is automatically called by `dotwhisker` in the example). One can use it to avoid too complicated embedding coding:
+e.g., You want to see the maximum value of the mileage for carts with 6 cylinders. The regular code can be written as:
+```{r eval= FALSE}
+max(dplyr::select(filter(mtcars, cyl == 6), mpg))
+```
+With the piper connector, you can write as:
+
+```{r eval = F}
+mtcars %>% 
+  filter(cyl == 6) %>% 
+  dplyr::select(mpg) %>% 
+  max
+```
+
+
+
+</div>
+
+
+## Two special types: interaction plot{.smaller}
+Plot the interactive effects with `interplot`.
+
+```{r message=FALSE}
+library(interplot)
+summary(lm_in)
+
+```
+
+----
+
+```{r fig.align="center"}
+interplot(m = lm_in, var1 = "hp", var2 = "wt") + 
+  xlab("Automobile Weight (thousands lbs)") + 
+  ylab("Estimated Coefficient for \nGross horsepower")
+```
+
+
+
+
+## Wrap Up
+* R has a bunch of packages for creating publishing-like tables, e.g., `stargazer`, `xtable`, and `texreg`
+
+* There are three ways to visualize statistics in R: basic, lattice (`ggplot`), and interactive.
+    + basic: e.g., `hist(<vector>)`
+    + `ggplot`: /n  e.g., `ggplot(<data>, aes(x=<vector>)) + geom_histogram()`.
+
+* Two special types of plot:
+    + Estimate plot with [`dotwhisker`](https://cran.r-project.org/web/packages/interplot/vignettes/interplot-vignette.html).
+    + Interaction plot with [`interplot`](https://cran.r-project.org/web/packages/dotwhisker/vignettes/dwplot-vignette.html).
+    
+## Almost the end: the last topic
+
+<div class="centered">
+![present](http://conservatives4palin.com/wp-content/uploads/2013/06/snob.gif)
+</div>
+
+
+# Version Control
+## Just a brief introduction{.columns-2 .build}
+* Tried to recall the deleted codes?
+* Tried to figure out what changes?
+* Saved a lot of replication files?
+* Version control can help you: 
+
+
+
+<div class = "center">
+<img src=image/vcontrol2.png />
+</div>
+
+---- 
+
+Tracking what you've changed:
+<div class = "center">
+<img src=image/vcontrol1.png />
+</div>
+ 
+
+## Using Git with RStudio
+
+* RStudio has associate with the Git and SVN very well. 
+* Process to use git:
+    + Register a user account in https://github.com.
+    + Connect your account with RStudio following [this instruction](http://www.molecularecologist.com/2013/11/using-github-with-r-and-rstudio/).
+    + Create a version-control project in RStudio
+        + <img src=image/vcontrol_set.png height = "200" />
+    + Pull and Push
+
+
+## External Sources
+* Q&A Blogs: 
+    + http://stackoverflow.com/questions/tagged/r
+    + https://stat.ethz.ch/mailman/listinfo/r-help
+
+* Graph Blogs:
+    + http://www.cookbook-r.com/Graphs/
+    + http://shiny.stat.ubc.ca/r-graph-catalog/
+
+* Blog for new stuffs: http://www.r-bloggers.com/
+
+
+----
+
+<div class = "center">
+<img src="http://www.junipercivic.com/images/Berry/thats-all-folks.jpg" height = "550" />
+</div>
+
