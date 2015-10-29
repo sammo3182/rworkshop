@@ -13,10 +13,10 @@ output:
 
 # Preface
 ## What Are Covered in this Series Workshop
-* A overview of R
-* Data manipulation (input/output, row/column selections, etc.)
-* Descriptive and binary hypotheses (summary, correlation, t-test, etc.)
-* Multiple regression (OLS, GLS, MLM, etc.)
+* [A overview of R](https://rpubs.com/sammo3182/Rintro) 
+* [Data manipulation (input/output, row/column selections, etc.)](https://rpubs.com/sammo3182/Rintro) 
+* [Descriptive and binary hypotheses (summary, correlation, t-test, etc.)](http://rpubs.com/sammo3182/Rstat)
+* [Multiple regression (OLS, GLS, MLM, etc.)](http://rpubs.com/sammo3182/Rstat)
 * **Presentation (table, graph)**
 
 # Presenting Techniques

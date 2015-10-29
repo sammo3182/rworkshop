@@ -12,11 +12,12 @@ output:
 ---
 # Preface
 ## What Are Covered in this Series Workshop
-* A overview of R
-* Data manipulation (input/output, row/column selections, etc.)
+* [A overview of R](https://rpubs.com/sammo3182/Rintro) 
+* [Data manipulation (input/output, row/column selections, etc.)](https://rpubs.com/sammo3182/Rintro) 
 * **Descriptive and binary hypotheses (summary, correlation, t-test, etc.)**
 * **Multiple regression (OLS, GLS, MLM, etc.)**
 * Presentation (table, graph)
+
 
 
 ## Data
@@ -323,7 +324,7 @@ summary(lm_in)
 res_long <- mtcars$mpg - predict(lm_ols)
 res_short <- resid(lm_ols)
 
-res_short[1:5]
+res_short[1:10]
 ```
 
 ****
@@ -331,6 +332,7 @@ res_short[1:5]
 ```{r}
 plot(lm_ols, which = 1) # R offer 6 types of plots for post-estimation diagnosis. 
 ```
+
 Use `which` to control for which plot you want to show. The default is to show four.
 
 
@@ -380,7 +382,7 @@ summary(logit)
 ```
 
 ## Interpretation: Margin
-* Marginal effect
+Marginal effect
 
 ```{r message=FALSE}
 library(mfx)
