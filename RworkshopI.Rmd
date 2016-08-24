@@ -9,145 +9,164 @@ output:
     slidy_presentation: null
     transition: faster
     widescreen: yes
-  beamer_presentation:
-    incremental: yes
 ---
+<style>
+div#before-column p.forceBreak {
+    break-before: column;
+}
+div#after-column p.forceBreak {
+    break-after: column;
+}
+</style>
+
+
 # Preface
-## What Are Covered in this Series Workshop
-* **A overview of R**
-* **Data manipulation (input/output, row/column selections, etc.)**
+## What are covered
+* A overview of R
+* Data manipulation (input/output, row/column selections, etc.)
 * Descriptive and binary hypotheses (summary, correlation, t-test, etc.)
 * Multiple regression (OLS, GLS, MLM, etc.)
 * Presentation (table, graph)
-
-
+* Version control (if we have time)
 
 
 # An Overview of R
-## What's R?
-* R is a programming language
+## Why using R in your research?
+You can use R to:
 
-* R is developed and maintained by statisticians.
-
-* R is a <span style="color:purple">weird</span> programming language
-    + Weird for users of typical statistical software (such as STATA, SPSS, and Excel)
-        + object-oriented programming (OOP).
-    + Weird for programmers: inconsistent and strict coding
-        + The debate of assignment operator (`=` vs. `<-`)
-        + `library("interplot")` == `library(interplot)`
-* So, why do we still learn weirdo?
-
-
-## Why R? {.columns-2 .build}
-<img src="http://revolution-computing.typepad.com/.a/6a010534b1db25970b01a3fc45e6fc970b-pi" height="400" width="450"/>
-[Magoulas & King, 2014, *Data Science Salary Survey*.](http://www.oreilly.com/data/free/stratasurvey.csp)
+* Do statistics and solve math problems
+* Edit codes in Excel, Python, C++, ...
+* Scrape data from texts, websites, databases, pdf...
+* Create presentation slides in pdf (as LaTex beamer) or html (as Markdown)
+* Create webpages
+* Write academic articles and save them in html, pdf, or word.
+* Write a book (see e.g., [bookdown](https://bookdown.org/home/).)
 
 
 
+## Why R rather than the others?? {.columns-2 .build}
 * It's free!! 
 * It's developing!
     + R is very compatible with new techniques
     + e.g., Network analysis, spatial analysis with GIS, and text analysis with big data. 
 * It's multi-lingual!
+
 ```{r eval = F}
 "Hello 你好 안녕하세요 здравствуйте"
 ```
+
+<p class="forceBreak"></p>
+
 * It's popular!
+    + <img src="http://revolution-computing.typepad.com/.a/6a010534b1db25970b01a3fc45e6fc970b-pi" height="290" width = "400"/>
+[Magoulas & King, 2014, *Data Science Salary Survey*.](http://www.oreilly.com/data/free/stratasurvey.csp)
 
 
-
-
-
-
-
-## What can R do?
-
-* Do statistics as STATA, SAS, SPSS, EXCEL,...
-* Scrape data from websites as Python, Java,...
-* Create presentation slides, documents, webpages as MS Word, Powerpoint, TexMaker, Dreamweaver,...
-* Solve math problems as Matlab, Mathematica, ...
-* An observation in the "useR" conference (2015):
-    
-    " I saw how R and Hadoop is used to make the <span style="color:purple">Tribal Wars game</span> engaging for 150M players; R is used to <span style="color:purple">teach high schoolers</span> to code, as their first programming language; R is used to help <span style="color:purple">veterinarians</span> identify lameness in horses using 3-d accelerometers ..."
-
-
-
-## When you may not want to work with R
+## A Trade-Off of the Great Power
 
 <div class="centered">
-  <img src="https://sites.google.com/a/nyu.edu/statistical-software-guide/_/rsrc/1396388441453/summary/LearningCurve2.png" height="400" width="450"/>    
+  <img src=https://sites.google.com/a/nyu.edu/statistical-software-guide/_/rsrc/1396388441453/summary/LearningCurve2.png height="400"/>
+  </div> Source: NYU Data Services.
 
-[Source: NYU Data Services.](https://sites.google.com/a/nyu.edu/statistical-software-guide/summary)
-  </div> 
+## Software  installations 
+* Software installation (<span style="color:green">Tip</span>)
+    + [![R](https://www.r-project.org/Rlogo.png)](https://www.r-project.org/)
+    + [![Rstudio](https://www.rstudio.com/wp-content/uploads/2014/03/blue-250.png)](https://www.rstudio.com/products/rstudio/download/preview/)
 
-## Software and package installations {.columns-2}
-### Software installation
-[![R](https://www.r-project.org/Rlogo.png)](https://www.r-project.org/)
-
-[![Rstudio](https://www.rstudio.com/wp-content/uploads/2014/03/blue-250.png)](https://www.rstudio.com/products/rstudio/download/preview/)
-
-<span style="color:green">Tip</span>:
 <div class="notes">
 Install R before Rstudio; so does in updating.
 Using the [Rstudio preview](https://www.rstudio.com/products/rstudio/download/preview/).
 </div>
 
-
-### Package installation and loading
-Packages are "<span style="color:purple">Apps</span>" for your R system. You can use R without them, but if you want fun, install them ~
-
-`install.packages(<package name>)`
-`install_github("<repositary/package name>")`
-
-[An example](https://github.com/sammo3182/interplot)
-
-Click the apps: Load the package
-
-`library(<package name>)`
-`require(<package name>)`
+## Package installation and loading
+* Packages are "<span style="color:purple">Apps</span>" for R. 
+    +  `install.packages(<package name>)`
+    +  `install_github("<repositary/package name>")`
+* Find instructions from package repositories:
+    + [An example](https://github.com/sammo3182/interplot)
+* Click the apps: Load the package
+    + `library(<package name>)`
+    + `require(<package name>)`
 
 ## RStudio{.flexbox .vcenter}
 <img src="image/rstudio.png" height="500" width = "900" />
 
 
-## Wrap Up
-* R is a programming language that can do a lot of statistical and non-statistical things.
 
-* Install R, RStudio (optional), and packages (optional)
-
-* Next: Let's Start the Journey
-    + <div class="centered">![journey](http://i.imgur.com/PbLQzSi.gif)</div>
-
-# Do Statistics with R
+# Math and Basic Statistics with R
 ## Set where to locate the data and store the results
+
 * Always check or set the <span style="color:purple">working directory</span> first
     + `getwd()`
     + `setwd("E:/R workshop/rworkshop")`
-* Or click, click, click, and click in Rstudio
-    + <img src=image/setwd.png />
+* Or click, click, and click in Rstudio
+    + <img src=https://impaulchung.files.wordpress.com/2013/01/packageinstall4.png?w=563&h=405 height = "300"/>
  
 
-## Vector {.smaller}
-(<span style="color:green">Tip</span>)
+## Terms of R in plain English {.columns-2}
+* **Object**: packing things together and naming it
+* **Vector**: 
+    + Mathematics: a one-column matrix
+    + Practice: a single variable
+* **Factor**:
+    + A special vector
+    + Special for ordinal or mulinomial variable
+* **Matrix** vis-a-vis **Data frame**
+    + Matrix is a pile of numbers
+    + Data frame is a dataset
+    
+<p class="forceBreak"></p>  
+
+* **Array**: a multi-dimension matrix
+    + <img src="http://www.quotelotus.com/wp-content/uploads/admin/images/43_24cell_shape.gif" height="250"/>
+    + one-dimension array == vector
+    + two-dimension array == matrix
+* **Function**: a process to handle the object
+    
+
+## Do math with R: Basic Functions
+
+```{r eval=FALSE}
+# basic math
+x + (1 - 2) * 3 / 4
+
+# advanced math
+x^2;sqrt(x);log(x);exp(x)
+
+# matrix algebra
+z <- matrix(1:4, ncol = 2)
+z + z - z
+z %*% z  # inner mul<span style="color:green">Tip</span>lication 
+z %o% z  # outter mul<span style="color:green">Tip</span>lication
+
+# logical evaluation
+x == z; x != Z
+x & z; x | z
+x > z; x <= z
+```
+
+
+## Commen Data Type: Vector{.smaller}
 ```{r}
 1:10  # numeric (integer/double)
 c("R", "workshop") # character
-3 == 5  # boolean
+3 == 5  # logical
 factor(1:3, levels = 1:3, labels = c("low", "medium", "high"))  # factor 
 ```
-
+(<span style="color:green">Tip</span>)
 <div class="notes">
 The `factor` is a R *function*. Ususally, the first component ("`1:3`") of a R function is the  <span style="color:purple">object</span>, the target this function is going to work on. The rest components ("`levels = 1:3, labels = c("low", "medium", "high")`") are <span style="color:purple">arguments</span>, with which setting the special conditions the object is dealt.
 
 If you are not sure about the utility of certain arguments, ask R for help by `?`, e.g.,
+
 ```{r eval=FALSE}
 ?factor
 ```
-
 </div>
 
 
-## Dataset {.smaller}
+## Commen Data Type: Dataset {.smaller}
+
 ```{r}
 matrix(1:4, ncol = 2)  # matrix
 data.frame(x = 1:2, y = 3:4)  # data.frame
@@ -156,7 +175,7 @@ list(c("one", "two"), c(3, 4)) # 2-D list
 
 ----
 ```{r}
-array(c(1:4,5:8), dim = c(2, 2, 3)) # 3-D or n-D "list""
+array(c(1:8), dim = c(2, 2, 3)) # 3-D or n-D "list""
 ```
 
 
@@ -178,12 +197,17 @@ Basic rules for object name:
 * Case sensitivity (`X != x`)
 
 
+
+
 ## Attributes of an object {.smaller .build}
 * Structure
+
 ```{r}
 str(df)
 ```
+
 * Unique values (<span style="color:green">Tip</span>)
+
 ```{r}
 unique(df$x)
 ```
@@ -191,11 +215,13 @@ unique(df$x)
 What is the `$`?  It is used to call specific columns a data.frame. 
 
 To call the components in a vector, we use "[]"
+
 ```{r}
 x[3]
 ```
 
 To call the components in a list, we use "[[]]"
+
 ```{r}
 list[[2]]
 ```
@@ -203,6 +229,7 @@ list[[2]]
 </div>
 
 * Names
+
 ```{r}
 names(df)
 ```
@@ -210,65 +237,55 @@ names(df)
 ----
 
 Length
+
 ```{r}
 length(x)
 ```
 
 Class
+
 ```{r}
 class(x);typeof(x)  # ; is used to write two commands in one line
 ```
 
+
 ## Detect the attributes
 Using `is.`
+
 ```{r}
+x <-c(1, 2, NA, 4)
 is.numeric(x)
 is.na(x) # detect if x includes missing values
 ```
 
 
-## Do math in R
-```{r eval=FALSE}
-# basic math
-x + (1 - 2) * 3 / 4
 
-# advanced math
-x^2;sqrt(x);log(x);exp(x)
 
-# matrix algebra
-z <- matrix(1:4, ncol = 2)
-z + z - z
-z %*% z  # inner mul<span style="color:green">Tip</span>lication 
-z %o% z  # outter mul<span style="color:green">Tip</span>lication
+## Wrap up {.columns-2}
 
-# logical evaluation
-x == z; x != Z
-x & z; x | z
-x > z; x <= z
-```
-
-## Wrap up
 * Set the working directory first: `setwd()`
 * Four types of data: numeric, character, logical, factor
 * Four types of datasets: matrix, data.frame, list, array
-* Save the things into an object by `<-`, e.g., `list <- list(x, df)`
-    + Objects have attributes (`str()`, `length()`, `names()`, etc.)
-    + Detect the attributes with `is.`, e.g., `is.numeric(x)`
-* Do math in R
+* Save the things into an object by `<-`
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 
-----
+<p class="forceBreak"></p>
 
-Next: let's have a look at the data, first.
+* Next: Data input 
+    + <img src=https://cnet1.cbsistatic.com/img/cbDfaPT6Hj22YVzbIXdKHdW7y-k=/270x0/2016/07/08/a82975f5-6adb-4dec-8bec-561ca3d348ea/pokemon-go-gif.gif height = "290"/>
 
-<div class="centered">
-<img src=https://powerofus.force.com/servlet/rtaImage?eid=ka080000000D4YB&feoid=00N800000059i9I&refid=0EM800000000Tnw />
-</div>
 
-Or click the "table" sign in the "Envirnoment" tab in RStudio 
 
-# Data Analysis
-## Input data {.build}
-* R can read almost all types of datasets.
+# Data Input and Manipulation
+## Input default data types{.build}
+
+* Default data types: .Rds, .Rdata(.Rda)
+
 ```{r eval=FALSE}
 load("<FileName>.RData")
 
@@ -276,23 +293,25 @@ df_txt <- read.table("<FileName>.txt")
 df_csv <- read.csv("<FileName>.csv")
 
 ```
+
 * Some data are already embedded in R. To call them, use `data()`, e.g.
+
 ```{r eval=FALSE}
 data(mtcars)
 ```
 
 
-## Input data with packages{.smaller}
+## Input data with packages
 ```{r eval=FALSE}
+# SPSS, Stata, SAS
+library(haven)
+df_spss <- read_spss("<FileName>.sav")
+df_stata <- read_dta("<FileName>.dta") 
+df_sas <- read_sas("<FileName>.sas7bdat")  
+
 # Excel sheets
 library(readxl)
 df_excel <- read_excel("<FileName>.xls");read_excel("<FileName>.xlsx") 
-
-# SPSS/STATA/SAS
-library(foreign)
-df_spss <- read.spss("<FileName>.sav")
-df_stata <- read.dta("<FileName>.dta") 
-df_sas <- read.sas7bdat("<FileName>.sas7bdat")  
 
 # JavaScript Object Notation 
 library(rjson)
@@ -303,93 +322,192 @@ df_xml <- xmlTreeParse("<url>")
 df_html <- readHTMLTable(url, which=3)
 
 ```
-More instructions are available in this [blog](http://blog.datacamp.com/r-data-import-tutorial/).
 
 
-## Output data {.build}
-* Save in a R dataset (`.RData`) <span style="color:green">Tip</span>
+## Output data{.build}
+
+* Save in a R dataset (`.RData`) 
+
 ```{r eval = F}
 save(object, file = "./Data/mydata.Rdata")
 ```
-<div class="notes">
-In R, the directory are written with `/`.
-</div>
 
 * Save as `.csv`
+
 ```{r eval = F}
 write.csv(object, file = "mydata.csv")
 ```
 
+* Save as `.feather` (<span style="color:green">Tip</span>)
+
+```{r eval=F}
+feather::write_feather(mydata, "mydata.feather")
+```
+
+<div class="notes">
+Feather is a fast, lightweight, and easy-to-use binary file format for storing data frames, which can be read by both R and Python.
+See more details in [Feather](https://blog.rstudio.org/2016/03/29/feather/).
+</div>
+
 
 ## Manipulate the data{.build}
 * let's call a dataset first,
+
 ```{r}
 data(mtcars)
 ```
-* How many variables and what are they?
+
+* Variable numbers and Observations
+
 ```{r}
 ncol(mtcars);names(mtcars)
+nrow(mtcars)
 ```
 
-## Have a look at the data{.build}
+
+## Have a glimpse.
+```{r}
+dplyr::glimpse(mtcars)
+```
+
+----
 
 ```{r}
 head(mtcars) # show the first six lines of mtcars
-
 ```
 
-## Look at a specific area in a dataset
+## Let's zoom in!{.build}
+* locate a specific row, column, or cell of data: `data[row#, col#]` or `data["rowName","colName"]`. 
 
-In a dataset or matrix, a special row and column can be specified by `data[row#, col#]` or `data["rowName","colName"]`. 
-
-So, for example, to select the first two rows of the third and fourth columns:
 ```{r}
 mtcars[1:2,3:4] # show first and the second rows of the third and fourth columns
 ```
 
-## Row/column selection{.small .build}
-
-* Select an entire row or column (<span style="color:green">Tip</span>:  The <span style="color:red">comma</span>!)
 ```{r eval=FALSE}
-mtcars[,"mpg"] # show the column "mpg"
-```
-
-* Select components of a selected row or column
-```{r}
-mtcars[,"mpg"][3]  # show the third component of the column "mpg"
+mtcars[ ,"mpg"] # show the column "mpg"
+mtcars[ ,"mpg"][3]
 ```
 
 ----
 
 Select with special conditions
+
 ```{r}
 mtcars[mtcars$mpg < 20,][1,] # show the first rows which mpg are below 5.
 ```
 
 Create new rows/columns
+
 ```{r}
 mtcars$id <- seq(1:nrow(mtcars))
-names(mtcars)
 ```
 
 
+## Let's generalize!{.build}
+* Summarise vector in categories
+
+```{r}
+unique(mtcars$cyl)
+table(mtcars$cyl)
+```
+
+----
+
+For a dataset or a numeric vector
+
+```{r}
+summary(mtcars$cyl)
+```
+
+One can use `mean`, `sd`, `max`, `min`, etc. to extract specific descriptive statistics.
+
+```{r}
+mean(mtcars$cyl)
+```
+
+## Let's create!{.build}
+* Create a variable into the dataset (<span style="color:green">Tip</span>)
+
+```{r}
+mtcars$newvar <- c(1:nrow(mtcars)) # create an "ID" variable
+mtcars$newvar
+```
+
+<div class="notes">
+Obviously, variables can be immediately overwrite without any specific setting. 
+
+It is convenient but also <span style="color:purple">risky</span>.
+</div>
+
+* Remove a variable from the dataset
+
+```{r}
+mtcars$newvar <- NULL
+mtcars$newvar
+```
+
+----
+
+Remove variable, result, function, or data from the environment
+
+```{r eval=FALSE}
+rm(x)
+```
+
+Recode a variable: e.g., numeric to binary, mpg > mean, 1, otherwise 0
+
+```{r eval=FALSE}
+# Method I
+mtcars$newvar[mtcars$mpg > mean(mtcars$mpg)] <- 1
+mtcars$newvar[mtcars$mpg <= mean(mtcars$mpg)] <- 0
+
+# Method II
+mtcars$newvar <- ifelse(mtcars$mpg > mean(mtcars$mpg), 1, 0) # overwrite the NAs
+```
+
+
+## Wrap Up 
+* Input/output: `load()`/`read.`series and `save()`/`write.`series
+* A glimpse of data: `head()` or `dplyr::glimpse`
+* Description: `summary()`, `table()`
+    + More specific: `mean`, `sd`, `max`, `min`, etc.
+* Manipulation: 
+    + create: `mtcars$newvar <- c(1:nrow(mtcars))`
+    + Remove: `mtcars$newvar <- NULL`; `rm()`
+    + Recode: `recodevar[<condition>] <- <new value>`
+* There are also [`apply` family](http://www.r-bloggers.com/r-tutorial-on-the-apply-family-of-functions/) functions for with batching management of data.
+
+
+## Next lecture: Hypothsis test
+
+<div class="centered">
+![](http://mathsupport.mas.ncl.ac.uk/images/d/d0/95contint.gif)
+</div>
+
+
+## See you then ~
+
+<div class = "center">
+![](http://rescuethepresent.net/tomandjerry/files/2016/05/16-thanks.gif)
+</div>
 
 
 ## External Sources
+* My email: [yue-hu-1@uiowa.edu](mailto: yue-hu-1@uiowa.edu)
+
+* Workshops: http://ppc.uiowa.edu/node/3608
+* Consulting service: http://ppc.uiowa.edu/node/3385/
 * Q&A Blogs: 
     + http://stackoverflow.com/questions/tagged/r
     + https://stat.ethz.ch/mailman/listinfo/r-help
+
+* Blog for new stuffs: http://www.r-bloggers.com/
 
 * Graph Blogs:
     + http://www.cookbook-r.com/Graphs/
     + http://shiny.stat.ubc.ca/r-graph-catalog/
 
-* Blog for new stuffs: http://www.r-bloggers.com/
 
 
-----
 
-<div class = "center">
-<img src="http://www.junipercivic.com/images/Berry/thats-all-folks.jpg" height = "550" />
-</div>
 

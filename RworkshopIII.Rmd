@@ -3,28 +3,73 @@ title: "Hello, R!"
 author: "Yue Hu's R Workshop Series III"
 output:
   ioslides_presentation:
-    self_contained: yes
+    incremental: yes
     logo: image/logo.gif
+    slidy_presentation: null
     transition: faster
     widescreen: yes
-    slidy_presentation:
-    incremental: yes
 ---
 
 # Preface
-## What Are Covered in this Series Workshop
+## What Are Covered in This Workshop Series
 * [A overview of R](https://rpubs.com/sammo3182/Rintro) 
 * [Data manipulation (input/output, row/column selections, etc.)](https://rpubs.com/sammo3182/Rintro) 
 * [Descriptive and binary hypotheses (summary, correlation, t-test, etc.)](http://rpubs.com/sammo3182/Rstat)
 * [Multiple regression (OLS, GLS, MLM, etc.)](http://rpubs.com/sammo3182/Rstat)
+* Multilevel Regression
 * **Presentation (table, graph)**
 
 # Presenting Techniques
 
-## Tabling
-There are over twenty packages for [table presentation](http://conjugateprior.org/2013/03/r-to-latex-packages-coverage/) in R. My favoriate three are `stargazer`, `xtable`, and `texreg`.
+## Tabling in Word
+For summary data or table：
 
-(Sorry, but all of them are for **Latex** output)
+1. Save the data to an object.
+
+2. Use `View()` on the object.
+
+3. Copy and paste. 
+
+## An example
+```{r message=FALSE}
+data("mtcars")
+
+# Cross comparison table
+aggregate(mpg ~ gear, mtcars, mean)
+```
+
+----
+```{r message=FALSE}
+#summary table
+library(stargazer)
+stargazer(mtcars, type = "text", title = "Descriptive Statistics", digits = 3)
+```
+
+## Regression
+```{r eval = FALSE}
+m1 <- lm(mpg ~ wt, data=mtcars)
+m2 <- lm(mpg ~ wt + hp, data=mtcars)
+m3 <- lm(mpg ~ wt + hp + factor(gear), data=mtcars)
+stargazer(m1, m2, m3, type="text",
+ dep.var.labels=c("Miles/(US) gallon"),
+ covariate.labels=c("Weight", "Gross horsepower","Four foward gears","Five forward gears"))
+
+# A more decent way
+stargazer(m1, m2, m3, type="html",
+ dep.var.labels=c("Miles/(US) gallon"),
+ covariate.labels=c("Weight", "Gross horsepower","Four foward gears","Five forward gears"), out="models.htm")
+```
+
+
+## Downside of MS Word
+1. Not very pretty, and have to arrange for each table.
+2. Copy and paste all the time. A potential solution: check [here](http://www.r-statistics.com/2010/05/exporting-r-output-to-ms-word-with-r2wd-an-example-session/).
+3. MS Word is very unstable.
+4. Solution: Latex
+
+
+## Tabling in Latex
+There are over twenty packages for [table presentation](http://conjugateprior.org/2013/03/r-to-latex-packages-coverage/) in R. My favoriate three are `stargazer`, `xtable`, and `texreg`.
 
 * `stargazer`: good for summary table and regular regression results
 * `texreg`: when some results can't be presented by `stargazer`, try `texreg` (e.g., MLM results.)
@@ -33,6 +78,8 @@ There are over twenty packages for [table presentation](http://conjugateprior.or
 ## An example {.smaller}
 
 ```{r message = F}
+lm_ols <- lm(mpg ~ cyl + hp + wt, data = mtcars)
+
 library(stargazer)
 stargazer(lm_ols, align = T)
 ```
@@ -42,10 +89,9 @@ stargazer(lm_ols, align = T)
 Present in PDF
 
 <div class="centered">
-  <img src=image/table.png height="400"/>
-  </div> 
+  <img src="http://repec.org/bocode/e/estout/esttab012d.png" height="400"/>
+</div> 
   
-* For the users of MS Word, click [here](http://www.r-statistics.com/2010/05/exporting-r-output-to-ms-word-with-r2wd-an-example-session/).
 
 ## Plotting
 
@@ -53,10 +99,8 @@ Three types of graphic presenting approaches in R:
 
 * Basic plots: `plot()`.
 * Lattice plots: e.g., `ggplot()`.
-* Interactive plots: `shiny()`. (save for later)
-    + <div class="centered">
-  <img src="http://i.stack.imgur.com/qZObK.png" height="300"/>
-  </div> 
+* Interactive plots: `shiny()`. ([save for later](http://shiny.rstudio.com/gallery/word-cloud.html))
+
 
 ## Basic plot
 Pro:
@@ -83,17 +127,17 @@ hist(mtcars$mpg)
 hist(mtcars$mpg, freq = F,  # plot the density rather than frequency
      breaks = 10,  # change the number of bins
      col = "purple", # change the color of the bins 
-     xlab="Miles Per Gallon",   # adding the x-axis label
-  	main="Histogram")  # adding a title
+     xlab="Miles per Gallon",   # adding the x-axis label
+  	main="Histogram of Milage")  # adding a title
 ```
 
 ## Adding a normal curve{.smaller}
 
 ```{r fig.align="center", fig.height=3.5}
-hist<-hist(mtcars$mpg, breaks=10, col="purple", xlab="Miles Per Gallon", 
-  	main="Histogram with Normal Curve") 
+hist<-hist(mtcars$mpg, breaks=10, col="purple", xlab="Year", 
+  	main="Histogram of Milage") 
 
-xfit<-seq(min(mtcars$mpg),max(mtcars$mpg),length=40) 
+xfit<-seq(min(mtcars$mpg),max(mtcars$mpg),length = 40) 
 yfit<-dnorm(xfit,mean=mean(mtcars$mpg),sd=sd(mtcars$mpg)) 
 yfit <- yfit*diff(hist$mids[1:2])*length(mtcars$mpg) 
 lines(xfit, yfit, col="blue", lwd=2)
@@ -113,11 +157,6 @@ hist
 dev.off()
 ```
 
-<span style="color:green">Tip</span>
-<div class="notes">
-Sometimes, RStudio may distort the graphic output.In this case, try to <span style="color:purple">zoom</span> or <span style="color:purple">export</span> it. 
-</div>
-
 ----
 
 The device list:
@@ -131,6 +170,10 @@ The device list:
 | bmp("mygraph.bmp")          	| bmp file         	|
 | postscript("mygraph.ps")    	| postscript file  	|
 
+<span style="color:green">Tip</span>
+<div class="notes">
+Sometimes, RStudio may distort the graphic output. In this case, try `windows()`,  to <span style="color:purple">zoom</span> or <span style="color:purple">export</span> it. 
+</div>
 
 ## `ggplot`: the most popular graphic engine in R {.build}
 
@@ -150,37 +193,37 @@ ggplot(mtcars, aes(x=mpg)) +
     geom_histogram(aes(y=..density..), 
                    binwidth=2,
                    colour="black", fill="purple") +
-    geom_density(alpha=.2, fill="blue")  + # Overlay with transparent density plot
+    #geom_density(alpha=.5, fill="blue")  + # Overlay with transparent density plot
+    stat_function(fun=dnorm, color="blue",args=list(mean=mean(mtcars$mpg), sd=sd(mtcars$mpg))) +
     theme_bw() + 
-    ggtitle("histogram with Normal Curve") + 
-    xlab("Miles Per Gallon") + ylab("Density")
+    ggtitle("Histogram of Milage \n 1974 Motor Trend US Magazine") + 
+    xlab("Miles per Gallon") + ylab("Density")
 ```
 
 
 ## histogram comparison in `ggplot`
 ```{r fig.align="center", fig.height=3}
-ggplot(mtcars, aes(x=mpg, fill = factor(vs))) +  # Separate cars with V or straight engine
-    geom_histogram(aes(y=..density..), 
-                   binwidth=2, alpha = .5, position = "identity") +
-    geom_density(alpha=.2)  + # Overlay with transparent density plot
+ggplot(mtcars, aes(x=mpg, fill = factor(am))) +  # Separate cars with V or straight engine
+    geom_histogram(binwidth=2, alpha = .3, position = "identity") +
     theme_bw() + 
-    ggtitle("histogram with Normal Curve") + 
-    xlab("Miles Per Gallon") + ylab("Density")
+    ggtitle("Histogram of Milage \n 1974 Motor Trend US Magazine") + 
+    xlab("Miles per Gallon") + ylab("Frequency")
 ```
+
+
+
+## Scatterplot
+Let's visualize the linear relationship between number of new born babies under different names and the proportion of that name in the population
+
+```{r}
+ggplot(mtcars, aes(x=wt, y=mpg)) +  
+    geom_point(shape=1) +  
+    geom_smooth(method=lm)
+```
+
+
 
 ## Even fancier
-Taking a third variable ("quarter mile time") into account: 
-
-```{r echo=FALSE, fig.align="center"}
-ggplot(mtcars,aes(mpg,qsec)) + 
-  geom_point() + 
-  geom_rug(col="purple",alpha=.5) +
-  xlab("Miles Per Gallon") + ylab("1/4 Mile Time") + 
-  theme_bw()
-```
-
-
-----
 
 ```{r echo=FALSE, fig.align="center"}
 library(gridExtra)
@@ -226,6 +269,7 @@ grid.arrange(plot_top, empty, scatter, plot_right, ncol=2, nrow=2, widths=c(4, 1
 The codes to create these graphs are a little more complicated. For those who are interested in creating such a plot, click [here](http://rforpublichealth.blogspot.com/2014/02/ggplot2-cheatsheet-for-visualizing.html).
 
 
+
 ## Save `ggplot` {.build}
 
 * `ggsave(<plot project>, "<name + type>")`:
@@ -264,54 +308,32 @@ hist(mtcars$mpg)
 ## Two special types: estimate plot{.smaller}
 Plot the comparable coefficients or other estimates (margins, predicted probabilities, etc.) with `dotwhisker`.
 
-```{r message=FALSE}
+```{r message=FALSE, fig.align="center", fig.height=4}
 library(dotwhisker)
-library(broom)
-lm_df <- tidy(lm_ols)
-lm_df
+dwplot(lm_ols)
 ```
 
 ----
 
 ```{r message=F, fig.align="center", fig.height=4}
+library(broom); library(dplyr)
+lm_df <- tidy(lm_ols)
 lm_df <- by_2sd(lm_df, mtcars) %>% # rescale the coefficients
   filter(term != "(Intercept)") # omit intercept
 dwplot(lm_df)
 ```
 
-<span style="color:green">Tip</span>
-<div class="notes">
-`%>%` is a piper connector embedded in `dplyr` package (which is automatically called by `dotwhisker` in the example). One can use it to avoid too complicated embedding coding:
-e.g., You want to see the maximum value of the mileage for carts with 6 cylinders. The regular code can be written as:
-```{r eval= FALSE}
-max(dplyr::select(filter(mtcars, cyl == 6), mpg))
-```
-With the piper connector, you can write as:
-
-```{r eval = F}
-mtcars %>% 
-  filter(cyl == 6) %>% 
-  dplyr::select(mpg) %>% 
-  max
-```
-
-
-
-</div>
-
-
 ## Two special types: interaction plot{.smaller}
 Plot the interactive effects with `interplot`.
 
-```{r message=FALSE}
-library(interplot)
-summary(lm_in)
-
+```{r}
+lm_in <- lm(mpg ~ cyl + hp * wt, data = mtcars); summary(lm_in)
 ```
 
 ----
 
-```{r fig.align="center"}
+```{r fig.align="center",message=FALSE}
+library(interplot)
 interplot(m = lm_in, var1 = "hp", var2 = "wt") + 
   xlab("Automobile Weight (thousands lbs)") + 
   ylab("Estimated Coefficient for \nGross horsepower")
@@ -340,22 +362,26 @@ interplot(m = lm_in, var1 = "hp", var2 = "wt") +
 
 # Version Control
 ## Just a brief introduction{.columns-2 .build}
+<div class = "center">
+<img src= "http://www.foldertrack.com/images/Personal_Version_Mess.png" width = "400" height = "400" />
+</div>
+
+
+
+
+
+
+
+
 * Tried to recall the deleted codes?
 * Tried to figure out what changes?
 * Saved a lot of replication files?
-* Version control can help you: 
-
-
-
-<div class = "center">
-<img src=image/vcontrol2.png />
-</div>
+* Version control can help you.
 
 ---- 
 
-Tracking what you've changed:
 <div class = "center">
-<img src=image/vcontrol1.png />
+<img src="http://cdn.arstechnica.net//wp-content/uploads/2012/05/uncommitted-changes-1.png" />
 </div>
  
 
@@ -366,8 +392,8 @@ Tracking what you've changed:
     + Register a user account in https://github.com.
     + Connect your account with RStudio following [this instruction](http://www.molecularecologist.com/2013/11/using-github-with-r-and-rstudio/).
     + Create a version-control project in RStudio
-        + <img src=image/vcontrol_set.png height = "200" />
-    + Pull and Push
+        + <img src="https://andreacirilloblog.files.wordpress.com/2014/12/new-project.png" height = "200" />
+    + Commit, Pull and Push
 
 
 ## External Sources
@@ -375,12 +401,14 @@ Tracking what you've changed:
     + http://stackoverflow.com/questions/tagged/r
     + https://stat.ethz.ch/mailman/listinfo/r-help
 
+* Blog for new stuffs: http://www.r-bloggers.com/
+
 * Graph Blogs:
     + http://www.cookbook-r.com/Graphs/
     + http://shiny.stat.ubc.ca/r-graph-catalog/
 
-* Blog for new stuffs: http://www.r-bloggers.com/
-
+* Workshops: http://ppc.uiowa.edu/node/3608
+* Consulting service: http://ppc.uiowa.edu/node/3385/
 
 ----
 
