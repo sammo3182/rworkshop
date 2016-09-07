@@ -21,200 +21,103 @@ output:
 
 
 
-## Data
-```{r message=FALSE}
-library(dplyr)
-baby <- filter(babynames::babynames, year > 2010)
-head(baby)
-```
-
-****
-```{r message=FALSE}
-library(dplyr)
-glimpse(baby)
-```
-
-
-## Descriptive analysis {.smaller}
-For a dataset or a numeric vector
-```{r}
-summary(baby)
-```
-One can use `mean`, `sd`, `max`, `min`, etc. to extract specific descriptive statistics.
-
-## Descriptive analysis (continue) {.build}
-`dplyr::summarise` <span style="color:green">Tip</span>
-
-<div class="notes">
-`%>%` is a piper connector embedded in `dplyr` package. One can use it to avoid too complicated embedding coding: e.g., You want to see the maximum value of the mileage for carts with 6 cylinders. The regular code can be written as:
-```{r eval= FALSE}
-max(dplyr::select(filter(baby, year == 2013), n))
-```
-With the piper connector, you can write as:
-
-```{r eval = F}
-baby %>% 
-  filter(year == 2013) %>% 
-  dplyr::select(n) %>% 
-  max
-```
-
-</div>
-
-```{r}
-baby %>% count(sex)
-```
-****
-```{r}
-baby %>% group_by(sex) %>% summarise(sum = sum(n))
-```
-
-
-## Descriptive analysis (continue) {.build}
-* For categorical vectors
-
-```{r}
-table(baby$sex)
-```
-
-* For observation number
-```{r}
-nrow(baby)
-```
-
-
-
-
-## Data manipulation{.build}
-* Create a variable into the dataset (<span style="color:green">Tip</span>)
-
-```{r}
-id <- baby$id <- c(1:nrow(baby)) # create an "ID" variable
-baby[1:5,] %>% add_rownames("id") # add rowname 
-```
-
-<div class="notes">
-Obviously, variables can be immediately overwrite without any specific setting. 
-
-It is convenient but also <span style="color:purple">risky</span>.
-</div>
-
-****
-
-* Remove a variable from the dataset
-
-```{r}
-names(baby)
-baby$id <- NULL
-names(baby)
-```
-
-* Remove variable, result, function, or data from the environment
-
-```{r}
-rm(id)
-```
-
-
-
-## Wrap Up 
-* Description: `summary()`, `table()`, `ncol()`, `nrow()`, 
-    + More specific: `mean`, `sd`, `max`, `min`, etc.
-    + More manipulation is allowed with `dplyr` functions.
-* Manipulation: 
-    + create: `baby$newvar <- ...`
-    + Remove: `baby$newvar <- NULL`; `rm()`
-* There are also [`apply` family](http://www.r-bloggers.com/r-tutorial-on-the-apply-family-of-functions/) functions for with batching management of data.
-
-
-
 # Hypothesis Tests
 
-## Binary Tests: Difference of mean
-
-$H_{0}: \bar{prop.male} = \bar{prop.female},\ \alpha = .05$
+## package loading
+You want the `pacman` package to load multiple packages.
 
 ```{r}
-t.test(baby$n[baby$sex == "M"], baby$n[baby$sex == "F"]) 
+pacman::p_load(dplyr)
+```
+
+## Data Glimpse
+```{r}
+data("mtcars")
+dplyr::glimpse(mtcars)
+```
+
+
+## Binary Tests: Difference in mean
+
+$H_{0}: \bar{cylinders} = \bar{gears},\ \alpha = .05$
+
+```{r}
+t.test(mtcars$cyl, mtcars$gears) 
 ```
 
 ----
 
 `t.test` offers arguments `alternative`, `mu`, `paired`, and `conf.level` for users to change in two-tail/one-tail test, parameter mean, independent/paired comparison, and $\alpha$.
 
-```{r}
+```{r eval=FALSE}
 # one side, cyl > gear, alpha = .01
-t.test(baby$n[baby$sex == "M"], baby$n[baby$sex == "F"],
-       alternative = "greater", conf.level = .99)     
-```
+t.test(mtcars$cyl, mtcars$gear,
+       alternative = "greater", conf.level = .99)) 
 
-****
-```{r}
 # comparing with the parameter (true value)
-t.test(baby$n[baby$sex == "M"], mu = mean(baby$n))   # the true mean is 6.
-```
+t.test(mtcars$cyl, mu = 6)   # the true mean is 6.
 
+```
 
 
 ## Binary Tests: Correlation
 $H_{0}: \rho_{(cyl,gear)} = 0,\ \alpha = .05$
 
 ```{r}
-cor.test(baby$n, baby$prop)
+cor.test(mtcars$cyl, mtcars$gear)
 ```
 
-****
+----
 
 `cor.test` offers various arguments as in `t.test` for more specific settings. Moreover, users can use the `method` argument to set the method to calculate the correlations, "Pearson", "Kendall", or "Spearman." (<span style="color:green">Tip</span>)
 
-```{r warning=FALSE}
-cor.test(baby$n, baby$prop, conf.level = .99)
-# cor.test(~ baby$n + baby$prop, conf.level = .99)
+```{r}
+cor.test(mtcars$cyl, mtcars$gear, method = "kendall")
 ```
 
 <div class="notes">
-Do I have to type the `baby$` every time? 
+Do I have to type the `mtcars$` every time? 
 
 * No you don't.
     + It offers a potential for cross-dataset operation, though.
-    + Use `within()`: e.g., `within(baby, cor.test(n, prop))`
+    + Use `within()`: e.g., `within(mtcars, cor.test(cyl, gear))`
     + Use `attach()` (not recommonded)
 </div>
 
 
 ----
 
+We can get the correlation matrix, too:
 ```{r}
-with(baby, cor.test(~ n + prop, subset = (year == 2013)))
+cor(mtcars[,1:4])
 ```
 
+## Present the correlations
+You want the `corrplot` package.
+```{r fig.height=4}
+cor(mtcars) %>% corrplot::corrplot()
+```
 
 ----
 
-We can get the correlation matrix, too:
+Or a mixed format:
 ```{r}
-cor(baby[,4:5])
+cor(mtcars) %>% corrplot::corrplot.mixed()
 ```
 
-## Binary Tests: ANOVA{.smaller}
-One way or two way ANOVA: (<span style="color:green">Tip</span>)
+
+## Binary Tests: ANOVA {.smaller}
+One way or two way ANOVA: 
 
 ```{r}
-aov_one <- aov(prop ~ sex, data = baby) #one-way
-aov_two <- aov(prop ~ sex + year, data = baby) #two-way
+aov_one <- aov(cyl ~ gear, data = mtcars) #one-way
+
+aov_two <- aov(cyl ~ gear + am, data = mtcars) #two-way
 
 summary(aov_one); summary(aov_two)
 ```
 
-<div class="notes">
-Sometimes, `summary` offers more organized results than `print`:
 
-```{r}
-aov_one #print it
-summary(aov_one) #summarize it
-```
-
-</div>
 
 ## Wrap up
 * T-test: `t.test(x, y = NULL, alternative = c("two.sided", "less", "greater"), mu = 0, paired = FALSE, conf.level = 0.95, ...)`
@@ -225,36 +128,43 @@ summary(aov_one) #summarize it
 
 ----
 
-Next: more commands are coming: multiple regressions~
+Next: Multiple regression
 
-+ <div class="centered">
-![core](http://i.123g.us/c/bus_appreciate/card/101834.gif)
+<div class="centered">
+![core](http://www.math.yorku.ca/SCS/spida/lm/mreganim3.gif)
 </div>
 
+
 # Multiple Regression
-## Ordinary Linear Regression{.build}
-* we are detecting the contributions of the cylinders, horsepower, and weight of the care (Xs) to the mileage (Y): 
-    
+## Ordinary Linear Regression
+$Mileage = \beta_0cylinders + \beta_1horsepower + \beta_3weight + \varepsilon$
+
 ```{r}
-lm_ols <- lm(prop ~ n + sex + year, data = baby)
+lm_ols <- lm(mpg ~ cyl + hp + wt, data = mtcars)
 ``` 
 
+* `lm_ols`: Object name
+* `mpg`: Dependent variable
+* `cyl + hp + wt`: Independent variables
+* `data = mtcars`: Where the variables are stored
 
-## The result {.smaller}
 
-```{r}
+## Result{.smaller}
+
+```{r} 
 summary(lm_ols)
-```  
+```
 
-  
-## Nonlinear transformation
+## Nonlinear transition
 ln, square, exponential, or inverse
 
 ```{r}
-lm_tran <- lm(exp(prop) ~ log(n) + sex + I(year - min(year)) + 
-                I((year - min(year))^2), data = baby)
+lm_tran <- lm(log(mpg) ~ I(cyl^2) + exp(hp) + I(1/wt), data = mtcars)
 ```
 
+* `log(mpg)`: logistic
+* `I(cyl^2), I(1/wt)`: square, inverse
+* `exp(hp)`: exponential
 
 ## The result {.smaller}
 
@@ -262,65 +172,58 @@ lm_tran <- lm(exp(prop) ~ log(n) + sex + I(year - min(year)) +
 summary(lm_tran)
 ```
 
-## Break the factor variable
+## Adding binary variables
 
-If we want to include a categorical variable into the regression, R will break it into binary variables for you.
+When the model including binary variables based on a factor 
 
-```{r message=FALSE}
-baby$year_f <- baby$year - 2010 
-baby$year_f <- factor(baby$year_f, levels = 1:3, labels = c("2011", "2012", "2013"))
-str(baby$year_f)  
-
-lm_f <- lm(prop ~ n + sex + year_f, data = baby)
-
+```{r}
+mtcars$gear_f <- factor(mtcars$gear, levels = 3:5, labels = c("3-gear", "4-gear", "5-gear"))
+table(mtcars$gear)
+table(mtcars$gear_f); class(mtcars$gear_f)
 ```
 
 ## The result {.smaller}
 
 ```{r}
+lm_f <- lm(mpg ~ cyl + hp + wt + gear_f, data = mtcars)
 summary(lm_f)
 ```
 
+
 ## Interaction
-Two ways to write the model
+Two-way interaction: horsepower * Weight
+
 ```{r}
-lm_in <- lm(prop ~ n + sex * year, data = baby)
-# lm_in <- lm(prop ~ n + sex + year + sex:year, data = baby)
+lm_in <- lm(mpg ~ cyl + hp * wt, data = mtcars)
+
 ```
+
+Equivalent to `lm_in2 <- lm(mpg ~ cyl + hp + wt + hp:wt, data = mtcars)`
+
 
 ## The result {.smaller}
 ```{r}
 summary(lm_in)
 ```
 
+
+
 ## Post-estimate diagnoses: Residural
   
 ```{r fig.height=3.5, fig.align="center"}
-res <- resid(lm_ols)
-# res <- baby$prop - predict(lm_ols)
-
-res[1:5]
+res <- resid(lm_ols); res[1:4]
+plot(lm_ols, which = 1) # residural vs. fitted plot
 ```
-
-****
-
-```{r}
-plot(lm_ols, which = 1) # R offer 6 types of plots for post-estimation diagnosis. 
-```
-
-Use `which` to control for which plot you want to show. The default is to show four.
-
 
 ## Post-estimate diagnoses: Outliers
-```{r warning=FALSE}
-library(car) # Bonferonni p-value for most extreme obs
-
-outlierTest(lm_ols)
+```{r}
+car::outlierTest(lm_ols) # Bonferonni p-value for most extreme obs
 ```
 
 ----
+
 ```{r}
-qqPlot(lm_ols)  #qq plot for studentized resid 
+car::qqPlot(lm_ols)  #qq plot for studentized resid 
 ```
 
 
@@ -328,21 +231,32 @@ qqPlot(lm_ols)  #qq plot for studentized resid
 * Heteroscedasticity 
 
 ```{r}
-ncvTest(lm_ols) 
+car::ncvTest(lm_ols) 
 ```
 
 * Multicollinearity
+
 ```{r}
-vif(lm_ols) 
+car::vif(lm_ols) 
 ```
+
+----
+
+Autocorrelation
+
+```{r}
+car::durbinWatsonTest(lm_ols)
+```
+
 
 ## Logit
-The process to run a logit is largely the same as running an OLS, except for the function name and certain arguments. 
+$vs = \frac{1}{1 + e^{-(\beta_0 + \beta_1cylinder + \beta_2horsepower + \beta_3weight + \varepsilon)}}$
 
 ```{r}
-baby$female <- ifelse(baby$sex == "M", 0, 1)
-logit <- glm(female ~ n + year, data = baby, family = "binomial")
+logit <- glm(vs ~ cyl + hp + wt, data = mtcars, family = "binomial")
 ```
+
+MLE on other distributions: change the value of the argument `family` to `Gamma`, `poisson`, `gaussian`, etc.
 
 ## The result{.smaller}
 
@@ -350,27 +264,28 @@ logit <- glm(female ~ n + year, data = baby, family = "binomial")
 summary(logit)
 ```
 
+
 ## Interpretation: Margin
-Marginal effect
 
 ```{r message=FALSE}
 library(mfx)
-logit_m <- logitmfx(female ~ n + year, data = baby) 
+logit_m <- logitmfx(vs ~ cyl + hp + wt, data = mtcars) 
 logit_m
 ```
 
 ## Interpretation: Predicted probability
-Predicted Probability when `year` changes from 2011 to 2013.
+Predicted Probability when `cyl` changes from 4 to 6.
+
 ```{r}
 # Step 1: creat an aggregate data 
-baby_fake <- with(baby, data.frame(year = 2011:2013, n = mean(n)))
+mtcars_fake <- with(mtcars, data.frame(cyl = 4:6, hp = mean(hp), wt = mean(wt)))
 # Step 2: predict based on the new data
-logit_pp <- cbind(baby_fake, predict(logit, newdata = baby_fake, type = "link", se = TRUE))
+logit_pp4 <- cbind(mtcars_fake,predict(logit, newdata = mtcars_fake, type = "link", se = TRUE))
 # Step 3: convert to probability 
-logit_pp <- within(logit_pp, {pp <- plogis(fit) 
+logit_pp4 <- within(logit_pp4, {pp <- plogis(fit) 
                                 lb <- plogis(fit - 1.96 * se.fit)
                                 ub <- plogis(fit + 1.96 * se.fit)})
-logit_pp[, 6:8]
+logit_pp4[,7:9]
 ```
 
 
@@ -389,28 +304,36 @@ logit_pp[, 6:8]
         
 ----
 
-Next: How to effectively present the results?
+Next: Presenting with R
 
 <div class="centered">
-![present](http://media.giphy.com/media/HQjYmJ2OGSNeE/giphy.gif)
-</div>
 
-Come to the R-series Lecture III: Presentation with R!    
+<img src="https://espngrantland.files.wordpress.com/2014/06/9u4jd.gif" height="500" width = "800" />
+
+</div>
+ 
+ 
+## See you then ~
+
+<div class = "centered">
+
+<img src="http://rescuethepresent.net/tomandjerry/files/2016/05/16-thanks.gif" />
+
+</div>        
 
 ## External Sources
+* My email: [yue-hu-1@uiowa.edu](mailto: yue-hu-1@uiowa.edu)
+
+* Workshops: http://ppc.uiowa.edu/node/3608
+* Consulting service: http://ppc.uiowa.edu/node/3385/
 * Q&A Blogs: 
     + http://stackoverflow.com/questions/tagged/r
     + https://stat.ethz.ch/mailman/listinfo/r-help
 
 * Blog for new stuffs: http://www.r-bloggers.com/
 
-* Workshops: http://ppc.uiowa.edu/node/3608
-* Consulting service: http://ppc.uiowa.edu/node/3385/
+* Graph Blogs:
+    + http://www.cookbook-r.com/Graphs/
+    + http://shiny.stat.ubc.ca/r-graph-catalog/
 
-
-----
-
-<div class = "center">
-<img src="http://www.junipercivic.com/images/Berry/thats-all-folks.jpg" height = "550" />
-</div>
 

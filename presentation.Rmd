@@ -475,6 +475,20 @@ Next: Hypothsis test
 
 # Hypothesis Tests
 
+## package loading
+You want the `pacman` package to load multiple packages.
+
+```{r}
+pacman::p_load(dplyr)
+```
+
+## Data Glimpse
+```{r}
+data("mtcars")
+dplyr::glimpse(mtcars)
+```
+
+
 ## Binary Tests: Difference in mean
 
 $H_{0}: \bar{cylinders} = \bar{gears},\ \alpha = .05$
@@ -490,8 +504,7 @@ t.test(mtcars$cyl, mtcars$gears)
 ```{r eval=FALSE}
 # one side, cyl > gear, alpha = .01
 t.test(mtcars$cyl, mtcars$gear,
-       alternative = "greater", conf.level = .99)     
-       ) 
+       alternative = "greater", conf.level = .99)) 
 
 # comparing with the parameter (true value)
 t.test(mtcars$cyl, mu = 6)   # the true mean is 6.
@@ -530,6 +543,20 @@ We can get the correlation matrix, too:
 ```{r}
 cor(mtcars[,1:4])
 ```
+
+## Present the correlations
+You want the `corrplot` package.
+```{r fig.height=4}
+cor(mtcars) %>% corrplot::corrplot()
+```
+
+----
+
+Or a mixed format:
+```{r}
+cor(mtcars) %>% corrplot::corrplot.mixed()
+```
+
 
 ## Binary Tests: ANOVA {.smaller}
 One way or two way ANOVA: 
@@ -642,14 +669,13 @@ plot(lm_ols, which = 1) # residural vs. fitted plot
 
 ## Post-estimate diagnoses: Outliers
 ```{r}
-library(car)
-outlierTest(lm_ols) # Bonferonni p-value for most extreme obs
+car::outlierTest(lm_ols) # Bonferonni p-value for most extreme obs
 ```
 
 ----
 
 ```{r}
-qqPlot(lm_ols)  #qq plot for studentized resid 
+car::qqPlot(lm_ols)  #qq plot for studentized resid 
 ```
 
 
@@ -657,21 +683,21 @@ qqPlot(lm_ols)  #qq plot for studentized resid
 * Heteroscedasticity 
 
 ```{r}
-ncvTest(lm_ols) 
+car::ncvTest(lm_ols) 
 ```
 
 * Multicollinearity
 
 ```{r}
-vif(lm_ols) 
+car::vif(lm_ols) 
 ```
 
 ----
 
-Autocoorelation
+Autocorrelation
 
 ```{r}
-durbinWatsonTest(lm_ols)
+car::durbinWatsonTest(lm_ols)
 ```
 
 
@@ -733,7 +759,9 @@ logit_pp4[,7:9]
 Next: Presenting with R
 
 <div class="centered">
-[![present](https://espngrantland.files.wordpress.com/2014/06/9u4jd.gif)]
+
+<img src="https://espngrantland.files.wordpress.com/2014/06/9u4jd.gif" height="500" width = "800" />
+
 </div>
 
 
