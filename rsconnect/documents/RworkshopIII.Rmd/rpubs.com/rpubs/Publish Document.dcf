@@ -1,0 +1,8 @@
+name: Publish Document
+title:
+account: rpubs
+server: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/131831/f6aeef101eaa43eebf00252308b8132b
+bundleId: https://api.rpubs.com/api/v1/document/131831/f6aeef101eaa43eebf00252308b8132b
+url: http://rpubs.com/sammo3182/131831
+when: 1475265330.16801

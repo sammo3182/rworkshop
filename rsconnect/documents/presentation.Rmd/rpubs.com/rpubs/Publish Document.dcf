@@ -1,0 +1,8 @@
+name: Publish Document
+title:
+account: rpubs
+server: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/99749/74073cf65ad14707947b6dfe450affc6
+bundleId: https://api.rpubs.com/api/v1/document/99749/74073cf65ad14707947b6dfe450affc6
+url: http://rpubs.com/sammo3182/99749
+when: 1475431564.2173

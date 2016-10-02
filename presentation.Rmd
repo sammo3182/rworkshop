@@ -775,7 +775,7 @@ There are over twenty packages for [table presentation](http://conjugateprior.or
 * `texreg`: when some results can't be presented by `stargazer`, try `texreg` (e.g., MLM results.)
 * `xtable`: the most extensively compatible package, but need more settings to get a pretty output, most of which `stargazer` and `texreg` can automatically do for you.
 
-## An example {.smaller}
+## An example {.smaller .columns-2}
 
 ```{r message = F}
 lm_ols <- lm(mpg ~ cyl + hp + wt, data = mtcars)
@@ -880,34 +880,65 @@ ggplot(mtcars, aes(x=mpg)) +
     xlab("Miles Per Gallon") + ylab("Density")
 ```
 
+
+## Break in Parts:{.smaller}
+
+```{r eval=FALSE}
+ggplot(data = mtcars, aes(x=mpg)) + 
+    geom_histogram(aes(y=..density..), binwidth=2, colour="black", fill="purple") +
+    geom_density(alpha=.2, fill="blue")  + # Overlay with transparent density plot
+    theme_bw() + ggtitle("histogram with a Normal Curve") + 
+    xlab("Miles Per Gallon") + ylab("Density")
+```
+* `data`: The data that you want to visualise
+
+* `aes`: Aesthetic mappings
+describing how variables in the data are mapped to aesthetic attributes
+    + horizontal position (`x`)
+    + vertical position (`y`)
+    + colour
+    + size
+* `geoms`: Geometric objects that represent what you actually see on
+the plot
+    + points
+    + lines
+    + polygons
+    + bars
+
+----
+
+* `theme`, `ggtitle`, `xlab`, `ylab`: decorations.
+* Other parts you may see in some developed template
+    + `stats`: Statistics transformations
+    + `scales`: relate the data to the aesthetic
+    + `coord`: a coordinate system that describes how data coordinates are
+mapped to the plane of the graphic.
+    + `facet`: a faceting specification describes how to break up the data into sets.
+
+
 ## Save `ggplot`
 * `ggsave(<plot project>, "<name + type>")`:
     + When the `<plot project>` is omitted, R will save the last presented plot. 
     + There are additional arguments which users can use to adjust the size, path, scale, etc.
 
 
-## `qplot` function {.build}
-The `ggplot` version of basic plot
 
-* Histogram with `qplot`:
+## Plotting with packages: Map
 
 ```{r eval=FALSE}
-qplot(mtcars$mpg) # Equivalent to ggplot(mtcars, aes(x=mpg)) + geom_histogram()
+starbucks <- read.csv("https://opendata.socrata.com/api/views/ddym-zvjk/rows.csv?accessType=DOWNLOAD")
+
+
+library(leaflet)
+leaflet() %>% addTiles() %>% 
+  setView(-91.535632, 41.660965, zoom = 16) %>% 
+  addMarkers(data = starbucks, lat = ~Latitude, lng = ~Longitude, popup = starbucks$Name)
 ```
 
-
-* Comparing to the basic plot: 
-```{r eval=FALSE}
-hist(mtcars$mpg)
-```
+----
 
 
-## Plotting with packages: Correlation
-
-
-## Plotting with packages: Map {.columns-2}
-
-```{r two-column, results = 'asis', echo=FALSE, out.extra = '', cache=TRUE}
+```{r two-column, echo=FALSE, results = 'asis', out.extra = '', cache=TRUE}
 starbucks <- read.csv("https://opendata.socrata.com/api/views/ddym-zvjk/rows.csv?accessType=DOWNLOAD")
 
 
@@ -918,9 +949,7 @@ leaflet() %>% addTiles() %>%
 ```
 
 
-
-
-## Two special types: `dotwhisker`{.smaller}
+## Plotting with packages: `dotwhisker`{.smaller}
 Plot the comparable coefficients or other estimates (margins, predicted probabilities, etc.).
 
 ```{r message=FALSE}
@@ -936,28 +965,8 @@ lm_df
 dwplot(lm_df)
 ```
 
-<span style="color:green">Tip</span>
-<div class="notes">
-`%>%` is a piper connector embedded in `dplyr` package (which is automatically called by `dotwhisker` in the example). One can use it to avoid too complicated embedding coding:
-e.g., You want to see the maximum value of the mileage for carts with 6 cylinders. The regular code can be written as:
 
-```{r eval= FALSE}
-library(dplyr)
-max(select(filter(mtcars, cyl == 6), mpg))
-```
-
-With the piper connector, you can write as:
-
-```{r eval = F}
-mtcars %>% 
-  filter(cyl == 6) %>% 
-  select(mpg) %>% 
-  max
-```
-</div>
-
-
-## Two special types: interaction plot{.smaller}
+## Plotting with packages: `interplot`{.smaller}
 
 
 ```{r message=FALSE}
@@ -1028,7 +1037,6 @@ interplot(m = lm_in, var1 = "hp", var2 = "wt") +
     + Create a version-control project in RStudio
         + <img src="https://andreacirilloblog.files.wordpress.com/2014/12/new-project.png" height = "200" />
     + Commit, Pull and Push
-
 
 ## External Sources
 * Q&A Blogs: 

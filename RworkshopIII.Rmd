@@ -10,78 +10,20 @@ output:
     widescreen: yes
 ---
 
-# Preface
-## What Are Covered in This Workshop Series
-* [A overview of R](https://rpubs.com/sammo3182/Rintro) 
-* [Data manipulation (input/output, row/column selections, etc.)](https://rpubs.com/sammo3182/Rintro) 
-* [Descriptive and binary hypotheses (summary, correlation, t-test, etc.)](http://rpubs.com/sammo3182/Rstat)
-* [Multiple regression (OLS, GLS, MLM, etc.)](http://rpubs.com/sammo3182/Rstat)
-* Multilevel Regression
-* **Presentation (table, graph)**
-
-# Presenting Techniques
-
-## Tabling in Word
-For summary data or table：
-
-1. Save the data to an object.
-
-2. Use `View()` on the object.
-
-3. Copy and paste. 
-
-## An example
-```{r message=FALSE}
-data("mtcars")
-
-# Cross comparison table
-aggregate(mpg ~ gear, mtcars, mean)
-```
-
-----
-```{r message=FALSE}
-#summary table
-library(stargazer)
-stargazer(mtcars, type = "text", title = "Descriptive Statistics", digits = 3)
-```
-
-## Regression
-```{r eval = FALSE}
-m1 <- lm(mpg ~ wt, data=mtcars)
-m2 <- lm(mpg ~ wt + hp, data=mtcars)
-m3 <- lm(mpg ~ wt + hp + factor(gear), data=mtcars)
-stargazer(m1, m2, m3, type="text",
- dep.var.labels=c("Miles/(US) gallon"),
- covariate.labels=c("Weight", "Gross horsepower","Four foward gears","Five forward gears"))
-
-# A more decent way
-stargazer(m1, m2, m3, type="html",
- dep.var.labels=c("Miles/(US) gallon"),
- covariate.labels=c("Weight", "Gross horsepower","Four foward gears","Five forward gears"), out="models.htm")
-```
-
-
-## Downside of MS Word
-1. Not very pretty, and have to arrange for each table.
-2. Copy and paste all the time. A potential solution: check [here](http://www.r-statistics.com/2010/05/exporting-r-output-to-ms-word-with-r2wd-an-example-session/).
-3. MS Word is very unstable.
-4. Solution: Latex
-
-
-## Tabling in Latex
+## Tabling
 There are over twenty packages for [table presentation](http://conjugateprior.org/2013/03/r-to-latex-packages-coverage/) in R. My favoriate three are `stargazer`, `xtable`, and `texreg`.
+
+(Sorry, but all of them are for **Latex** output)
 
 * `stargazer`: good for summary table and regular regression results
 * `texreg`: when some results can't be presented by `stargazer`, try `texreg` (e.g., MLM results.)
 * `xtable`: the most extensively compatible package, but need more settings to get a pretty output, most of which `stargazer` and `texreg` can automatically do for you.
 
-## An example {.smaller}
+## An example {.smaller .columns-2}
 
 ```{r message = F}
 lm_ols <- lm(mpg ~ cyl + hp + wt, data = mtcars)
-
-library(stargazer)
-stargazer(lm_ols, align = T)
+stargazer::stargazer(lm_ols, type = "text", align = T)
 ```
 
 ----
@@ -89,18 +31,21 @@ stargazer(lm_ols, align = T)
 Present in PDF
 
 <div class="centered">
-  <img src="http://repec.org/bocode/e/estout/esttab012d.png" height="400"/>
-</div> 
+  <img src=image/table.png height="400"/>
+  </div> 
   
+* For the users of MS Word, click [here](http://www.r-statistics.com/2010/05/exporting-r-output-to-ms-word-with-r2wd-an-example-session/).
 
-## Plotting
 
+## But...why tabulating if you can plot?
 Three types of graphic presenting approaches in R:
 
 * Basic plots: `plot()`.
 * Lattice plots: e.g., `ggplot()`.
-* Interactive plots: `shiny()`. ([save for later](http://shiny.rstudio.com/gallery/word-cloud.html))
-
+* Interactive plots: `shiny()`. (save for later)
+    + <div class="centered">
+  <img src="http://i.stack.imgur.com/qZObK.png" height="300"/>
+  </div> 
 
 ## Basic plot
 Pro:
@@ -114,35 +59,11 @@ Con:
 * Not very pretty
 * Not very flexible
 
-
 ## An example: create a histogram
 
 ```{r fig.align="center"}
 hist(mtcars$mpg)
 ```
-
-## Adding some customizations
-
-```{r fig.align="center", fig.height=3.5}
-hist(mtcars$mpg, freq = F,  # plot the density rather than frequency
-     breaks = 10,  # change the number of bins
-     col = "purple", # change the color of the bins 
-     xlab="Miles per Gallon",   # adding the x-axis label
-  	main="Histogram of Milage")  # adding a title
-```
-
-## Adding a normal curve{.smaller}
-
-```{r fig.align="center", fig.height=3.5}
-hist<-hist(mtcars$mpg, breaks=10, col="purple", xlab="Year", 
-  	main="Histogram of Milage") 
-
-xfit<-seq(min(mtcars$mpg),max(mtcars$mpg),length = 40) 
-yfit<-dnorm(xfit,mean=mean(mtcars$mpg),sd=sd(mtcars$mpg)) 
-yfit <- yfit*diff(hist$mids[1:2])*length(mtcars$mpg) 
-lines(xfit, yfit, col="blue", lwd=2)
-```
-
 
 ## Saving the plot{.build}
 * Compatible format:`.jpg`, `.png`, `.wmf`, `.pdf`, `.bmp`, and `postscript`.
@@ -157,6 +78,11 @@ hist
 dev.off()
 ```
 
+<span style="color:green">Tip</span>
+<div class="notes">
+Sometimes, RStudio may distort the graphic output. In this situation, try to <span style="color:purple">zoom</span> or use `windows()` function. 
+</div>
+
 ----
 
 The device list:
@@ -170,10 +96,6 @@ The device list:
 | bmp("mygraph.bmp")          	| bmp file         	|
 | postscript("mygraph.ps")    	| postscript file  	|
 
-<span style="color:green">Tip</span>
-<div class="notes">
-Sometimes, RStudio may distort the graphic output. In this case, try `windows()`,  to <span style="color:purple">zoom</span> or <span style="color:purple">export</span> it. 
-</div>
 
 ## `ggplot`: the most popular graphic engine in R {.build}
 
@@ -184,163 +106,127 @@ Sometimes, RStudio may distort the graphic output. In this case, try `windows()`
 ```{r message=FALSE}
 library(ggplot2)
 ```
-+ Then, let's redo the previous histogram in `ggplot`.
 
 
-## histogram in `ggplot`
+## Histogram in `ggplot`
 ```{r fig.align="center", fig.height=2.7}
 ggplot(mtcars, aes(x=mpg)) + 
-    geom_histogram(aes(y=..density..), 
-                   binwidth=2,
-                   colour="black", fill="purple") +
-    #geom_density(alpha=.5, fill="blue")  + # Overlay with transparent density plot
-    stat_function(fun=dnorm, color="blue",args=list(mean=mean(mtcars$mpg), sd=sd(mtcars$mpg))) +
-    theme_bw() + 
-    ggtitle("Histogram of Milage \n 1974 Motor Trend US Magazine") + 
-    xlab("Miles per Gallon") + ylab("Density")
+    geom_histogram(aes(y=..density..), binwidth=2, colour="black") 
+```
+
+## Decoration
+
+```{r fig.align="center", fig.height=2.7}
+ggplot(mtcars, aes(x=mpg)) + 
+    geom_histogram(aes(y=..density..), binwidth=2, colour="black", fill="purple") +
+    geom_density(alpha=.2, fill="blue")  + # Overlay with transparent density plot
+    theme_bw() + ggtitle("histogram with a Normal Curve") + 
+    xlab("Miles Per Gallon") + ylab("Density")
 ```
 
 
-## histogram comparison in `ggplot`
-```{r fig.align="center", fig.height=3}
-ggplot(mtcars, aes(x=mpg, fill = factor(am))) +  # Separate cars with V or straight engine
-    geom_histogram(binwidth=2, alpha = .3, position = "identity") +
-    theme_bw() + 
-    ggtitle("Histogram of Milage \n 1974 Motor Trend US Magazine") + 
-    xlab("Miles per Gallon") + ylab("Frequency")
+## Break in Parts:{.smaller}
+
+```{r eval=FALSE}
+ggplot(data = mtcars, aes(x=mpg)) + 
+    geom_histogram(aes(y=..density..), binwidth=2, colour="black", fill="purple") +
+    geom_density(alpha=.2, fill="blue")  + # Overlay with transparent density plot
+    theme_bw() + ggtitle("histogram with a Normal Curve") + 
+    xlab("Miles Per Gallon") + ylab("Density")
 ```
+* `data`: The data that you want to visualise
+
+* `aes`: Aesthetic mappings
+describing how variables in the data are mapped to aesthetic attributes
+    + horizontal position (`x`)
+    + vertical position (`y`)
+    + colour
+    + size
+* `geoms`: Geometric objects that represent what you actually see on
+the plot
+    + points
+    + lines
+    + polygons
+    + bars
+
+----
+
+* `theme`, `ggtitle`, `xlab`, `ylab`: decorations.
+* Other parts you may see in some developed template
+    + `stats`: Statistics transformations
+    + `scales`: relate the data to the aesthetic
+    + `coord`: a coordinate system that describes how data coordinates are
+mapped to the plane of the graphic.
+    + `facet`: a faceting specification describes how to break up the data into sets.
 
 
-
-## Scatterplot
-Let's visualize the linear relationship between number of new born babies under different names and the proportion of that name in the population
-
-```{r}
-ggplot(mtcars, aes(x=wt, y=mpg)) +  
-    geom_point(shape=1) +  
-    geom_smooth(method=lm)
-```
-
-
-
-## Even fancier
-
-```{r echo=FALSE, fig.align="center"}
-library(gridExtra)
-#placeholder plot - prints nothing at all
-empty <- ggplot()+geom_point(aes(1,1), colour="white") +
-     theme(                              
-       plot.background = element_blank(), 
-       panel.grid.major = element_blank(), 
-       panel.grid.minor = element_blank(), 
-       panel.border = element_blank(), 
-       panel.background = element_blank(),
-       axis.title.x = element_blank(),
-       axis.title.y = element_blank(),
-       axis.text.x = element_blank(),
-       axis.text.y = element_blank(),
-       axis.ticks = element_blank()
-     )
-
-#scatterplot of x and y variables
-scatter <- ggplot(mtcars,aes(mpg, qsec)) + 
-  geom_point(aes(color=factor(vs))) + 
-  xlab("Miles Per Gallon") + ylab("Density") + 
-  scale_color_manual(values = c("orange", "purple")) + 
-  theme(legend.position=c(1,1),legend.justification=c(1,1)) 
-
-#marginal density of x - plot on top
-plot_top <- ggplot(mtcars, aes(mpg, fill=factor(vs))) + 
-  geom_density(alpha=.5) + 
-  scale_fill_manual(values = c("orange", "purple")) + 
-  theme(legend.position = "none")
-
-#marginal density of y - plot on the right
-plot_right <- ggplot(mtcars, aes(qsec, fill=factor(vs))) + 
-  geom_density(alpha=.5) + 
-  coord_flip() + 
-  scale_fill_manual(values = c("orange", "purple")) + 
-  theme(legend.position = "none") 
-
-#arrange the plots together, with appropriate height and width for each row and column
-grid.arrange(plot_top, empty, scatter, plot_right, ncol=2, nrow=2, widths=c(4, 1), heights=c(1, 4))
-```
-
-The codes to create these graphs are a little more complicated. For those who are interested in creating such a plot, click [here](http://rforpublichealth.blogspot.com/2014/02/ggplot2-cheatsheet-for-visualizing.html).
-
-
-
-## Save `ggplot` {.build}
-
+## Save `ggplot`
 * `ggsave(<plot project>, "<name + type>")`:
-* e.g., `ggsave("comp_hist.png")`
     + When the `<plot project>` is omitted, R will save the last presented plot. 
     + There are additional arguments which users can use to adjust the size, path, scale, etc.
 
-```{r eval = F}
-ggsave(filename = default_name(plot), plot = last_plot(),
-  device = default_device(filename), path = NULL, scale = 1,
-  width = par("din")[1], height = par("din")[2], units = c("in", "cm",
-  "mm"), dpi = 300, limitsize = TRUE, ...)
-```
 
-## `qplot` function {.build}
-The `ggplot` version of basic plot
 
-* Redo the first histogram with `qplot`:
+## Plotting with packages: Map
 
 ```{r eval=FALSE}
-qplot(mtcars$mpg) 
+starbucks <- read.csv("https://opendata.socrata.com/api/views/ddym-zvjk/rows.csv?accessType=DOWNLOAD")
+
+
+library(leaflet)
+leaflet() %>% addTiles() %>% 
+  setView(-91.535632, 41.660965, zoom = 16) %>% 
+  addMarkers(data = starbucks, lat = ~Latitude, lng = ~Longitude, popup = starbucks$Name)
 ```
 
-* Equivalent to:
+----
 
-```{r eval=FALSE}
-ggplot(mtcars, aes(x=mpg)) + geom_histogram() 
+
+```{r two-column, echo=FALSE, results = 'asis', out.extra = '', cache=TRUE}
+starbucks <- read.csv("https://opendata.socrata.com/api/views/ddym-zvjk/rows.csv?accessType=DOWNLOAD")
+
+
+library(leaflet)
+leaflet() %>% addTiles() %>% 
+  setView(-91.535632, 41.660965, zoom = 16) %>% 
+  addMarkers(data = starbucks, lat = ~Latitude, lng = ~Longitude, popup = starbucks$Name)
 ```
 
-* Comparing to the basic plot engine: 
-```{r eval=FALSE}
-hist(mtcars$mpg)
-```
 
+## Plotting with packages: `dotwhisker`{.smaller}
+Plot the comparable coefficients or other estimates (margins, predicted probabilities, etc.).
 
-## Two special types: estimate plot{.smaller}
-Plot the comparable coefficients or other estimates (margins, predicted probabilities, etc.) with `dotwhisker`.
-
-```{r message=FALSE, fig.align="center", fig.height=4}
+```{r message=FALSE}
 library(dotwhisker)
-dwplot(lm_ols)
+library(broom)
+lm_df <- tidy(lm_ols)
+lm_df
 ```
 
 ----
 
 ```{r message=F, fig.align="center", fig.height=4}
-library(broom); library(dplyr)
-lm_df <- tidy(lm_ols)
-lm_df <- by_2sd(lm_df, mtcars) %>% # rescale the coefficients
-  filter(term != "(Intercept)") # omit intercept
 dwplot(lm_df)
 ```
 
-## Two special types: interaction plot{.smaller}
-Plot the interactive effects with `interplot`.
 
-```{r}
-lm_in <- lm(mpg ~ cyl + hp * wt, data = mtcars); summary(lm_in)
+## Plotting with packages: `interplot`{.smaller}
+
+
+```{r message=FALSE}
+library(interplot)
+lm_in <- lm(mpg ~ cyl + hp * wt, data = mtcars)
+summary(lm_in)
+
 ```
 
 ----
 
-```{r fig.align="center",message=FALSE}
-library(interplot)
+```{r fig.align="center"}
 interplot(m = lm_in, var1 = "hp", var2 = "wt") + 
   xlab("Automobile Weight (thousands lbs)") + 
   ylab("Estimated Coefficient for \nGross horsepower")
 ```
-
-
-
 
 ## Wrap Up
 * R has a bunch of packages for creating publishing-like tables, e.g., `stargazer`, `xtable`, and `texreg`
@@ -352,11 +238,12 @@ interplot(m = lm_in, var1 = "hp", var2 = "wt") +
 * Two special types of plot:
     + Estimate plot with [`dotwhisker`](https://cran.r-project.org/web/packages/interplot/vignettes/interplot-vignette.html).
     + Interaction plot with [`interplot`](https://cran.r-project.org/web/packages/dotwhisker/vignettes/dwplot-vignette.html).
-    
-## Almost the end: the last topic
+
+
+## Almost the end: one topic left
 
 <div class="centered">
-![present](http://conservatives4palin.com/wp-content/uploads/2013/06/snob.gif)
+[![present](http://conservatives4palin.com/wp-content/uploads/2013/06/snob.gif)]
 </div>
 
 
@@ -410,9 +297,9 @@ interplot(m = lm_in, var1 = "hp", var2 = "wt") +
 * Workshops: http://ppc.uiowa.edu/node/3608
 * Consulting service: http://ppc.uiowa.edu/node/3385/
 
+
 ----
 
 <div class = "center">
-<img src="http://www.junipercivic.com/images/Berry/thats-all-folks.jpg" height = "550" />
+[![end](http://rescuethepresent.net/tomandjerry/files/2016/05/16-thanks.gif)]
 </div>
-
