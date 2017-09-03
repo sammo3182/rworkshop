@@ -1,0 +1,201 @@
+---
+title: "Hello, R!"
+author: "Yue Hu's R Workshop Series IV"
+output:
+  ioslides_presentation:
+    incremental: yes
+    logo: image/logo.gif
+    slidy_presentation: null
+    transition: faster
+    widescreen: yes
+---
+
+# Preface
+## What Are Covered in This Workshop Series 
+* [A overview of R](https://rpubs.com/sammo3182/Rintro) 
+* [Data manipulation (input/output, row/column selections, etc.)](https://rpubs.com/sammo3182/Rintro) 
+* [Descriptive and binary hypotheses (summary, correlation, t-test, etc.)](http://rpubs.com/sammo3182/Rstat)
+* [Multiple regression (OLS, GLS, MLM, etc.)](http://rpubs.com/sammo3182/Rstat)
+* **Multilevel Regression**
+* [Presentation (table, graph)](https://rpubs.com/sammo3182/Rpresent)
+
+
+# What's Multilevel Effects?
+## An Example about Pizza{.columns-2}
+How do cost/fuel affect pizza quality?
+
+<img src="http://s3-media2.fl.yelpcdn.com/bphoto/t7sVz19Dh_km1nRzvbhAew/348s.jpg" />
+
+
+
+How do the impact of these factors vary by neighborhood?
+
+<img src="http://slice.seriouseats.com/images/20080124-regionalpizza.png" height = "300" width = "400" />
+
+
+
+
+## Data
+Based on Harris \& Lander's ["Predicting Pizza in Chinatown: An Intro to Multilevel Regression"(2010)](http://www.jaredlander.com/wordpress/wordpress-2.9.2/wordpress/wp-content/uploads/2010/10/NYC-PA-Meetup-Multilevel-Models.ppt)
+
+```{r message=FALSE}
+library(RCurl);library(dplyr) # load package for reading url and manipulate data
+path <- getURL("https://raw.githubusercontent.com/HarlanH/nyc-pa-meetup-multilevel-pizza/master/Fake%20Pizza%20Data.csv")
+pizza <- read.csv(text = path) # read the csv data
+glimpse(pizza)
+```
+
+
+## Neighborhood Variance{.smaller}
+(Multilevel Effects!!)
+
+```{r message=FALSE, fig.align="center", fig.height = 3}
+library(ggplot2)
+lm_nei <- lm(Rating ~ CostPerSlice * Neighborhood, data=pizza)
+pizza$pre_nei <- predict(lm_nei)
+ggplot(pizza, aes(CostPerSlice, Rating, color=Neighborhood)) +
+  geom_point() + theme_bw() + 
+  geom_smooth(aes(y = pre_nei), method='lm',se=FALSE) +
+  xlab("Cost per Slice") + ylab("Quality") 
+```
+
+## Dig in
+
+```{r echo=FALSE, fig.align="center"}
+lm_sour <- lm(Rating ~ CostPerSlice * HeatSource, data=pizza) 
+pizza$pre_sour <- predict(lm_sour)
+ggplot(pizza, aes(CostPerSlice, Rating, color=HeatSource)) +
+  geom_point() + facet_wrap(~ Neighborhood) + theme_bw() + 
+  xlab("Cost per Slice") + ylab("Quality") + 
+  geom_smooth(aes(y=pre_sour), method='lm', se=FALSE)
+```
+
+
+## Multilevel Model: Fixed Effect {.smaller .columns-2}
+```{r message = F}
+library(lme4) # package for multilevel model
+# Allow intercept varying
+mlm_fix <- lmer(Rating ~ HeatSource + 
+                  (1 | Neighborhood), data = pizza)
+summary(mlm_fix)
+```
+
+## Result: Fixed + Random Effect {.smaller .columns-2}
+```{r}
+# Allow slope varing
+mlm_ran <- lmer(Rating ~ HeatSource + CostPerSlice + 
+                  (CostPerSlice | Neighborhood), 
+                data = pizza)
+summary(mlm_ran)
+```
+
+## Result: Uncorrelated Random Effect {.smaller .columns-2}
+```{r}
+# Slop varying but not correlate to intercept
+mlm_ur <- lmer(Rating ~ HeatSource + CostPerSlice + 
+                 (CostPerSlice || Neighborhood),
+               data=pizza)
+# Just for the purpose of instruction
+summary(mlm_ur) # Shouldn't do since cor between CostPerSlice and Interaction was - .3
+```
+
+## About Covariance Matrix
+* Using Cholesky parameterization (which requires exchange matrix.):
+    + Avoid uneccessary rising of asymptotically flat surface warning---**Easier to converge**.
+    + Benefit **small- to medium-sized** data sets and complex variance-covariance models.
+* If you want to use log-Cholesky (unconstrained) parameterization, you want to use `nlme` package
+
+
+## Presentation
+Fixed effect coefficients: `dotwhisker`
+```{r message=FALSE}
+library(broom);library(dotwhisker)
+mlm_coef <- tidy(mlm_ran)
+mlm_coef
+```
+
+----
+
+```{r}
+delete <- grep("\\bsd_.*|cor_.*\\b", mlm_coef$term, value = T)
+mlm_sub <- filter(mlm_coef, term != delete) %>% filter(term != "(Intercept)")
+mlm_sub
+```
+
+Only keep the substantive variables.
+
+----
+
+
+```{r fig.align="center"}
+dwplot(mlm_sub) + ylab("Fixed Effect") + xlab("Coefficient") +
+    geom_vline(xintercept = 0, colour = "red", linetype = 2)
+```
+
+
+## Interaction{.smaller}
+Use `interplot` package: 
+```{r message=FALSE, fig.align="center", fig.height=3.5, warning=FALSE}
+mlm_int <- lmer(Rating ~ HeatSource * CostPerSlice + (CostPerSlice | Neighborhood),data=pizza)
+library(interplot)
+interplot(mlm_int, var1 = "HeatSource", var2 = "CostPerSlice", hist = T) +
+  xlab("Cost Per Slice") + ylab("Estimated Coefficient for Heat Source")
+```
+
+## Bonus
+### Categorical DV: Ordinal
+```{r}
+pizza$Rate_o <- cut(pizza$Rating, quantile(pizza$Rating), include.lowest = T, 
+                    labels = c(1:4)) %>%
+  as.ordered()
+table(pizza$Rate_o)
+```
+
+```{r message = FALSE}
+library(ordinal)
+pizza$Neighborhood_fa <- as.factor(pizza$Neighborhood)
+mlm_ord <- clmm(Rate_o ~ HeatSource + (1|Neighborhood_fa), data=pizza)
+```
+
+## Output
+
+```{r}
+summary(mlm_ord)
+```
+
+
+## Categorical DV: Nominal
+```{r warning=FALSE}
+pizza$Rate_f <- cut(pizza$Rating, quantile(pizza$Rating), 
+                    include.lowest = T, labels = c(1:4)) 
+mlm_nom <- clmm2(Rate_f ~ 1, nominal = ~ HeatSource, 
+                 random = Neighborhood_fa, data=pizza, 
+                 nAGQ = 15, Hess = TRUE) #nAGQ set the optimizer, not necessary.
+```
+
+## Output{.columns-2}
+```{r}
+summary(mlm_nom)
+```
+
+
+## External Sources
+* Q&A Blogs: 
+    + http://stackoverflow.com/questions/tagged/r
+    + https://stat.ethz.ch/mailman/listinfo/r-help
+
+* Blog for new stuffs: http://www.r-bloggers.com/
+
+* Graph Blogs:
+    + http://www.cookbook-r.com/Graphs/
+    + http://shiny.stat.ubc.ca/r-graph-catalog/
+
+* Workshops: http://ppc.uiowa.edu/node/3608
+* Consulting service: http://ppc.uiowa.edu/node/3385/
+
+----
+
+<div class = "center">
+<img src="http://www.junipercivic.com/images/Berry/thats-all-folks.jpg" height = "550" />
+</div>
+

@@ -1,166 +1,351 @@
 ---
 title: "Hello, R!"
-author: "Yue Hu's R Workshop Series IV"
+author: "Yue Hu's R Workshop Series III"
 output:
   ioslides_presentation:
+    self_contained: yes
     incremental: yes
     logo: image/logo.gif
     slidy_presentation: null
     transition: faster
     widescreen: yes
 ---
-
-# Preface
-## What Are Covered in This Workshop Series 
-* [A overview of R](https://rpubs.com/sammo3182/Rintro) 
-* [Data manipulation (input/output, row/column selections, etc.)](https://rpubs.com/sammo3182/Rintro) 
-* [Descriptive and binary hypotheses (summary, correlation, t-test, etc.)](http://rpubs.com/sammo3182/Rstat)
-* [Multiple regression (OLS, GLS, MLM, etc.)](http://rpubs.com/sammo3182/Rstat)
-* **Multilevel Regression**
-* [Presentation (table, graph)](https://rpubs.com/sammo3182/Rpresent)
-
-
-# What's Multilevel Effects?{.hcenter}
-## An Example about Pizza
-How do cost/fuel affect pizza quality?
-
-<img src="http://s3-media2.fl.yelpcdn.com/bphoto/t7sVz19Dh_km1nRzvbhAew/348s.jpg" />
-
-
-## An Example about Pizza{.hcenter}
-How do those factors vary by neighborhood?
-
-<img src="http://slice.seriouseats.com/images/20080124-regionalpizza.png" height = "300" width = "400" />
-
-
-
-
-## Data
-(Based on Harris \& Lander's ["Predicting Pizza in Chinatown: An Intro to Multilevel Regression"(2010)](http://www.jaredlander.com/wordpress/wordpress-2.9.2/wordpress/wp-content/uploads/2010/10/NYC-PA-Meetup-Multilevel-Models.ppt))
-
-```{r message=FALSE}
-library(RCurl);library(dplyr) # load package for reading url and manipulate data
-path <- getURL("https://raw.githubusercontent.com/HarlanH/nyc-pa-meetup-multilevel-pizza/master/Fake%20Pizza%20Data.csv")
-pizza <- read.csv(text = path) # read the csv data
-glimpse(pizza)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 ```
 
 
-## Neighborhood Variance{.smaller}
-(Multilevel Effects!!)
+## Tabling
+There are over twenty packages for [table presentation](http://conjugateprior.org/2013/03/r-to-latex-packages-coverage/) in R. My favoriate three are `stargazer`, `xtable`, and `texreg`.
 
-```{r message=FALSE, fig.align="center", fig.height = 3}
-library(ggplot2)
-lm_nei <- lm(Rating ~ CostPerSlice * Neighborhood, data=pizza)
-pizza$pre_nei <- predict(lm_nei)
-ggplot(pizza, aes(CostPerSlice, Rating, color=Neighborhood)) +
-  geom_point() + theme_bw() + 
-  geom_smooth(aes(y = pre_nei), method='lm',se=FALSE) +
-  xlab("Cost per Slice") + ylab("Quality") 
-```
+(Sorry, but all of them are for **Latex** output)
 
-## Dig in
+* `stargazer`: good for summary table and regular regression results
+* `texreg`: when some results can't be presented by `stargazer`, try `texreg` (e.g., MLM results.)
+* `xtable`: the most extensively compatible package, but need more settings to get a pretty output, most of which `stargazer` and `texreg` can automatically do for you.
 
-```{r echo=FALSE, fig.align="center"}
-lm_sour <- lm(Rating ~ CostPerSlice * HeatSource, data=pizza) 
-pizza$pre_sour <- predict(lm_sour)
-ggplot(pizza, aes(CostPerSlice, Rating, color=HeatSource)) +
-  geom_point() + facet_wrap(~ Neighborhood) + theme_bw() + 
-  xlab("Cost per Slice") + ylab("Quality") + 
-  geom_smooth(aes(y=pre_sour), method='lm', se=FALSE)
-```
+## An example {.smaller .columns-2}
 
-
-## Multilevel Model (MLM)
 ```{r message = F}
-library(lme4) # package for multilevel model
-# Allow intercept varying
-mlm_fix <- lmer(Rating ~ HeatSource + (1 | Neighborhood),data=pizza)
-
-# Allow slope varing
-mlm_ran <- lmer(Rating ~ HeatSource + CostPerSlice + 
-                  (CostPerSlice | Neighborhood),data=pizza)
-
-# Slop varying but not correlate to intercept
-mlm_ur <- lmer(Rating ~ HeatSource + CostPerSlice + 
-                 (CostPerSlice || Neighborhood),data=pizza)
-# Just for the purpose of instruction
+lm_ols <- lm(mpg ~ cyl + hp + wt, data = mtcars)
+stargazer::stargazer(lm_ols, type = "text", align = T)
 ```
 
-## Result: Fixed Effect {.smaller .columns-2}
-```{r size = "tiny"}
-summary(mlm_fix)
+* For Word users, click [here](http://www.r-statistics.com/2010/05/exporting-r-output-to-ms-word-with-r2wd-an-example-session/).
+
+## Print out directly in the website or the manuscript{.smaler}
+
+```{r results='asis'}
+stargazer::stargazer(lm_ols, type = "html", align = T)
 ```
 
-## Result: Fixed + Random Effect {.smaller .columns-2}
-```{r}
-summary(mlm_ran)
+
+# But...why tabulating the results if you can plot it?
+## How do R plots look like
+<div class="centered">
+  <img src="http://mkweb.bcgsc.ca/embo/img/hiveplot-02.png" height="450"/>
+  </div>
+
+----
+<div class="center">
+  <img src="http://spatial.ly/wp-content/uploads/2012/02/bike_ggplot-1024x676.png" height="600"/>
+  </div>
+
+----
+<div class="center">
+  <img src="http://i.imgur.com/ELEA9FP.gif" height="550"/>
+  </div>
+
+## Too "fancy" for your research? Then...
+* <div class="centered">
+  <img src="http://fsolt.org/blog/dotwhisker1.jpg" height="530"/>
+  </div>
+  
+----
+<div class="centered">
+  <img src="data:image/png;base64,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" height="550" width = "500"/>
+  </div>
+  
+----
+<div class="centered">
+  <img src="http://fsolt.org/blog/interplot1.png" height="450"/>
+  </div>
+
+## Let's Start!
+
+* Basic plots: `plot()`.
+* Lattice plots: e.g., `ggplot()`.
+* Interactive plots: `shiny()`. (save for later)
+    + <div class="centered">
+  <img src="http://i.stack.imgur.com/qZObK.png" height="300"/>
+  </div> 
+
+## Basic plot
+Pro:
+
+* Embedded in R
+* Good tool for <span style="color:purple">data exploration</span>. 
+* <span style="color:purple">Spatial</span> analysis and <span style="color:purple">3-D</span> plots.
+
+Con:
+
+* Not very pretty
+* Not very flexible
+
+## An example: create a histogram
+
+```{r fig.align="center"}
+hist(mtcars$mpg)
 ```
 
-## Result: Uncorrelated Random Effect {.smaller .columns-2}
-```{r}
-summary(mlm_ur) # Shouldn't do since cor between CostPerSlice and Interaction was - .3
+## Saving the plot{.build}
+* Compatible format:`.jpg`, `.png`, `.wmf`, `.pdf`, `.bmp`, and `postscript`.
+* Process: 
+      1. call the graphic device
+      2. plot
+      3. close the device
+
+```{r eval = F}
+jpeg("histgraph.jpg")
+hist
+dev.off()
 ```
 
-## About Covariance Matrix
-* Using Cholesky parameterization (which requires exchange matrix.):
-    + Avoid uneccessary rising of asymptotically flat surface warning---**Easier to converge**.
-    + Benefit **small- to medium-sized** data sets and complex variance-covariance models.
-* If you want to use log-Cholesky (unconstrained) parameterization, you want to use `nlme` package
-
-
-## Diagnosis
-Fitted vs. residual plot
-```{r, fig.align="center", fig.height=4}
-plot(mlm_ran, type = c("p", "smooth"))
-```
+<span style="color:green">Tip</span>
+<div class="notes">
+Sometimes, RStudio may distort the graphic output. In this situation, try to <span style="color:purple">zoom</span> or use `windows()` function. 
+</div>
 
 ----
 
-Quantile-Quantile plots
-```{r fig.align="center"}
-lattice::qqmath(mlm_ran)
-```
+The device list:
 
-## Diagnosis: Posterior Predictive Simulation
-
-```{r}
-iqrvec <- sapply(simulate(mlm_ran, 1000), IQR)
-obsval <- IQR(pizza$Rating)
-post_pred_p <- mean(obsval >= c(obsval, iqrvec))
-post_pred_p
-```
-<span style="color:purple">Warning</span>: the above method does not allow for the uncertainty in the estimated parameters.
+| Function                    	| Output to        	|
+|-----------------------------	|------------------	|
+| pdf("mygraph.pdf")          	| pdf file         	|
+| win.metafile("mygraph.wmf") 	| windows metafile 	|
+| png("mygraph.png")          	| png file         	|
+| jpeg("mygraph.jpg")         	| jpeg file        	|
+| bmp("mygraph.bmp")          	| bmp file         	|
+| postscript("mygraph.ps")    	| postscript file  	|
 
 
+## `ggplot`: the most popular graphic engine in R {.build}
 
-## Present
-Fixed effect coefficients: `dotwhisker`
++ Built by Hadley Wickham based on Leland Wilkinson's *Grammar of Graphics*.
++ It breaks the plot into components as <span style="color:purple">scales</span> and <span style="color:purple">layers</span>---increase the flexibility.
++ To use `ggplot`, one needs to install the package `ggplot2` first.
+
 ```{r message=FALSE}
-library(broom);library(dotwhisker)
-mlm_coef <- tidy(mlm_ran)
-delete <- grep("\\bsd_.*|cor_.*\\b", mlm_coef$term, value = T)
-mlm_sub <- filter(mlm_coef, term != delete) %>% filter(term != "(Intercept)")
+library(ggplot2)
 ```
-Only keep the substantive variables.
+
+
+## Histogram in `ggplot`
+```{r fig.align="center", fig.height=2.7}
+ggplot(mtcars, aes(x=mpg)) + 
+    geom_histogram(aes(y=..density..), binwidth=2, colour="black") 
+```
+
+## Decoration
+
+```{r fig.align="center", fig.height=2.7}
+ggplot(mtcars, aes(x=mpg)) + 
+    geom_histogram(aes(y=..density..), binwidth=2, colour="black", fill="purple") +
+    geom_density(alpha=.2, fill="blue")  + # Overlay with transparent density plot
+    theme_bw() + ggtitle("histogram with a Normal Curve") + 
+    xlab("Miles Per Gallon") + ylab("Density")
+```
+
+
+## Break in Parts:{.smaller}
+
+```{r eval=FALSE}
+ggplot(data = mtcars, aes(x=mpg)) + 
+    geom_histogram(aes(y=..density..), binwidth=2, colour="black", fill="purple") +
+    geom_density(alpha=.2, fill="blue")  + # Overlay with transparent density plot
+    theme_bw() + ggtitle("histogram with a Normal Curve") + 
+    xlab("Miles Per Gallon") + ylab("Density")
+```
+* `data`: The data that you want to visualise
+
+* `aes`: Aesthetic mappings
+describing how variables in the data are mapped to aesthetic attributes
+    + horizontal position (`x`)
+    + vertical position (`y`)
+    + colour
+    + size
+* `geoms`: Geometric objects that represent what you actually see on
+the plot
+    + points
+    + lines
+    + polygons
+    + bars
 
 ----
 
+* `theme`, `ggtitle`, `xlab`, `ylab`: decorations.
+* Other parts you may see in some developed template
+    + `stats`: Statistics transformations
+    + `scales`: relate the data to the aesthetic
+    + `coord`: a coordinate system that describes how data coordinates are
+mapped to the plane of the graphic.
+    + `facet`: a faceting specification describes how to break up the data into sets.
+
+## An advanced version:
+```{r fig.height=3}
+library(dplyr)
+df_desc <- select(mtcars, am, carb, cyl, gear,vs) %>% # select the variables
+  tidyr::gather(var, value) # reshape the wide data to long data
+
+ggplot(data = df_desc, aes(x = as.factor(value))) + geom_bar() + 
+  facet_wrap(~ var, scales = "free", ncol = 5) + xlab("")
+```
+
+## Save `ggplot`
+* `ggsave(<plot project>, "<name + type>")`:
+    + When the `<plot project>` is omitted, R will save the last presented plot. 
+    + There are additional arguments which users can use to adjust the size, path, scale, etc.
+
+
+
+## Plotting with packages: `dotwhisker`{.smaller}
+Plot the comparable coefficients or other estimates (margins, predicted probabilities, etc.).
+
+```{r message=FALSE}
+library(dotwhisker)
+library(broom)
+m1 <- lm(mpg ~ wt + cyl + disp + gear, data = mtcars)
+```
+
+----
+```{r}
+summary(m1)
+```
+
+----
+
+```{r}
+dwplot(m1)
+```
+
+
+----
+
+```{r message=F, fig.align="center", fig.height=4}
+m2 <- update(m1, . ~ . + hp) # add another predictor
+m3 <- update(m2, . ~ . + am) # and another 
+
+dwplot(list(m1, m2, m3))
+```
+
+----
+
+```{r eval = F}
+dwplot(list(m1, m2, m3)) +
+     relabel_y_axis(c("Weight", "Cylinders", "Displacement", 
+                     "Gears", "Horsepower", "Manual")) +
+     theme_bw() + xlab("Coefficient Estimate") + ylab("") +
+     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+     ggtitle("Predicting Gas Mileage") +
+     theme(plot.title = element_text(face="bold"),
+           legend.justification=c(0, 0), legend.position=c(0, 0),
+           legend.background = element_rect(colour="grey80"),
+           legend.title = element_blank()) 
+```
+
+----
+
+```{r echo = F}
+dwplot(list(m1, m2, m3)) +
+     relabel_y_axis(c("Weight", "Cylinders", "Displacement", 
+                     "Gears", "Horsepower", "Manual")) +
+     theme_bw() + xlab("Coefficient Estimate") + ylab("") +
+     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+     ggtitle("Predicting Gas Mileage") +
+     theme(plot.title = element_text(face="bold"),
+           legend.justification=c(0, 0), legend.position=c(0, 0),
+           legend.background = element_rect(colour="grey80"),
+           legend.title = element_blank()) 
+```
+
+
+
+## Plotting with packages: `interplot`{.smaller}
+
+
+```{r message=FALSE}
+library(interplot)
+lm_in <- lm(mpg ~ cyl + hp * wt, data = mtcars)
+```
+
+----
+```{r}
+summary(lm_in)
+```
+
+
+----
 
 ```{r fig.align="center"}
-dwplot(mlm_sub) + ylab("Fixed Effect") + xlab("Coefficient") +
-    geom_vline(xintercept = 0, colour = "red", linetype = 2)
+interplot(m = lm_in, var1 = "hp", var2 = "wt", hist = TRUE) + 
+  xlab("Automobile Weight (thousands lbs)") + 
+  ylab("Estimated Coefficient for \nGross horsepower")
 ```
 
+## Wrap Up
+* R has a bunch of packages for creating publishing-like tables, e.g., `stargazer`, `xtable`, and `texreg`
 
-## Interaction{.smaller}
-Use `interplot` package: 
-```{r message=FALSE, fig.align="center", fig.height=3.5, warning=FALSE}
-mlm_int <- lmer(Rating ~ HeatSource * CostPerSlice + (CostPerSlice | Neighborhood),data=pizza)
-library(interplot)
-interplot(mlm_int, var1 = "HeatSource", var2 = "CostPerSlice", hist = T) +
-  xlab("Cost Per Slice") + ylab("Estimated Coefficient for Heat Source")
-```
+* There are three ways to visualize statistics in R: basic, lattice (`ggplot`), and interactive.
+    + basic: e.g., `hist(<vector>)`
+    + `ggplot`: /n  e.g., `ggplot(<data>, aes(x=<vector>)) + geom_histogram()`.
+
+* Two special types of plot:
+    + Estimate plot with [`dotwhisker`](https://cran.r-project.org/web/packages/interplot/vignettes/interplot-vignette.html).
+    + Interaction plot with [`interplot`](https://cran.r-project.org/web/packages/dotwhisker/vignettes/dwplot-vignette.html).
+
+
+## Almost the end: one topic left
+
+<div class="centered">
+[![present](http://conservatives4palin.com/wp-content/uploads/2013/06/snob.gif)]
+</div>
+
+
+# Version Control
+## Just a brief introduction{.columns-2 .build}
+<div class = "center">
+<img src= "http://www.foldertrack.com/images/Personal_Version_Mess.png" width = "400" height = "400" />
+</div>
+
+
+
+
+
+
+
+
+* Tried to recall the deleted codes?
+* Tried to figure out what changes?
+* Saved a lot of replication files?
+* Version control can help you.
+
+---- 
+
+<div class = "center">
+<img src="http://cdn.arstechnica.net//wp-content/uploads/2012/05/uncommitted-changes-1.png" />
+</div>
+ 
+
+## Using Git with RStudio
+
+* RStudio has associate with the Git and SVN very well. 
+* Process to use git:
+    + Get a user account in https://github.com.
+    + Connect your account with RStudio following [this instruction](http://www.molecularecologist.com/2013/11/using-github-with-r-and-rstudio/).
+    + Create a version-control project in RStudio
+        + <img src="http://i0.wp.com/geraldbelton.com/wp-content/uploads/2017/01/new-project.jpg" height = "200" />
+    + Commit, Pull and Push
 
 
 ## External Sources
@@ -175,11 +360,11 @@ interplot(mlm_int, var1 = "HeatSource", var2 = "CostPerSlice", hist = T) +
     + http://shiny.stat.ubc.ca/r-graph-catalog/
 
 * Workshops: http://ppc.uiowa.edu/node/3608
-* Consulting service: http://ppc.uiowa.edu/node/3385/
+* Consulting service: http://ppc.uiowa.edu/isrc/methods-consulting
+
 
 ----
 
 <div class = "center">
-<img src="http://www.junipercivic.com/images/Berry/thats-all-folks.jpg" height = "550" />
+[![end](http://rescuethepresent.net/tomandjerry/files/2016/05/16-thanks.gif)]
 </div>
-

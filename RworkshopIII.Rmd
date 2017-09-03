@@ -1,289 +1,331 @@
 ---
 title: "Hello, R!"
-author: "Yue Hu's R Workshop Series III"
+author: "Yue Hu's R Workshop Series II"
 output:
   ioslides_presentation:
-    incremental: yes
+    self_contained: yes
     logo: image/logo.gif
-    slidy_presentation: null
     transition: faster
     widescreen: yes
+    slidy_presentation:
+    incremental: yes
 ---
+# Preface
+## What Are Covered in This Workshop Series 
+* [A overview of R](https://rpubs.com/sammo3182/Rintro) 
+* [Data manipulation (input/output, row/column selections, etc.)](https://rpubs.com/sammo3182/Rintro) 
+* **Descriptive and binary hypotheses (summary, correlation, t-test, etc.)**
+* **Multiple regression (OLS, GLS, MLM, etc.)**
+* Multilevel Regression
+* Presentation (table, graph)
 
-## Tabling
-There are over twenty packages for [table presentation](http://conjugateprior.org/2013/03/r-to-latex-packages-coverage/) in R. My favoriate three are `stargazer`, `xtable`, and `texreg`.
 
-(Sorry, but all of them are for **Latex** output)
 
-* `stargazer`: good for summary table and regular regression results
-* `texreg`: when some results can't be presented by `stargazer`, try `texreg` (e.g., MLM results.)
-* `xtable`: the most extensively compatible package, but need more settings to get a pretty output, most of which `stargazer` and `texreg` can automatically do for you.
+# Hypothesis Tests
 
-## An example {.smaller .columns-2}
+## package loading
+You want the `pacman` package to load multiple packages.
 
-```{r message = F}
-lm_ols <- lm(mpg ~ cyl + hp + wt, data = mtcars)
-stargazer::stargazer(lm_ols, type = "text", align = T)
+```{r}
+pacman::p_load(dplyr)
+```
+
+## Data Glimpse
+```{r}
+data("mtcars")
+dplyr::glimpse(mtcars)
+```
+
+
+## Binary Tests: Difference in mean
+
+$H_{0}: \bar{cylinders} = \bar{gears},\ \alpha = .05$
+
+```{r}
+t.test(mtcars$cyl, mtcars$gears) 
 ```
 
 ----
 
-Present in PDF
+`t.test` offers arguments `alternative`, `mu`, `paired`, and `conf.level` for users to change in two-tail/one-tail test, parameter mean, independent/paired comparison, and $\alpha$.
 
-<div class="centered">
-  <img src=image/table.png height="400"/>
-  </div> 
-  
-* For the users of MS Word, click [here](http://www.r-statistics.com/2010/05/exporting-r-output-to-ms-word-with-r2wd-an-example-session/).
+```{r eval=FALSE}
+# one side, cyl > gear, alpha = .01
+t.test(mtcars$cyl, mtcars$gear,
+       alternative = "greater", conf.level = .99)) 
 
+# comparing with the parameter (true value)
+t.test(mtcars$cyl, mu = 6)   # the true mean is 6.
 
-## But...why tabulating if you can plot?
-Three types of graphic presenting approaches in R:
-
-* Basic plots: `plot()`.
-* Lattice plots: e.g., `ggplot()`.
-* Interactive plots: `shiny()`. (save for later)
-    + <div class="centered">
-  <img src="http://i.stack.imgur.com/qZObK.png" height="300"/>
-  </div> 
-
-## Basic plot
-Pro:
-
-* Embedded in R
-* Good tool for <span style="color:purple">data exploration</span>. 
-* <span style="color:purple">Spatial</span> analysis and <span style="color:purple">3-D</span> plots.
-
-Con:
-
-* Not very pretty
-* Not very flexible
-
-## An example: create a histogram
-
-```{r fig.align="center"}
-hist(mtcars$mpg)
 ```
 
-## Saving the plot{.build}
-* Compatible format:`.jpg`, `.png`, `.wmf`, `.pdf`, `.bmp`, and `postscript`.
-* Process: 
-      1. call the graphic device
-      2. plot
-      3. close the device
 
-```{r eval = F}
-jpeg("histgraph.jpg")
-hist
-dev.off()
+## Binary Tests: Correlation
+$H_{0}: \rho_{(cyl,gear)} = 0,\ \alpha = .05$
+
+```{r}
+cor.test(mtcars$cyl, mtcars$gear)
 ```
 
-<span style="color:green">Tip</span>
+----
+
+`cor.test` offers various arguments as in `t.test` for more specific settings. Moreover, users can use the `method` argument to set the method to calculate the correlations, "Pearson", "Kendall", or "Spearman." (<span style="color:green">Tip</span>)
+
+```{r}
+cor.test(mtcars$cyl, mtcars$gear, method = "kendall")
+```
+
 <div class="notes">
-Sometimes, RStudio may distort the graphic output. In this situation, try to <span style="color:purple">zoom</span> or use `windows()` function. 
+Do I have to type the `mtcars$` every time? 
+
+* No you don't.
+    + It offers a potential for cross-dataset operation, though.
+    + Use `within()`: e.g., `within(mtcars, cor.test(cyl, gear))`
+    + Use `attach()` (not recommonded)
 </div>
 
-----
-
-The device list:
-
-| Function                    	| Output to        	|
-|-----------------------------	|------------------	|
-| pdf("mygraph.pdf")          	| pdf file         	|
-| win.metafile("mygraph.wmf") 	| windows metafile 	|
-| png("mygraph.png")          	| png file         	|
-| jpeg("mygraph.jpg")         	| jpeg file        	|
-| bmp("mygraph.bmp")          	| bmp file         	|
-| postscript("mygraph.ps")    	| postscript file  	|
-
-
-## `ggplot`: the most popular graphic engine in R {.build}
-
-+ Built by Hadley Wickham based on Leland Wilkinson's *Grammar of Graphics*.
-+ It breaks the plot into components as <span style="color:purple">scales</span> and <span style="color:purple">layers</span>---increase the flexibility.
-+ To use `ggplot`, one needs to install the package `ggplot2` first.
-
-```{r message=FALSE}
-library(ggplot2)
-```
-
-
-## Histogram in `ggplot`
-```{r fig.align="center", fig.height=2.7}
-ggplot(mtcars, aes(x=mpg)) + 
-    geom_histogram(aes(y=..density..), binwidth=2, colour="black") 
-```
-
-## Decoration
-
-```{r fig.align="center", fig.height=2.7}
-ggplot(mtcars, aes(x=mpg)) + 
-    geom_histogram(aes(y=..density..), binwidth=2, colour="black", fill="purple") +
-    geom_density(alpha=.2, fill="blue")  + # Overlay with transparent density plot
-    theme_bw() + ggtitle("histogram with a Normal Curve") + 
-    xlab("Miles Per Gallon") + ylab("Density")
-```
-
-
-## Break in Parts:{.smaller}
-
-```{r eval=FALSE}
-ggplot(data = mtcars, aes(x=mpg)) + 
-    geom_histogram(aes(y=..density..), binwidth=2, colour="black", fill="purple") +
-    geom_density(alpha=.2, fill="blue")  + # Overlay with transparent density plot
-    theme_bw() + ggtitle("histogram with a Normal Curve") + 
-    xlab("Miles Per Gallon") + ylab("Density")
-```
-* `data`: The data that you want to visualise
-
-* `aes`: Aesthetic mappings
-describing how variables in the data are mapped to aesthetic attributes
-    + horizontal position (`x`)
-    + vertical position (`y`)
-    + colour
-    + size
-* `geoms`: Geometric objects that represent what you actually see on
-the plot
-    + points
-    + lines
-    + polygons
-    + bars
 
 ----
 
-* `theme`, `ggtitle`, `xlab`, `ylab`: decorations.
-* Other parts you may see in some developed template
-    + `stats`: Statistics transformations
-    + `scales`: relate the data to the aesthetic
-    + `coord`: a coordinate system that describes how data coordinates are
-mapped to the plane of the graphic.
-    + `facet`: a faceting specification describes how to break up the data into sets.
+We can get the correlation matrix, too:
+```{r}
+cor(mtcars[,1:4])
+```
 
-
-## Save `ggplot`
-* `ggsave(<plot project>, "<name + type>")`:
-    + When the `<plot project>` is omitted, R will save the last presented plot. 
-    + There are additional arguments which users can use to adjust the size, path, scale, etc.
-
-
-
-## Plotting with packages: Map
-
-```{r eval=FALSE}
-starbucks <- read.csv("https://opendata.socrata.com/api/views/ddym-zvjk/rows.csv?accessType=DOWNLOAD")
-
-
-library(leaflet)
-leaflet() %>% addTiles() %>% 
-  setView(-91.535632, 41.660965, zoom = 16) %>% 
-  addMarkers(data = starbucks, lat = ~Latitude, lng = ~Longitude, popup = starbucks$Name)
+## Present the correlations
+You want the `corrplot` package.
+```{r fig.height=4}
+cor(mtcars) %>% corrplot::corrplot()
 ```
 
 ----
 
-
-```{r two-column, echo=FALSE, results = 'asis', out.extra = '', cache=TRUE}
-starbucks <- read.csv("https://opendata.socrata.com/api/views/ddym-zvjk/rows.csv?accessType=DOWNLOAD")
-
-
-library(leaflet)
-leaflet() %>% addTiles() %>% 
-  setView(-91.535632, 41.660965, zoom = 16) %>% 
-  addMarkers(data = starbucks, lat = ~Latitude, lng = ~Longitude, popup = starbucks$Name)
+Or a mixed format:
+```{r}
+cor(mtcars) %>% corrplot::corrplot.mixed()
 ```
 
 
-## Plotting with packages: `dotwhisker`{.smaller}
-Plot the comparable coefficients or other estimates (margins, predicted probabilities, etc.).
+## Binary Tests: ANOVA {.smaller}
+One way or two way ANOVA: 
 
-```{r message=FALSE}
-library(dotwhisker)
-library(broom)
-lm_df <- tidy(lm_ols)
-lm_df
+```{r}
+aov_one <- aov(cyl ~ gear, data = mtcars) #one-way
+
+aov_two <- aov(cyl ~ gear + am, data = mtcars) #two-way
+
+summary(aov_one); summary(aov_two)
 ```
+
+
+
+## Wrap up
+* T-test: `t.test(x, y = NULL, alternative = c("two.sided", "less", "greater"), mu = 0, paired = FALSE, conf.level = 0.95, ...)`
+
+* Correlation: `cor.test(x, y, alternative = c("two.sided", "less", "greater"), method = c("pearson", "kendall", "spearman"), conf.level = 0.95, continuity = FALSE, ...) `
+
+* ANOVA: `aov(formula, data = NULL, ...)`
 
 ----
 
-```{r message=F, fig.align="center", fig.height=4}
-dwplot(lm_df)
+Next: Multiple regression
+
+<div class="centered">
+![core](http://www.math.yorku.ca/SCS/spida/lm/mreganim3.gif)
+</div>
+
+
+# Multiple Regression
+## Ordinary Linear Regression
+$Mileage = \beta_0cylinders + \beta_1horsepower + \beta_3weight + \varepsilon$
+
+```{r}
+lm_ols <- lm(mpg ~ cyl + hp + wt, data = mtcars)
+``` 
+
+* `lm_ols`: Object name
+* `mpg`: Dependent variable
+* `cyl + hp + wt`: Independent variables
+* `data = mtcars`: Where the variables are stored
+
+
+## Result{.smaller}
+
+```{r} 
+summary(lm_ols)
+```
+
+## Nonlinear transition
+ln, square, exponential, or inverse
+
+```{r}
+lm_tran <- lm(log(mpg) ~ I(cyl^2) + exp(hp) + I(1/wt), data = mtcars)
+```
+
+* `log(mpg)`: logistic
+* `I(cyl^2), I(1/wt)`: square, inverse
+* `exp(hp)`: exponential
+
+## The result {.smaller}
+
+```{r}
+summary(lm_tran)
+```
+
+## Adding binary variables
+
+When the model including binary variables based on a factor 
+
+```{r}
+mtcars$gear_f <- factor(mtcars$gear, levels = 3:5, labels = c("3-gear", "4-gear", "5-gear"))
+table(mtcars$gear)
+table(mtcars$gear_f); class(mtcars$gear_f)
+```
+
+## The result {.smaller}
+
+```{r}
+lm_f <- lm(mpg ~ cyl + hp + wt + gear_f, data = mtcars)
+summary(lm_f)
 ```
 
 
-## Plotting with packages: `interplot`{.smaller}
+## Interaction
+Two-way interaction: horsepower * Weight
 
-
-```{r message=FALSE}
-library(interplot)
+```{r}
 lm_in <- lm(mpg ~ cyl + hp * wt, data = mtcars)
-summary(lm_in)
 
+```
+
+Equivalent to `lm_in2 <- lm(mpg ~ cyl + hp + wt + hp:wt, data = mtcars)`
+
+
+## The result {.smaller}
+```{r}
+summary(lm_in)
+```
+
+
+
+## Post-estimate diagnoses: Residural
+  
+```{r fig.height=3.5, fig.align="center"}
+res <- resid(lm_ols); res[1:4]
+plot(lm_ols, which = 1) # residural vs. fitted plot
+```
+
+## Post-estimate diagnoses: Outliers
+```{r}
+car::outlierTest(lm_ols) # Bonferonni p-value for most extreme obs
 ```
 
 ----
 
-```{r fig.align="center"}
-interplot(m = lm_in, var1 = "hp", var2 = "wt") + 
-  xlab("Automobile Weight (thousands lbs)") + 
-  ylab("Estimated Coefficient for \nGross horsepower")
+```{r}
+car::qqPlot(lm_ols)  #qq plot for studentized resid 
 ```
+
+
+## Post-estimate diagnoses: CLRM Properties{.build}
+* Heteroscedasticity 
+
+```{r}
+car::ncvTest(lm_ols) 
+```
+
+* Multicollinearity
+
+```{r}
+car::vif(lm_ols) 
+```
+
+----
+
+Autocorrelation
+
+```{r}
+car::durbinWatsonTest(lm_ols)
+```
+
+
+## Logit
+$vs = \frac{1}{1 + e^{-(\beta_0 + \beta_1cylinder + \beta_2horsepower + \beta_3weight + \varepsilon)}}$
+
+```{r}
+logit <- glm(vs ~ cyl + hp + wt, data = mtcars, family = "binomial")
+```
+
+MLE on other distributions: change the value of the argument `family` to `Gamma`, `poisson`, `gaussian`, etc.
+
+## The result{.smaller}
+
+```{r}
+summary(logit)
+```
+
+
+## Interpretation: Margin
+
+```{r message=FALSE}
+library(mfx)
+logit_m <- logitmfx(vs ~ cyl + hp + wt, data = mtcars) 
+logit_m
+```
+
+## Interpretation: Predicted probability
+Predicted Probability when `cyl` changes from 4 to 6.
+
+```{r}
+# Step 1: creat an aggregate data 
+mtcars_fake <- with(mtcars, data.frame(cyl = 4:6, hp = mean(hp), wt = mean(wt)))
+# Step 2: predict based on the new data
+logit_pp4 <- cbind(mtcars_fake,predict(logit, newdata = mtcars_fake, type = "link", se = TRUE))
+# Step 3: convert to probability 
+logit_pp4 <- within(logit_pp4, {pp <- plogis(fit) 
+                                lb <- plogis(fit - 1.96 * se.fit)
+                                ub <- plogis(fit + 1.96 * se.fit)})
+logit_pp4[,7:9]
+```
+
 
 ## Wrap Up
-* R has a bunch of packages for creating publishing-like tables, e.g., `stargazer`, `xtable`, and `texreg`
+* OLS: `lm(Y ~ X, data = data)`
+    + Non-linear transformations: `I(X^2)`, `exp(X)`, `log(X)`.
+    + Using factor variable: R will handle that for you.
+    + Interaction: `lm(Y ~ X * Z, data = data)`.
+    + Post-estimate diagnoses: `resid()`, `outlierTest()`, `qqPlot()`, `ncvTest()`, `vif()`, `durbinWatsonTest()`
+* Logit: `glm(Y ~ X, data = data, family = "binomial")`
+    + Margins: using `mfx::logitmfx`
+    + Predict probabilty: 
+        + Step 1: create an aggregate data
+        + Step 2: predict the log odds
+        + Step 3: transfer to probability
+        
+----
 
-* There are three ways to visualize statistics in R: basic, lattice (`ggplot`), and interactive.
-    + basic: e.g., `hist(<vector>)`
-    + `ggplot`: /n  e.g., `ggplot(<data>, aes(x=<vector>)) + geom_histogram()`.
-
-* Two special types of plot:
-    + Estimate plot with [`dotwhisker`](https://cran.r-project.org/web/packages/interplot/vignettes/interplot-vignette.html).
-    + Interaction plot with [`interplot`](https://cran.r-project.org/web/packages/dotwhisker/vignettes/dwplot-vignette.html).
-
-
-## Almost the end: one topic left
+Next: Presenting with R
 
 <div class="centered">
-[![present](http://conservatives4palin.com/wp-content/uploads/2013/06/snob.gif)]
-</div>
 
+<img src="https://espngrantland.files.wordpress.com/2014/06/9u4jd.gif" height="500" width = "800" />
 
-# Version Control
-## Just a brief introduction{.columns-2 .build}
-<div class = "center">
-<img src= "http://www.foldertrack.com/images/Personal_Version_Mess.png" width = "400" height = "400" />
-</div>
-
-
-
-
-
-
-
-
-* Tried to recall the deleted codes?
-* Tried to figure out what changes?
-* Saved a lot of replication files?
-* Version control can help you.
-
----- 
-
-<div class = "center">
-<img src="http://cdn.arstechnica.net//wp-content/uploads/2012/05/uncommitted-changes-1.png" />
 </div>
  
+ 
+## See you then ~
 
-## Using Git with RStudio
+<div class = "centered">
 
-* RStudio has associate with the Git and SVN very well. 
-* Process to use git:
-    + Register a user account in https://github.com.
-    + Connect your account with RStudio following [this instruction](http://www.molecularecologist.com/2013/11/using-github-with-r-and-rstudio/).
-    + Create a version-control project in RStudio
-        + <img src="https://andreacirilloblog.files.wordpress.com/2014/12/new-project.png" height = "200" />
-    + Commit, Pull and Push
+<img src="http://rescuethepresent.net/tomandjerry/files/2016/05/16-thanks.gif" />
 
+</div>        
 
 ## External Sources
+* My email: [yue-hu-1@uiowa.edu](mailto: yue-hu-1@uiowa.edu)
+
+* Workshops: http://ppc.uiowa.edu/node/3608
+* Consulting service: http://ppc.uiowa.edu/node/3385/
 * Q&A Blogs: 
     + http://stackoverflow.com/questions/tagged/r
     + https://stat.ethz.ch/mailman/listinfo/r-help
@@ -294,12 +336,4 @@ interplot(m = lm_in, var1 = "hp", var2 = "wt") +
     + http://www.cookbook-r.com/Graphs/
     + http://shiny.stat.ubc.ca/r-graph-catalog/
 
-* Workshops: http://ppc.uiowa.edu/node/3608
-* Consulting service: http://ppc.uiowa.edu/node/3385/
 
-
-----
-
-<div class = "center">
-[![end](http://rescuethepresent.net/tomandjerry/files/2016/05/16-thanks.gif)]
-</div>

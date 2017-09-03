@@ -1,325 +1,496 @@
 ---
 title: "Hello, R!"
-author: "Yue Hu's R Workshop Series II"
+author: "Yue Hu's R Workshop Series I"
 output:
   ioslides_presentation:
-    self_contained: yes
+    incremental: true
     logo: image/logo.gif
+    self_contained: yes
+    slidy_presentation: null
     transition: faster
     widescreen: yes
-    slidy_presentation:
-    incremental: yes
 ---
+
 # Preface
-## What Are Covered in This Workshop Series 
-* [A overview of R](https://rpubs.com/sammo3182/Rintro) 
-* [Data manipulation (input/output, row/column selections, etc.)](https://rpubs.com/sammo3182/Rintro) 
-* **Descriptive and binary hypotheses (summary, correlation, t-test, etc.)**
-* **Multiple regression (OLS, GLS, MLM, etc.)**
-* Multilevel Regression
-* Presentation (table, graph)
+## What are covered
+
+*Fall*
+
+* A overview of R
+* Data manipulation (input/output, row/column selections, etc.)
+* Quantitative Analysis
+* Basic Data Visualization
 
 
 
-# Hypothesis Tests
+# An Overview of R
+## Why using R in your research?
+You can use R to:
 
-## package loading
-You want the `pacman` package to load multiple packages.
-
-```{r}
-pacman::p_load(dplyr)
-```
-
-## Data Glimpse
-```{r}
-data("mtcars")
-dplyr::glimpse(mtcars)
-```
+* Do statistics and solve math problems
+* Edit codes in Excel, Python, C++, ...
+* Scrape data from texts, websites, databases, pdf...
+* Create presentation slides in pdf (as LaTex beamer) or html (as Markdown)
+* Create webpages
+* Write academic articles and save them in html, pdf, or word.
+* Write an academic artical or book (see e.g., [bookdown](https://bookdown.org/home/).)
 
 
-## Binary Tests: Difference in mean
 
-$H_{0}: \bar{cylinders} = \bar{gears},\ \alpha = .05$
+## Why R rather than the others??
 
-```{r}
-t.test(mtcars$cyl, mtcars$gears) 
-```
+<div style="float: left; width: 50%;">
+* It's free!! 
+* It's developing!
+    + R is very compatible with new techniques
+    + e.g., Network analysis, spatial analysis with GIS, and text analysis with big data. 
+* It's multi-lingual!: `"Hello 你好 здравствуйте"`
 
-----
 
-`t.test` offers arguments `alternative`, `mu`, `paired`, and `conf.level` for users to change in two-tail/one-tail test, parameter mean, independent/paired comparison, and $\alpha$.
+</div>
+
+<div style="float: right; width: 50%;">
+* It's popular!
+    + <img src="http://revolution-computing.typepad.com/.a/6a010534b1db25970b01a3fc45e6fc970b-pi" height="290" width = "400"/>
+[Magoulas & King, 2014, *Data Science Salary Survey*.](http://www.oreilly.com/data/free/stratasurvey.csp)
+</div>
+
+
+## A Trade-Off of the Great Power
+
+<div class="centered">
+  <img src=image/LearningCurve2.png height="400"/>
+  </div> Source: NYU Data Services.
+
+## Software  installations 
+* Software installation (<span style="color:purple">Tip</span>)
+    + [![R](image/Rlogo.png)](https://www.r-project.org/)
+    + [![Rstudio](image/rStudioLogo.png)](https://www.rstudio.com/products/rstudio/download/preview/)
+
+<div class="notes">
+Install R before Rstudio; so does in updating.
+Using the [Rstudio preview](https://www.rstudio.com/products/rstudio/download/preview/).
+</div>
+
+## Package installation and loading{.build}
+* Packages are "<span style="color:red">Apps</span>" for R. 
+    +  `install.packages(<package name>)`
+    +  `install_github("<repositary/package name>")`
+* Find instructions from package repositories:
+    + [An example](https://github.com/sammo3182/interplot)
+* Click the apps: Load the package
+    + `library(<package name>)`
+    + `require(<package name>)`
+
+## RStudio{.flexbox .vcenter}
+<img src="image/rstudio.png" height="500" width = "900" />
+
+
+
+# Math and Basic Statistics with R
+## Set where to locate the data and store the results
+
+<div style="float: left; width: 50%;">
+* Always check or set the <span style="color:red">working directory</span> first
+    + `getwd()`
+    + `setwd("E:/R workshop/rworkshop")`
+</div>
+
+<div style="float: right; width: 50%;">
+* Or click, click, and click in Rstudio
+    + <img src=image/wdSetting.png height = "300"/>
+</div>
+
+
+## Terms of R in plain English {.columns-2}
+* **Object**: packing things together and naming it
+* **Vector**: 
+    + Mathematics: a one-column matrix
+    + Practice: a single variable
+* **Factor**:
+    + A special vector
+    + Special for ordinal or mulinomial variable
+* **Matrix** vis-a-vis **Data frame**
+    + Matrix is a pile of numbers
+    + Data frame is a dataset
+    
+<p class="forceBreak"></p>  
+
+* **Array**: a multi-dimension matrix
+    + <img src="image/array.gif" height="250"/>
+    + one-dimension array == vector
+    + two-dimension array == matrix
+* **Function**: a process to handle the object (`functionName(varLabel = varData)`)
+    
+
+## Do math with R: Basic Functions
 
 ```{r eval=FALSE}
-# one side, cyl > gear, alpha = .01
-t.test(mtcars$cyl, mtcars$gear,
-       alternative = "greater", conf.level = .99)) 
+# basic math
+x + (1 - 2) * 3 / 4
 
-# comparing with the parameter (true value)
-t.test(mtcars$cyl, mu = 6)   # the true mean is 6.
+# advanced math
+x^2;sqrt(x);log(x);exp(x)
 
+# matrix algebra
+z <- matrix(1:4, ncol = 2)
+z + z - z
+z %*% z  # inner mul<span style="color:purple">Tip</span>lication 
+z %o% z  # outter mul<span style="color:purple">Tip</span>lication
+
+# logical evaluation
+x == z; x != Z
+x & z; x | z
+x > z; x <= z
 ```
 
 
-## Binary Tests: Correlation
-$H_{0}: \rho_{(cyl,gear)} = 0,\ \alpha = .05$
+## Common Data Type: Vector{.smaller}
+```{r}
+1:10  # numeric (integer/double)
+c("R", "workshop") # character
+3 == 5  # logical
+factor(1:3, levels = 1:3, labels = c("low", "medium", "high"))  # factor 
+```
+(<span style="color:purple">Tip</span>)
+
+<div class="notes">
+The `factor` is a R *function*. Ususally, the first component ("`1:3`") of a R function is the  <span style="color:red">object</span>, the target this function is going to work on. The rest components ("`levels = 1:3, labels = c("low", "medium", "high")`") are <span style="color:red">arguments</span>, with which setting the special conditions the object is dealt.
+
+If you are not sure about the utility of certain arguments, ask R for help by `?`, e.g.,
+
+```{r eval=FALSE}
+?factor
+```
+</div>
+
+
+## Common Data Type: Dataset {.smaller}
 
 ```{r}
-cor.test(mtcars$cyl, mtcars$gear)
+matrix(1:4, ncol = 2)  # matrix
+data.frame(x = 1:2, y = 3:4)  # data.frame
+list(c("one", "two"), c(3, 4)) # 2-D list
+```
+
+----
+```{r}
+array(c(1:8), dim = c(2, 2, 3)) # 3-D or n-D "list""
+```
+
+
+## Save data to an object
+```{r}
+x <- rep(c(.01, .05, .1), times = 2) # repeat 1:5 for twice
+df <- data.frame(x = 1:1, y = 3:4)
+list <- list(x, df)
+
+list # == print(list)
 ```
 
 ----
 
-`cor.test` offers various arguments as in `t.test` for more specific settings. Moreover, users can use the `method` argument to set the method to calculate the correlations, "Pearson", "Kendall", or "Spearman." (<span style="color:green">Tip</span>)
+Basic rules for object name:
+
+* Don't start with numbers (WRONG: `1stday`)
+* No special signs except for `.` and `-` (WRONG: `M&M`)
+* Case sensitivity (`X != x`)
+
+
+
+
+## Attributes of an object {.smaller .build}
+* Structure
 
 ```{r}
-cor.test(mtcars$cyl, mtcars$gear, method = "kendall")
+str(df)
+```
+
+* Unique values (<span style="color:purple">Tip</span>)
+
+```{r}
+unique(df$x)
+```
+<div class="notes">
+What is the `$`?  It is used to call specific columns a data.frame. 
+
+To call the components in a vector, we use "[]"
+
+```{r}
+x[3]
+```
+
+To call the components in a list, we use "[[]]"
+
+```{r}
+list[[2]]
+```
+
+</div>
+
+* Names
+
+```{r}
+names(df)
+```
+
+----
+
+Length
+
+```{r}
+length(x)
+```
+
+Class
+
+```{r}
+class(x);typeof(x)  # ; is used to write two commands in one line
+```
+
+
+## Detect the attributes
+Using `is.`
+
+```{r}
+x <-c(1, 2, NA, 4)
+is.numeric(x)
+is.na(x) # detect if x includes missing values
+```
+
+
+
+
+## Wrap up {.columns-2}
+
+* Set the working directory first: `setwd()`
+* Four types of data: numeric, character, logical, factor
+* Four types of datasets: matrix, data.frame, list, array
+* Save the things into an object by `<-`
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<p class="forceBreak"></p>
+
+* Next: Data input 
+    + <img src=https://cnet1.cbsistatic.com/img/cbDfaPT6Hj22YVzbIXdKHdW7y-k=/270x0/2016/07/08/a82975f5-6adb-4dec-8bec-561ca3d348ea/pokemon-go-gif.gif height = "290"/>
+
+
+
+# Data Input and Manipulation
+## Input default data types{.build}
+
+* Default data types: .Rds, .Rdata(.Rda)
+
+```{r eval=FALSE}
+load("<FileName>.RData")
+
+df_txt <- read.table("<FileName>.txt")
+df_csv <- read.csv("<FileName>.csv")
+
+```
+
+* Some data are already embedded in R. To call them, use `data()`, e.g.
+
+```{r eval=FALSE}
+data(mtcars)
+```
+
+
+## Input data with packages
+```{r eval=FALSE}
+# SPSS, Stata, SAS
+library(haven)
+df_spss <- read_spss("<FileName>.sav")
+df_stata <- read_dta("<FileName>.dta") 
+df_sas <- read_sas("<FileName>.sas7bdat")  
+
+# Excel sheets
+library(readxl)
+df_excel <- read_excel("<FileName>.xls");read_excel("<FileName>.xlsx") 
+
+# JavaScript Object Notation 
+library(rjson)
+df_json <- fromJSON(file = "<FileName>.json" )
+
+# XML/Html
+df_xml <- xmlTreeParse("<url>")
+df_html <- readHTMLTable(url, which=3)
+
+```
+
+
+## Output data{.build}
+
+* Save in a R dataset (`.RData`) 
+
+```{r eval = F}
+save(object, file = "./Data/mydata.Rdata")
+```
+
+* Save as `.csv`
+
+```{r eval = F}
+write.csv(object, file = "mydata.csv")
+```
+
+* Save as `.feather` (<span style="color:purple">Tip</span>)
+
+```{r eval=F}
+feather::write_feather(mydata, "mydata.feather")
 ```
 
 <div class="notes">
-Do I have to type the `mtcars$` every time? 
-
-* No you don't.
-    + It offers a potential for cross-dataset operation, though.
-    + Use `within()`: e.g., `within(mtcars, cor.test(cyl, gear))`
-    + Use `attach()` (not recommonded)
+Feather is a fast, lightweight, and easy-to-use binary file format for storing data frames, which can be read by both R and Python.
+See more details in [Feather](https://blog.rstudio.org/2016/03/29/feather/).
 </div>
 
 
-----
-
-We can get the correlation matrix, too:
-```{r}
-cor(mtcars[,1:4])
-```
-
-## Present the correlations
-You want the `corrplot` package.
-```{r fig.height=4}
-cor(mtcars) %>% corrplot::corrplot()
-```
-
-----
-
-Or a mixed format:
-```{r}
-cor(mtcars) %>% corrplot::corrplot.mixed()
-```
-
-
-## Binary Tests: ANOVA {.smaller}
-One way or two way ANOVA: 
+## Manipulate the data{.build}
+* let's call a dataset first,
 
 ```{r}
-aov_one <- aov(cyl ~ gear, data = mtcars) #one-way
+data(mtcars)
+```
 
-aov_two <- aov(cyl ~ gear + am, data = mtcars) #two-way
+* Variable numbers and Observations
 
-summary(aov_one); summary(aov_two)
+```{r}
+ncol(mtcars);names(mtcars)
+nrow(mtcars)
 ```
 
 
-
-## Wrap up
-* T-test: `t.test(x, y = NULL, alternative = c("two.sided", "less", "greater"), mu = 0, paired = FALSE, conf.level = 0.95, ...)`
-
-* Correlation: `cor.test(x, y, alternative = c("two.sided", "less", "greater"), method = c("pearson", "kendall", "spearman"), conf.level = 0.95, continuity = FALSE, ...) `
-
-* ANOVA: `aov(formula, data = NULL, ...)`
+## Have a glimpse.
+```{r}
+dplyr::glimpse(mtcars)
+```
 
 ----
 
-Next: Multiple regression
+```{r}
+head(mtcars) # show the first six lines of mtcars
+```
+
+## Let's zoom in!{.build}
+* locate a specific row, column, or cell of data: `data[row#, col#]` or `data["rowName","colName"]`. 
+
+```{r}
+mtcars[1:2,3:4] # show first and the second rows of the third and fourth columns
+```
+
+```{r eval=FALSE}
+mtcars[ ,"mpg"] # show the column "mpg"
+mtcars[ ,"mpg"][3]
+```
+
+----
+
+Select with special conditions
+
+```{r}
+mtcars[mtcars$mpg < 20,][1,] # show the first rows which mpg are below 5.
+```
+
+Create new rows/columns
+
+```{r}
+mtcars$id <- seq(1:nrow(mtcars))
+```
+
+
+## Let's generalize!{.build}
+* Summarise vector in categories
+
+```{r}
+unique(mtcars$cyl)
+table(mtcars$cyl)
+```
+
+----
+
+For a dataset or a numeric vector
+
+```{r}
+summary(mtcars$cyl)
+```
+
+One can use `mean`, `sd`, `max`, `min`, etc. to extract specific descriptive statistics.
+
+```{r}
+mean(mtcars$cyl)
+```
+
+## Let's create!{.build}
+* Create a variable into the dataset (<span style="color:purple">Tip</span>)
+
+```{r}
+mtcars$newvar <- c(1:nrow(mtcars)) # create an "ID" variable
+mtcars$newvar
+```
+
+<div class="notes">
+Obviously, variables can be immediately overwrite without any specific setting. 
+
+It is convenient but also <span style="color:red">risky</span>.
+</div>
+
+* Remove a variable from the dataset
+
+```{r}
+mtcars$newvar <- NULL
+mtcars$newvar
+```
+
+----
+
+Remove variable, result, function, or data from the environment
+
+```{r eval=FALSE}
+rm(x)
+```
+
+Recode a variable: e.g., numeric to binary, mpg > mean, 1, otherwise 0
+
+```{r eval=FALSE}
+# Method I
+mtcars$newvar[mtcars$mpg > mean(mtcars$mpg)] <- 1
+mtcars$newvar[mtcars$mpg <= mean(mtcars$mpg)] <- 0
+
+# Method II
+mtcars$newvar <- ifelse(mtcars$mpg > mean(mtcars$mpg), 1, 0) # overwrite the NAs
+```
+
+
+## Wrap Up 
+* Input/output: `load()`/`read.`series and `save()`/`write.`series
+* A glimpse of data: `head()` or `dplyr::glimpse`
+* Description: `summary()`, `table()`
+    + More specific: `mean`, `sd`, `max`, `min`, etc.
+* Manipulation: 
+    + create: `mtcars$newvar <- c(1:nrow(mtcars))`
+    + Remove: `mtcars$newvar <- NULL`; `rm()`
+    + Recode: `recodevar[<condition>] <- <new value>`
+* There are also [`apply` family](http://www.r-bloggers.com/r-tutorial-on-the-apply-family-of-functions/) functions for with batching management of data.
+
+
+## Next lecture: Hypothsis test
 
 <div class="centered">
-![core](http://www.math.yorku.ca/SCS/spida/lm/mreganim3.gif)
+![](http://mathsupport.mas.ncl.ac.uk/images/d/d0/95contint.gif)
 </div>
 
 
-# Multiple Regression
-## Ordinary Linear Regression
-$Mileage = \beta_0cylinders + \beta_1horsepower + \beta_3weight + \varepsilon$
-
-```{r}
-lm_ols <- lm(mpg ~ cyl + hp + wt, data = mtcars)
-``` 
-
-* `lm_ols`: Object name
-* `mpg`: Dependent variable
-* `cyl + hp + wt`: Independent variables
-* `data = mtcars`: Where the variables are stored
-
-
-## Result{.smaller}
-
-```{r} 
-summary(lm_ols)
-```
-
-## Nonlinear transition
-ln, square, exponential, or inverse
-
-```{r}
-lm_tran <- lm(log(mpg) ~ I(cyl^2) + exp(hp) + I(1/wt), data = mtcars)
-```
-
-* `log(mpg)`: logistic
-* `I(cyl^2), I(1/wt)`: square, inverse
-* `exp(hp)`: exponential
-
-## The result {.smaller}
-
-```{r}
-summary(lm_tran)
-```
-
-## Adding binary variables
-
-When the model including binary variables based on a factor 
-
-```{r}
-mtcars$gear_f <- factor(mtcars$gear, levels = 3:5, labels = c("3-gear", "4-gear", "5-gear"))
-table(mtcars$gear)
-table(mtcars$gear_f); class(mtcars$gear_f)
-```
-
-## The result {.smaller}
-
-```{r}
-lm_f <- lm(mpg ~ cyl + hp + wt + gear_f, data = mtcars)
-summary(lm_f)
-```
-
-
-## Interaction
-Two-way interaction: horsepower * Weight
-
-```{r}
-lm_in <- lm(mpg ~ cyl + hp * wt, data = mtcars)
-
-```
-
-Equivalent to `lm_in2 <- lm(mpg ~ cyl + hp + wt + hp:wt, data = mtcars)`
-
-
-## The result {.smaller}
-```{r}
-summary(lm_in)
-```
-
-
-
-## Post-estimate diagnoses: Residural
-  
-```{r fig.height=3.5, fig.align="center"}
-res <- resid(lm_ols); res[1:4]
-plot(lm_ols, which = 1) # residural vs. fitted plot
-```
-
-## Post-estimate diagnoses: Outliers
-```{r}
-car::outlierTest(lm_ols) # Bonferonni p-value for most extreme obs
-```
-
-----
-
-```{r}
-car::qqPlot(lm_ols)  #qq plot for studentized resid 
-```
-
-
-## Post-estimate diagnoses: CLRM Properties{.build}
-* Heteroscedasticity 
-
-```{r}
-car::ncvTest(lm_ols) 
-```
-
-* Multicollinearity
-
-```{r}
-car::vif(lm_ols) 
-```
-
-----
-
-Autocorrelation
-
-```{r}
-car::durbinWatsonTest(lm_ols)
-```
-
-
-## Logit
-$vs = \frac{1}{1 + e^{-(\beta_0 + \beta_1cylinder + \beta_2horsepower + \beta_3weight + \varepsilon)}}$
-
-```{r}
-logit <- glm(vs ~ cyl + hp + wt, data = mtcars, family = "binomial")
-```
-
-MLE on other distributions: change the value of the argument `family` to `Gamma`, `poisson`, `gaussian`, etc.
-
-## The result{.smaller}
-
-```{r}
-summary(logit)
-```
-
-
-## Interpretation: Margin
-
-```{r message=FALSE}
-library(mfx)
-logit_m <- logitmfx(vs ~ cyl + hp + wt, data = mtcars) 
-logit_m
-```
-
-## Interpretation: Predicted probability
-Predicted Probability when `cyl` changes from 4 to 6.
-
-```{r}
-# Step 1: creat an aggregate data 
-mtcars_fake <- with(mtcars, data.frame(cyl = 4:6, hp = mean(hp), wt = mean(wt)))
-# Step 2: predict based on the new data
-logit_pp4 <- cbind(mtcars_fake,predict(logit, newdata = mtcars_fake, type = "link", se = TRUE))
-# Step 3: convert to probability 
-logit_pp4 <- within(logit_pp4, {pp <- plogis(fit) 
-                                lb <- plogis(fit - 1.96 * se.fit)
-                                ub <- plogis(fit + 1.96 * se.fit)})
-logit_pp4[,7:9]
-```
-
-
-## Wrap Up
-* OLS: `lm(Y ~ X, data = data)`
-    + Non-linear transformations: `I(X^2)`, `exp(X)`, `log(X)`.
-    + Using factor variable: R will handle that for you.
-    + Interaction: `lm(Y ~ X * Z, data = data)`.
-    + Post-estimate diagnoses: `resid()`, `outlierTest()`, `qqPlot()`, `ncvTest()`, `vif()`, `durbinWatsonTest()`
-* Logit: `glm(Y ~ X, data = data, family = "binomial")`
-    + Margins: using `mfx::logitmfx`
-    + Predict probabilty: 
-        + Step 1: create an aggregate data
-        + Step 2: predict the log odds
-        + Step 3: transfer to probability
-        
-----
-
-Next: Presenting with R
-
-<div class="centered">
-
-<img src="https://espngrantland.files.wordpress.com/2014/06/9u4jd.gif" height="500" width = "800" />
-
-</div>
- 
- 
 ## See you then ~
 
-<div class = "centered">
+<div class = "center">
+![](http://rescuethepresent.net/tomandjerry/files/2016/05/16-thanks.gif)
+</div>
 
-<img src="http://rescuethepresent.net/tomandjerry/files/2016/05/16-thanks.gif" />
-
-</div>        
 
 ## External Sources
 * My email: [yue-hu-1@uiowa.edu](mailto: yue-hu-1@uiowa.edu)
@@ -335,5 +506,8 @@ Next: Presenting with R
 * Graph Blogs:
     + http://www.cookbook-r.com/Graphs/
     + http://shiny.stat.ubc.ca/r-graph-catalog/
+
+
+
 
 
