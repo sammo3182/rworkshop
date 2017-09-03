@@ -955,15 +955,60 @@ Plot the comparable coefficients or other estimates (margins, predicted probabil
 ```{r message=FALSE}
 library(dotwhisker)
 library(broom)
-lm_df <- tidy(lm_ols)
-lm_df
+m1 <- lm(mpg ~ wt + cyl + disp + gear, data = mtcars)
+```
+
+----
+```{r}
+summary(m1)
 ```
 
 ----
 
-```{r message=F, fig.align="center", fig.height=4}
-dwplot(lm_df)
+```{r}
+dwplot(m1)
 ```
+
+
+----
+
+```{r message=F, fig.align="center", fig.height=4}
+m2 <- update(m1, . ~ . + hp) # add another predictor
+m3 <- update(m2, . ~ . + am) # and another 
+
+dwplot(list(m1, m2, m3))
+```
+
+----
+
+```{r eval = F}
+dwplot(list(m1, m2, m3)) +
+     relabel_y_axis(c("Weight", "Cylinders", "Displacement", 
+                     "Gears", "Horsepower", "Manual")) +
+     theme_bw() + xlab("Coefficient Estimate") + ylab("") +
+     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+     ggtitle("Predicting Gas Mileage") +
+     theme(plot.title = element_text(face="bold"),
+           legend.justification=c(0, 0), legend.position=c(0, 0),
+           legend.background = element_rect(colour="grey80"),
+           legend.title = element_blank()) 
+```
+
+----
+
+```{r echo = F}
+dwplot(list(m1, m2, m3)) +
+     relabel_y_axis(c("Weight", "Cylinders", "Displacement", 
+                     "Gears", "Horsepower", "Manual")) +
+     theme_bw() + xlab("Coefficient Estimate") + ylab("") +
+     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+     ggtitle("Predicting Gas Mileage") +
+     theme(plot.title = element_text(face="bold"),
+           legend.justification=c(0, 0), legend.position=c(0, 0),
+           legend.background = element_rect(colour="grey80"),
+           legend.title = element_blank()) 
+```
+
 
 
 ## Plotting with packages: `interplot`{.smaller}

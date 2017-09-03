@@ -1,0 +1,158 @@
+---
+title: "Network Analysis with R"
+author: Yue Hu
+output: html_notebook
+---
+
+Before the data exploration, here are commonly used data input, management, and network analysis packages.
+We need to load them for later useage. 
+
+```{r setup, include = TRUE}
+# chunk property setting
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+
+# package loading
+library(pacman)
+p_load(ggplot2, GGally, # Visualization
+       network, sna, igraph,# Applied
+       readxl, haven, descr, stringi, stringr, arm, car, stargazer, data.table, broom, tibble, tidyr, purrr, dplyr) # data wrangling
+
+# replication
+set.seed(313)
+```
+
+Source: https://briatte.github.io/ggnet/
+
+# Network Data
+## Data Format
+Network data are used to record network relations including nodes and edges.
+Commonly, such data can be categorized in three dimensions: 
+
+* Data format: adjacency vs. edgelist.
+* Edge weight: weighted vs. unweighted.
+* Edge direction: directed vs. nondirected.
+
+
+Let's first have a look at what do each looks like.
+Here we use the `sna::rgraph` function to create toy network data for illustration.
+
+```{r}
+# Unweighted nondirected adjacency network ####
+net_una <- rgraph(5, mode = "graph", tprob = 0.5)
+net_una
+
+# Unweighted nondirected edgelist ####
+net_une <- rgraph(5, mode = "graph", tprob = 0.5, return.as.edgelist = TRUE)
+net_une
+
+# weighted directed edgelist ####
+net_wde <- rgraph(5, mode = "graph", tprob = 0.5, return.as.edgelist = TRUE)
+net_wde[, 3] <- sample(1:5, nrow(net_wde), replace = TRUE)
+net_wde
+
+# Unweighted directed adjacency network ####
+net_uda <- rgraph(5, mode = "digraph", tprob = 0.5)
+net_uda
+```
+
+As shown above, the rows and columns of an adjacency network are both indices of nodes, and the cells represent edge status between the nodes. 
+The corresponding edgelist records the same information but in a dyadic way, where the data are recored in three columns: the indices of the first node, the indices of the second node, and the edge status.
+Regarding the edge status, a unweighted network, 1 represents the nodes are connected, while 0 represent they are not.
+When the network is weighted, instead of 1/0, the edge status shows a numeric measure of the strength of the connections between nodes.
+Finally, in nondirected network, the connections between nodes are always symmetric. That is, if A connects with B (A->B = 1), B is then definitely connected with A (B->A = 1).
+In a (unweigthed) direct network, this restriction is released. When A->B = 1, B->A can be either 1 or 0.
+
+NOTE: Some network analyses in R may require not only a matrix of the network relations. The matrix should also be saved as a `network` project.
+In such case, one more step after getting the correct network matrix: 
+
+```{r}
+net_unaNET <- network(net_una, directed = FALSE)
+class(net_unaNET)
+```
+
+
+## Data converting
+Although the same network can be recorded in adjacency matrix and edgelist, some analysis may require a specific type of data format.
+Then, how do we convert them between each other for the sake of analysis?
+
+
+```{r}
+# Adjacency to Edgelist ####
+net_una2e <- as.edgelist(net_unaNET)
+net_una2e
+
+# Edgelist to Adjacency ####
+net_une2a <- network(net_une, directed = FALSE) %>% 
+  # "%>%" is a pipe sign from the `dplyr` package meaning taking the result of the previous step to the following step as the first argument of the function.
+  as.sociomatrix()
+net_une2a
+```
+
+## Longitudinal Network
+In this section, we discuss a special demand of data management: longitudinal network.
+It refers to the data recording not only the spatial distribution of a network but also the time trend. 
+For preparing analyses for such data, there are generally two ways to manage the data, in data matrix or list. 
+
+### Longitudinal network data matrix
+This type of data can be directly used in `tnet` functions for TERGM analyses.
+The format is merely adding the time line in an edgelist:
+```{r}
+net_unt <- rgraph(5, mode = "graph", tprob = 0.5, return.as.edgelist = TRUE) %>%
+  as.data.frame() %>%
+    mutate(t = sample(1900:2017, nrow(.)), 
+           t = as.character(t), 
+           t = as.POSIXct(t, format = "%Y")) %>%
+             select(-V1, -V2, -V3, everything()) %>% # reorder the columns
+               rename(i = V1, j = V2, w = V3) # unnecessary step; just for showing the nature of the variables
+
+net_unt
+```
+
+Notice: 
+
+1. For a longitudinal data for `tnet` functions, there is a special requirement of the order of the columns. 
+The first column should be the time trend, and then the indices of the first, second node, and finally the weight of edges (weighting 1 for unweighted network).
+
+2. The time trend has to be coded as `POSIXct` classes (including `Date`). 
+
+### Temporial list of Network 
+Some packages (e.g., `tsna`) may require data to be coded as temporial lists, that is, storing an adjacency network in each element of a list according to time.^[See analytical examples with `tsna` in http://statnet.csde.washington.edu/workshops/SUNBELT/current/ndtv/ndtv_workshop.html]
+How can you get data in such format from a dyadic data frame?
+Here's an example. 
+We create a list of network (which is actually the format we finally need) first and convert it into a dyadic format for later practice. 
+Then, using the functions in `purrr` to convert it back to a temporal list of networks.
+```{r}
+# Creating the toy data ####
+net_unt2 <- rgraph(5, m = 3, mode = "graph", tprob = 0.5) %>%
+  # gives an array with the first dimension as the network index
+  array_tree(margin = 1) 
+
+net_unt2
+
+# Convert to the edgelist ####
+net_unt3 <- map_df(net_unt2, function(net){
+  t <- sample(1900:2017, 1) %>%
+    as.character() %>%
+      as.POSIXct(format = "%Y")
+  
+  net <- as.network(net) %>%
+    as.edgelist() %>%
+      as.data.frame()
+  
+  net$t <- t
+  return(net)
+  })
+
+net_unt3
+
+# Convert back to temporal list of network projects####
+net_unt3 <- net_unt3 %>%
+  split(.$t) %>%
+    map(function(net){
+      net <- select(net, -t) %>%
+        as.network(directed = FALSE) %>%
+          as.sociomatrix})
+
+net_unt3
+```
+

@@ -1,0 +1,184 @@
+\documentclass[12pt]{scrartcl}
+%\documentclass[12pt,abstracton]{article}
+\usepackage[english]{babel}
+\usepackage[letterpaper,margin=1in,footskip=.5in]{geometry} %left=0.6in,right=0.6in,top=1in,bottom=1in 用于细致调整
+\usepackage[tbtags]{amsmath}  
+%Place equation numbers on the left by adding [leqno]; [tbtags] ‘Top-or-bottom tags’ For a split equation, place equation numbers level with the last (resp. first) line, if numbers are on the right (resp. left).
+\usepackage[scaled=.90]{helvet}
+\usepackage{courier}
+\usepackage{times}
+\usepackage{setspace}
+\usepackage{paralist}
+\usepackage{titling}
+\usepackage{graphicx}  %Graph
+\usepackage{amssymb}  % Math
+\usepackage{fancyhdr} %Header set
+\usepackage{indentfirst} %indent at the first paragraph
+\usepackage[sort&compress]{natbib} %3 lines from here Bibliographic; sort & compress orders multiple citations into the sequence in which they appear in the list of references+;but in addition multiple numerical citations are compressed if possible (as 3-6, 15)
+\usepackage[utf8]{inputenc}
+\bibpunct{(}{)}{;}{a}{}{,}
+\usepackage{booktabs} %thinner lines in table
+\usepackage{dcolumn}  %aligning decimal points
+\usepackage[table]{xcolor}  %highlight parts of a table
+\usepackage[T1]{fontenc} %dealing with "<>" unable to appear problems
+\usepackage{multirow} %merge rows in table
+\usepackage[labelfont=bf]{caption}  % Border the caption includiong"Figure." and "Table."
+\usepackage{rotating} %rotate tables which are too wide
+\usepackage{tablefootnote} %Maintain footnotes appearing in table
+\usepackage[capposition=top, font=scriptsize]{floatrow} % adding notes for the figures
+\usepackage{subfigure} %纵排二图
+\usepackage{appendix} %精细化附录
+\usepackage[colorlinks,
+            linkcolor=red,
+            anchorcolor=blue,
+            citecolor=black
+            ]{hyperref}    %bookmark
+\usepackage[capitalise,noabbrev]{cleveref} %automatically detect type of reference by label, using \cref{key} instead of \ref{key}; at the begining of sentences, use \Cref{key}
+\interfootnotelinepenalty=10000 %Keep long footnote together
+\author{Yue Hu}
+
+\def\Tiny{\fontsize{5pt}{5pt} \selectfont} %choose font smaller than \tiny, the smallest size is 5pt.
+
+%Subtitle Codes
+\makeatletter
+\def\s@btitle{\relax}
+\def\subtitle#1{\gdef\s@btitle{#1}}
+\def\@maketitle{%
+  \newpage
+  \null
+  \vskip 0em%
+  \begin{center}%
+  \let \footnote \thanks
+    {\LARGE \@title \par}%
+  \if\s@btitle\relax
+  \else\typeout{[subtitle]}%
+   \vskip 0pc
+   \begin{large}%
+    \textsl{\s@btitle}%
+    \par
+   \end{large}%
+  \fi
+    \vskip 1em%
+    {\normalsize
+      \lineskip .em%
+      \begin{tabular}[t]{c}%
+        \@author
+      \end{tabular}\par}%
+    \vskip 0em%
+    {\normalsize \@date}%
+  \end{center}%
+  \par
+  \vskip 0em}
+\makeatother
+
+% This code puts the section numbering in the margins
+%\renewcommand*{\othersectionlevelsformat}[1]{%
+%	\makebox[0pt][r]{%
+%	\csname the#1\endcsname\enskip}%
+%	}
+
+\begin{document}
+	\title{Outline of R Workshop}
+	\date{\today}
+	\maketitle
+	
+	%\doublespacing
+	\setlength{\parindent}{2em} %段前空格
+	
+\section{Purpose}
+\begin{itemize}
+	\item Displaying the features, advantage, and disadvantages of R (comparing to STATA). 
+	\item Introducing the basic knowledge of statistical analysis and programming in R.
+	\item Showing the means and resources to self learn R.
+\end{itemize}
+
+\section{Schedule (Brief)}
+\begin{itemize}
+	\item[Day 1] (1 hour) Overview of R:
+		\begin{enumerate}
+			\item What is R?
+			\item Why do we learn R (as a beginner of programming/ as a STATA user)?
+			\item What R can do but STATA can't?
+			\item Install R and Rstudio
+			\item How to incorporate R with Github.
+		\end{enumerate}
+	\item[Day 2] (1.5 hours) Basic R
+		\begin{enumerate}
+			\item How to create vectors, lists, matices, and datasets?
+			\item Use R as an advanced calculator.
+			\item How to input, output data and set working directions?
+			\item Introduction of common R packages. 
+		\end{enumerate}
+	\item[Day 3] (1.5 hours) Data Manipulation
+		\begin{enumerate}
+			\item How to use filter rows?
+			\item How to select columns (variables)?
+			\item How to create new variables based on the existing ones and how to arrange them?
+			\item How to bind data (long to wide, wide to long, merge, append)?
+			\item An introduction of piping programing
+		\end{enumerate}
+	\item[Day 4] (1.5 hours) Data Analysis and Programming
+		\begin{enumerate}
+			\item How to do descriptive statistics in R? 
+			\item How to do t-test and ANOVA in R?
+			\item How to do OLS in R?
+			\item Introduction of basic MLE models in R.
+			\item Multiple Imputation and Factor Analysis (optional)
+		\end{enumerate}
+	\item[Day 5] (1.5 hours) Visualization and Output
+		\begin{enumerate}
+			\item Introduction of ggplot2.
+			\item How to do descriptive graphs (histgram, density, frequency)?
+			\item How to graph the regression results?
+			\item How to present interaction?
+			\item A very brief introduction of Latex.
+			\item How to incorporate R output (tables and figures) with Latex. 
+		\end{enumerate}
+\end{itemize}
+
+\section{Examples}
+Table
+% Table created by stargazer v.5.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: 周三, 7月 29, 2015 - 10:18:34
+% Requires LaTeX packages: dcolumn 
+\begin{table}[!htbp] \centering 
+	\caption{} 
+	\label{} 
+	\begin{tabular}{@{\extracolsep{5pt}}lD{.}{.}{-3} } 
+		\\[-1.8ex]\hline 
+		\hline \\[-1.8ex] 
+		& \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
+		\cline{2-2} 
+		\\[-1.8ex] & \multicolumn{1}{c}{mpg} \\ 
+		\hline \\[-1.8ex] 
+		cyl & -0.942^{*} \\ 
+		& (0.551) \\ 
+		& \\ 
+		hp & -0.018 \\ 
+		& (0.012) \\ 
+		& \\ 
+		wt & -3.167^{***} \\ 
+		& (0.741) \\ 
+		& \\ 
+		Constant & 38.752^{***} \\ 
+		& (1.787) \\ 
+		& \\ 
+		\hline \\[-1.8ex] 
+		Observations & \multicolumn{1}{c}{32} \\ 
+		R$^{2}$ & \multicolumn{1}{c}{0.843} \\ 
+		Adjusted R$^{2}$ & \multicolumn{1}{c}{0.826} \\ 
+		Residual Std. Error & \multicolumn{1}{c}{2.512 (df = 28)} \\ 
+		F Statistic & \multicolumn{1}{c}{50.171$^{***}$ (df = 3; 28)} \\ 
+		\hline 
+		\hline \\[-1.8ex] 
+		\textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+	\end{tabular} 
+\end{table} 
+
+\clearpage
+\bibliographystyle{ajps}
+\bibliography{E:/Dropbox_sync/Dropbox/Jabref}
+
+
+
+\end{document}
