@@ -44,15 +44,15 @@ You can use R to:
 * It's developing!
     + R is very compatible with new techniques
     + e.g., Network analysis, spatial analysis with GIS, and text analysis with big data. 
-* It's multi-lingual!: `"Hello 你好 здравствуйте"`
+* It's multi-lingual!: <br><br>`"Hello 你好 здравствуйте"`
 
 
 </div>
 
 <div style="float: right; width: 50%;">
 * It's popular!
-    + <img src="http://revolution-computing.typepad.com/.a/6a010534b1db25970b01a3fc45e6fc970b-pi" height="290" width = "400"/>
-[Magoulas & King, 2014, *Data Science Salary Survey*.](http://www.oreilly.com/data/free/stratasurvey.csp)
+    + <img src="http://www.kdnuggets.com/images/top-analytics-data-science-machine-learning-software-2015-2017.jpg" height="290" width = "400"/>
+[KDnuggets Software Poll](http://www.kdnuggets.com/2017/05/poll-analytics-data-science-machine-learning-software-leaders.html)
 </div>
 
 
@@ -69,7 +69,7 @@ You can use R to:
 
 <div class="notes">
 Install R before Rstudio; so does in updating.
-Using the [Rstudio preview](https://www.rstudio.com/products/rstudio/download/preview/).
+Using the [Rstudio Daily Builds](https://dailies.rstudio.com/).
 </div>
 
 ## Package installation and loading{.build}

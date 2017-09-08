@@ -1,7 +1,10 @@
 name: Publish Document
+title:
+username:
 account: rpubs
 server: rpubs.com
+hostUrl: rpubs.com
 appId: https://api.rpubs.com/api/v1/document/116176/6a33a364c3d94d9b904825ba6b021d2a
 bundleId: https://api.rpubs.com/api/v1/document/116176/6a33a364c3d94d9b904825ba6b021d2a
 url: http://rpubs.com/sammo3182/116176
-when: 1472009038.02335
+when: 1504898761.12349
