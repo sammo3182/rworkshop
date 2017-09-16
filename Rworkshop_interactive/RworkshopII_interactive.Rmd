@@ -1,0 +1,278 @@
+---
+title: "R Workshop II: Data Management"
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+
+```{r setup, include=FALSE}
+library(learnr)
+library(tidyverse)
+library(gapminder)
+
+top_10 <- c("United States", "United Kingdom", "Germany", "France",
+            "Japan", "Italy", "China", "India", "Canada", "Brazil")
+```
+
+
+## Preface
+
+*Fall 2018*
+
+* A overview of R
+* **Data manipulation (input/output, row/column selections, etc.)**
+* Quantitative Analysis
+* Basic Data Visualization
+
+## Data input and output
+
+### Input
+
+* Load build-in data: call by name.
+* Load `.rdata`, `.txt`, `.tab`, `.csv` directly.
+* Load almost <span style="color:red">ALL</span> types of data with packages (e.g., `haven`).
+
+<br>
+
+Toy data: `gapminder` data, demographic statistics popularized by [Hans Rosling's TED talks](https://www.ted.com/talks/hans_rosling_shows_the_best_stats_you_ve_ever_seen?utm_campaign=tedspread--b&utm_medium=referral&utm_source=tedcomshare).
+
+```{r toy, exercise = TRUE}
+library(gapminder)
+gapminder
+
+# If the data is in .csv
+# gapminder2 <- read.csv(file = "./gapminder.csv")
+
+# If the data is in .sav (SPSS data)
+#library(haven)
+#gapminder <- read_sav(file = "./gapminder.sav")
+```
+
+### Output
+
+* Save the data to the current working directory.
+
+```{r saveData, eval=FALSE}
+# save as rdata
+save(gapminder, file = "gapminder.Rdata")
+save.image() # save everything in the environment
+
+# Save as csv
+write.csv(gapminder, file = "gapminder.csv")
+```
+
+
+## Data manipulation
+
+### Functions
+
+In R, you manipulate data by passing the data to functions.
+
+```{r simple, exercise = TRUE}
+round(1234.567, digits = 2)
+nrow(gapminder)
+```
+
+
+
+### Load the `tidyverse`
+
+* A convenient tool for data manipulation in R is `tidyverse`, which includes [a series of packages](https://www.tidyverse.org/packages/). You must load the packages to use the functions.
+* A convenient way is load `tidyverse`, which is equivalent of loading the following common-used packages together: `ggplot2`, `dplyr`, `tidyr`, `readr`, `purrr`, and `tibble`.
+
+```{r loadTidy, exercise = TRUE}
+## install.packages("tidyverse")
+library("tidyverse")
+```
+
+
+### Why `tidyverse`: Simple
+
+They do one thing, and they do it well.
+
+```{r out.width = "95%", echo = FALSE}
+knitr::include_graphics("images/simple.png")
+```
+
+### Why `tidyverse`: Composable
+
+They can be combined with other functions for multi-step operations.
+
+```{r out.width = "95%", echo = FALSE}
+knitr::include_graphics("images/composable.png")
+```
+
+Shortcut for `%>%`: 
+
+* Ctrl + Shift + M (Win)
+* Cmd + Shift + M (Mac)
+
+### Which countries have the largest populations?
+
+```{r out.width = "95%", echo = FALSE}
+knitr::include_graphics("images/arrange.png")
+```
+
+```{r out.width = "95%", echo = FALSE}
+knitr::include_graphics("images/desc.png")
+```
+
+```{r ex4, exercise = TRUE, exercise.eval = TRUE}
+gapminder
+```
+
+```{r ex4-solution}
+arrange(gapminder, desc(pop))
+```
+
+### Which countries had the largest population in *2007*?
+
+```{r out.width = "95%", echo = FALSE}
+knitr::include_graphics("images/filter.png")
+```
+
+```{r ex6, exercise = TRUE, exercise.eval = TRUE}
+gapminder
+```
+
+```{r ex6-solution}
+gapminder2007 <- filter(gapminder, year == 2007)
+arrange(gapminder2007, desc(pop))
+
+gapminder %>% 
+  filter(year == 2007) %>% 
+  arrange(desc(pop))
+```
+
+### Which countries had the largest life expectancy in 2007?
+
+```{r out.width = "95%", echo = FALSE}
+knitr::include_graphics("images/select.png")
+```
+
+```{r ex7, exercise = TRUE, exercise.eval = TRUE}
+gapminder
+```
+
+```{r ex7-solution}
+gapminder %>% 
+  filter(year == 2007) %>% 
+  arrange(desc(lifeExp)) %>% 
+  select(country, lifeExp)
+```
+
+### What is the gdp of each country?
+
+```{r out.width = "95%", echo = FALSE}
+knitr::include_graphics("images/mutate.png")
+```
+
+```{r ex8, exercise = TRUE, exercise.eval = TRUE}
+gapminder
+```
+
+```{r ex8-solution}
+gapminder %>% 
+  mutate(gdp = pop * gdpPercap)
+```
+
+
+### What was the average gdp?
+
+```{r out.width = "95%", echo = FALSE}
+knitr::include_graphics("images/summarise.png")
+```
+
+```{r ex9, exercise = TRUE, exercise.eval = TRUE}
+gapminder %>% 
+  mutate(gdp = pop * gdpPercap)
+```
+
+```{r ex9-solution}
+gapminder %>% 
+  mutate(gdp = pop * gdpPercap) %>% 
+  summarise(mean_gdp = mean(gdp))
+```
+
+### What was the average gdp for each year
+
+```{r out.width = "95%", echo = FALSE}
+knitr::include_graphics("images/group_by.png")
+```
+
+```{r ex10, exercise = TRUE, exercise.eval = TRUE}
+gapminder %>% 
+  mutate(gdp = pop * gdpPercap) %>% 
+  summarise(mean_gdp = mean(gdp))
+```
+
+```{r ex10-solution}
+gapminder %>% 
+  mutate(gdp = pop * gdpPercap) %>% 
+  group_by(year) %>% 
+  summarise(mean_gdp = mean(gdp))
+```
+
+### Important note
+
+When doing `gapminder %>% ...`, you are <span style="color:red">NOT</span> adding or changing anything in the `gapminder`.
+If you want to really have a copy of changed data, send the result to an object.
+
+```{r eval = FALSE}
+gapminderNew <- gapminder %>% ...
+```
+
+
+## Data Combination
+
+### Combine 
+
+```{r out.width = "95%", echo = FALSE}
+knitr::include_graphics("images/rowbind.png")
+```
+
+### Combine 2002 and 2007 data
+
+```{r ex11, exercise = TRUE, exercise.eval = TRUE}
+gapminder2002 <- filter(gapminder, year == 2002)[1:2, ]
+gapminder2007 <- filter(gapminder, year == 2007)[1:2, ]
+```
+
+```{r ex11-solution}
+gapminder2002 <- filter(gapminder, year == 2002)[1:2, ]
+gapminder2007 <- filter(gapminder, year == 2007)[1:2, ]
+
+gapminder0207 <- bind_rows(gapminder2002, gapminder2007)
+```
+
+See also `bind_cols`.
+
+### Merge
+
+```{r out.width = "95%", echo = FALSE}
+knitr::include_graphics("images/join.png")
+```
+
+### Create a dataset including both continent and year
+
+```{r ex12, exercise = TRUE, exercise.eval = TRUE}
+gapminder2002 <- filter(gapminder, year == 2002)[1:2, ]
+
+gapminder2002A <- select(gapminder2002, country, continent)
+gapminder2002B <- select(gapminder2002, country, year)
+```
+
+```{r ex12-solution}
+gapminder2002A <- select(gapminder2002, country, continent)
+gapminder2002B <- select(gapminder2002, country, year)
+
+gapminder2002AB <- left_join(gapminder2002A, gapminder2002B)
+```
+
+## Do the same job in STATA
+```{r out.width = "100%", echo = FALSE}
+knitr::include_graphics("images/stata.jpg")
+```
