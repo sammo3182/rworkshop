@@ -1,5 +1,5 @@
 ---
-title: "R Workshop II: Data Management"
+title: "Data Management"
 output: 
   learnr::tutorial:
     progressive: true
@@ -17,6 +17,8 @@ top_10 <- c("United States", "United Kingdom", "Germany", "France",
             "Japan", "Italy", "China", "India", "Canada", "Brazil")
 ```
 
+**Yue Hu's R workshop series II**   
+*Iowa Social Science Research Center (ISRC)*
 
 ## Preface
 
