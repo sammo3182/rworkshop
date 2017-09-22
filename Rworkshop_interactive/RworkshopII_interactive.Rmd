@@ -17,7 +17,7 @@ top_10 <- c("United States", "United Kingdom", "Germany", "France",
             "Japan", "Italy", "China", "India", "Canada", "Brazil")
 ```
 
-**Yue Hu's R workshop series II**   
+**Yue Hu's "Hello, R!" workshop series II**   
 *Iowa Social Science Research Center (ISRC)*
 
 ## Preface
@@ -28,6 +28,11 @@ top_10 <- c("United States", "United Kingdom", "Germany", "France",
 * **Data manipulation (input/output, row/column selections, etc.)**
 * Quantitative Analysis
 * Basic Data Visualization
+
+<br>
+
+Request example codes from yue-hu-1@uiowa.edu.    
+Register other workshops in the [ISRC website](http://ppc.uiowa.edu/node/3608).
 
 ## Data input and output
 

@@ -5,8 +5,8 @@ account: huyue
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 215256
-bundleId: 985523
+bundleId: 991897
 url: https://huyue.shinyapps.io/Data_Management_with_R/
-when: 1505697673.745
+when: 1506045618.03765
 asMultiple: FALSE
 asStatic: FALSE
