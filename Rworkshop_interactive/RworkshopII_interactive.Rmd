@@ -85,7 +85,7 @@ nrow(gapminder)
 
 
 
-### Load the `tidyverse`
+### Working with`tidyverse`
 
 * A convenient tool for data manipulation in R is `tidyverse`, which includes [a series of packages](https://www.tidyverse.org/packages/). You must load the packages to use the functions.
 * A convenient way is load `tidyverse`, which is equivalent of loading the following common-used packages together: `ggplot2`, `dplyr`, `tidyr`, `readr`, `purrr`, and `tibble`.

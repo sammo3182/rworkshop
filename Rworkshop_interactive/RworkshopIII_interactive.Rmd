@@ -1,0 +1,215 @@
+---
+title: "Quantitative Analysis"
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+
+```{r setup, include=FALSE}
+pacman::p_load(learnr, tidyverse, gapminder, car)
+```
+
+**Yue Hu's "Hello, R!" workshop series III**   
+*Iowa Social Science Research Center (ISRC)*
+
+## Preface
+
+*Fall 2018*
+
+* A overview of R
+* Data manipulation (input/output, row/column selections, etc.)
+* _Quantitative Analysis_
+* Basic Data Visualization
+
+<br>
+
+Register other workshops in the [ISRC website](http://ppc.uiowa.edu/node/3608).
+
+## Descriptive Analysis
+
+### Data Glimpse
+
+Toy data: `gapminder` data, demographic statistics popularized by [Hans Rosling's TED talks](https://www.ted.com/talks/hans_rosling_shows_the_best_stats_you_ve_ever_seen?utm_campaign=tedspread--b&utm_medium=referral&utm_source=tedcomshare).
+Let's have a check of data structure and sample observations.
+
+```{r structure, exercise = TRUE}
+glimpse(gapminder)
+# as_data_frame(gapminder)
+```
+
+### Variable Glimpse
+
+Discover the attributes and distribution of a variable.
+
+```{r variable, exercise = TRUE}
+summary(gapminder)
+```
+
+```{r variable-solution}
+summary(gapminder$lifeExp)
+hist(gapminder$lifeExp)
+```
+
+## Binary Analysis
+
+### T Test
+
+Does the average life expectancy changes before and after the Cold War? (Difference in Mean)
+
+$H_{0}: \bar{LifeExpctancy}_{prio 1991} = \bar{LifeExpctancy}_{post 1991},\ \alpha = .05$
+
+```{r ttest, exercise = TRUE}
+gapminder$lifeExp[gapminder$year <= 1991]
+gapminder$lifeExp[gapminder$year > 1991]
+```
+
+```{r ttest-solution}
+t.test(gapminder$lifeExp[gapminder$year <= 1991], gapminder$lifeExp[gapminder$year > 1991])
+
+t.test(gapminder$lifeExp[gapminder$year <= 1991], gapminder$lifeExp[gapminder$year > 1991], alternative = "greater", conf.level = .99)
+```
+
+### Correlation
+
+Does a country's average life expectancy associate with its GDP per capital? (How about with populations?)
+
+$H_{0}: \rho_{(LifeExpectancy, GDP)} = 0,\ \alpha = .05$
+
+```{r corr, exercise = TRUE}
+cor.test(gapminder$lifeExp, gapminder$gdpPercap)
+```
+
+```{r corr-solution}
+cor(gapminder[, 4:6]) %>% corrplot::corrplot.mixed()
+```
+
+### ANOVA
+
+Does the average life expectancy vary across continents? (And over year?)
+
+$H_{0}: \mu_{Africa} = \mu_{Americas} = ... = \mu_{Oceania},\ \alpha = .05$
+
+```{r anova, exercise = TRUE}
+aov(lifeExp ~ continent, data = gapminder) %>% 
+  summary()
+```
+
+```{r anova-solution}
+aov(lifeExp ~ continent + as.factor(year), data = gapminder) %>% 
+  summary()
+```
+
+## Multivariate Analysis
+
+### How does a country's average life expectancy change across continents and over time?
+
+```{r ols, exercise = TRUE}
+model <- formula(lifeExp ~ continent + year)
+```
+
+
+```{r ols-solution}
+lm(model, data = gapminder) %>%
+  summary()
+```
+
+### Controlling for time dependency?
+
+$t + t^2$
+
+```{r time, exercise = TRUE}
+lm(lifeExp ~ gdpPercap + year, data = gapminder) %>%
+  summary()
+```
+
+
+```{r time-solution}
+lm(model, data = gapminder) %>%
+  summary()
+```
+
+### Conditional Effect
+
+Does the contribution of GDP per captia to a country's life expectancy vary with different sizes of population?
+
+```{r interact, exercise = TRUE}
+lm(lifeExp ~ gdpPercap + year, data = gapminder) %>%
+  summary()
+```
+
+
+```{r interact-solution}
+lm(lifeExp ~ gdpPercap * pop + year, data = gapminder) %>%
+  summary()
+```
+
+### Post-Estimate Diagonses
+
+* Residual
+
+```{r residual, exercise = TRUE}
+fit <- lm(lifeExp ~ gdpPercap + year, data = gapminder)
+res <- resid(fit)
+```
+
+```{r residual-solution}
+plot(fit, which  = 1)
+```
+
+* Outlier
+
+```{r outlier, exercise = TRUE}
+library(car)
+outlierTest(fit)
+# car::qqPlot(fit)
+```
+
+
+* Heteroscedasticity
+
+```{r heter, exercise = TRUE}
+ncvTest(fit) 
+```
+
+* Multicollinearity
+
+```{r multi, exercise = TRUE}
+vif(fit)
+```
+
+* Autocorrelation
+
+```{r durbin, exercise = TRUE}
+durbinWatsonTest(fit)
+```
+
+### Limited Dependent Variables
+
+* Logit: Does GDP per capita determine if a country's average life expentacy is above the global average after controlling for the population size?
+
+```{r logit, exercise = TRUE}
+gapminder$avgLife <- if_else(gapminder$lifeExp < mean(gapminder$lifeExp), 0, 1)
+```
+
+```{r logit-solution}
+glm(avgLife ~ gdpPercap + pop, data = gapminder, family = "binomial") %>%
+  summary()
+```
+
+* Interpretation: marginal effect
+
+```{r margin, exercise = TRUE}
+mfx::logitmfx(avgLife ~ gdpPercap + pop, data = gapminder)
+```
+
+
+### Done!
+
+```{r out.width = "90%", echo = FALSE}
+knitr::include_graphics("images/thatsit.gif")
+```
+
+Request these interactive slides from yue-hu-1@uiowa.edu.
