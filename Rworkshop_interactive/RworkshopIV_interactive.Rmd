@@ -10,11 +10,17 @@ runtime: shiny_prerendered
 
 ```{r setup, include=FALSE}
 library(learnr)
-library(tidyverse)
-library(car)
 library(stargazer)
+library(broom)
+library(dotwhisker)
+library(interplot)
+library(tidyverse)
 
-mpg_lm <- lm(mpg ~ cyl + hp + wt, data = mtcars)
+m1 <- lm(mpg ~ cyl + hp + wt, data = mtcars)
+m2 <- lm(mpg ~ cyl + hp + wt + hp, data = mtcars)
+m3 <- lm(mpg ~ cyl + hp + wt + hp + am, data = mtcars)
+
+m_cyl <- lm(mpg ~ wt * cyl, data = mtcars)
 ```
 
 **Yue Hu's "Hello, R!" workshop series IV**   
@@ -36,7 +42,7 @@ Register other workshops in the [ISRC website](http://ppc.uiowa.edu/node/3608).
 
 ## Data Glimpse
 
-Toy data: `gapminder` data, demographic statistics popularized by [Hans Rosling's TED talks](https://www.ted.com/talks/hans_rosling_shows_the_best_stats_you_ve_ever_seen?utm_campaign=tedspread--b&utm_medium=referral&utm_source=tedcomshare).
+Toy data: `mtcars` data, extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).
 Let's have a check of data structure and sample observations.
 
 ```{r structure, exercise = TRUE}
@@ -46,12 +52,12 @@ glimpse(mtcars)
 ## Model
 
 ```{r model, exercise = TRUE}
-mpg_lm <- lm(mpg ~ cyl + hp + wt, data = mtcars)
+m1 <- lm(mpg ~ wt + cyl + disp + gear, data = mtcars)
 ```
 
 
 ## Tabulating
-There are over twenty packages for [table presentation](http://conjugateprior.org/2013/03/r-to-latex-packages-coverage/) in R. My favoriate three are `stargazer`, `xtable`, and `texreg`.
+There are over twenty packages for [table presentation](http://conjugateprior.org/2013/03/r-to-latex-packages-coverage/) in R. My favorite three are `stargazer`, `xtable`, and `texreg`.
 
 (Sorry, but all of them are for **Latex** output)
 
@@ -63,21 +69,21 @@ There are over twenty packages for [table presentation](http://conjugateprior.or
 ```{r table, exercise = TRUE}
 library(stargazer)
 
-stargazer(mpg_lm, type = "text", align = T, header = FALSE)
+stargazer(m1, type = "text", align = T, header = FALSE)
 ```
 
 ```{r table-solution}
-stargazer(mpg_lm, type = "text", align = T, header = FALSE,
+stargazer(m1, type = "text", align = T, header = FALSE,
           title = "An Attracting Title",
           dep.var.labels = "Miles/(US) gallon",
-          covariate.labels = c("Number of cylinders", "Gross horsepower", "Weight (1000 lbs)"), 
+          covariate.labels = c("Weight (1000 lbs)", "Number of cylinders", "Displacement (cu.in.)", "Number of forward gears"), 
           notes = "Adding anything you want readers to notice, such as the source of data and so on.")
 ```
 
 ## Printing Publishable Table
 
 ```{r print, results='asis'}
-stargazer(mpg_lm, type = "html", align = T)
+stargazer(m1, type = "html", align = T)
 ```
 
 <br><br>
@@ -144,9 +150,17 @@ Con:
 
 ### Example
 
-```{r basePlot}
+```{r basePlot, exercise = TRUE}
 hist(mtcars$mpg)
 ```
+
+```{r basePlot-solution}
+plot(mtcars$wt, mtcars$mpg, 
+     main="Scatterplot Example", 
+     xlab="Car Weight ", 
+     ylab="Miles Per Gallon ")
+```
+
 
 ### Saving the output
 
@@ -174,7 +188,7 @@ dev.off()
 ### Example
 
 ```{r gghist, exercise = TRUE}
-ggplot(mtcars, aes(x=mpg)) + 
+ggplot(data = mtcars, aes(x=mpg)) + 
     geom_histogram(aes(y=..density..), binwidth=2, colour="black") 
 ```
 
@@ -188,13 +202,13 @@ ggplot(mtcars, aes(x=mpg)) +
     xlab("Miles Per Gallon") + ylab("Density")
 ```
 
-* `data`: The data that you want to visualise
+* `data`: The data that you want to visualize
 
 * `aes`: Aesthetic mappings
 describing how variables in the data are mapped to aesthetic attributes
     + horizontal position (`x`)
     + vertical position (`y`)
-    + colour
+    + color
     + size
 * `geoms`: Geometric objects that represent what you actually see on
 the plot
@@ -236,14 +250,126 @@ ggplot(data = df_desc, aes(x = as.factor(value))) + geom_bar() +
 saveThis <- ggplot(data = df_desc, aes(x = as.factor(value))) + geom_bar() + 
   facet_wrap(~ var, scales = "free", ncol = 3) + xlab("")
 
-ggsave(saveThis)
+ggsave("A Good Figure.png")
 ```
 
 
-## Done!
+## Visualization Packages
 
-```{r out.width = "90%", echo = FALSE}
+### `dotwhisker` ![](http://cranlogs.r-pkg.org/badges/grand-total/dotwhisker)
+A quick and easy way to create highly customizable dot-and-whisker plots for presenting and comparing the output of regression models. 
+
+```{r dotwhisker, exercise = TRUE}
+stargazer(m1, type = "text", align = T, header = FALSE)
+```
+
+```{r dotwhisker-solution}
+dwplot(m1)
+```
+
+### How about multiple models
+
+```{r dwMulti, exercise = TRUE}
+m2 <- lm(mpg ~ cyl + hp + wt + hp, data = mtcars)
+m3 <- lm(mpg ~ cyl + hp + wt + hp + am, data = mtcars)
+
+stargazer(list(m1, m2, m3), type = "text", align = T, header = FALSE)
+```
+
+```{r dwMulti-solution}
+dwplot(list(m1, m2, m3))
+
+## Don't like combined results?
+
+dwplot(list(m1, m2, m3)) +
+    facet_grid(~model, scales="free_y")
+```
+
+### A pretty publishable figure
+
+```{r publishable}
+dwplot(list(m1, m2, m3)) %>% 
+    relabel_predictors(c(wt = "Weight",                       
+                         cyl = "Cylinders", 
+                         disp = "Displacement", 
+                         hp = "Horsepower", 
+                         gear = "Gears", 
+                         am = "Manual")) +
+     theme_bw() + xlab("Coefficient Estimate") + ylab("") +
+     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+     ggtitle("Predicting Gas Mileage") +
+     theme(plot.title = element_text(face="bold"),
+           legend.justification=c(0, 0), legend.position=c(0, 0),
+           legend.background = element_rect(colour="grey80"),
+           legend.title = element_blank()) 
+```
+
+See more details in the [vignette](https://cran.r-project.org/web/packages/dotwhisker/vignettes/dotwhisker-vignette.html).
+
+### You can do even better!
+
+```{r smallMultiple, exercise = TRUE}
+
+small_multiple(list(m1, m2, m3)) +
+  ylab("Coefficient Estimate") +
+  geom_hline(yintercept = 0, colour = "grey60", linetype = 2) +
+  ggtitle("Predicting Gas Mileage") +
+  theme(plot.title = element_text(face = "bold"), legend.position = "none",
+    axis.text.x  = element_text(angle = 60, hjust = 1)) 
+
+```
+
+
+### `interplot` ![](http://cranlogs.r-pkg.org/badges/grand-total/interplot)
+
+Visualizing the changes in the coefficient of one variable in a two-way interaction term conditional on the value of the other included variable.
+
+* You can't correctly explain interactions with table!
+    + Model: $$Y = \beta_0 + \beta_1X + \beta_2Z + \beta_3X\times Z + \varepsilon.$$
+    + Effect: $$\frac{\partial Y}{\partial X} = \beta_1 + \beta_3Z.$$
+    + Standard error: $$\hat{\sigma}_{\frac{\partial Y}{\partial X}} = \sqrt{var(\hat{\beta_1}) + Z^2var(\hat{\beta_3}) + 2Zcov(\hat{\beta_1}, \hat{\beta_3})}.$$
+
+* How can you tell if the change is significant?
+    + Most precise way: calculate the difference between two mean with SEs.
+    + Most convenient way: visualizing it
+
+### Interactive effects
+
+```{r interact, exercise = TRUE}
+m_cyl <- lm(mpg ~ wt * cyl, data = mtcars)
+summary(m_cyl)
+```
+
+```{r interact-solution}
+library(interplot)
+
+interplot(m = m_cyl, var1 = "cyl", var2 = "wt")
+interplot(m = m_cyl, var1 = "wt", var2 = "cyl")
+```
+
+### How do you know if it is significant?
+
+```{r interHist}
+interplot(m = m_cyl, var1 = "cyl", var2 = "wt", hist = TRUE) +
+    geom_hline(yintercept = 0, linetype = "dashed")
+```
+
+
+### Interactive effect with factors
+
+```{r interFactor}
+mtcars$gear <- factor(mtcars$gear)
+m_gear <- lm(mpg ~ gear * wt, data = mtcars)
+
+interplot(m = m_gear, var1 = "wt", var2 = "gear")
+```
+
+
+## Contact
+
+```{r out.width = "40%", fig.align="center", echo = FALSE}
 knitr::include_graphics("images/thatsit.gif")
 ```
 
-Request these interactive slides from yue-hu-1@uiowa.edu.
+#### My email: yue-hu-1@uiowa.edu      
+#### My website: https://sammo3182.github.io/

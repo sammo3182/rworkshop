@@ -1,0 +1,13 @@
+name: Data_Visualization_with_R
+title: Data_Visualization_with_R
+username:
+account: huyue
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 232123
+bundleId: 1060013
+url: https://huyue.shinyapps.io/Data_Visualization_with_R/
+when: 1509897156.31253
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: RworkshopII_interactive.html|RworkshopII_interactive.Rmd|RworkshopIII_interactive.html|RworkshopIII_interactive.Rmd
