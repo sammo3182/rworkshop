@@ -12,9 +12,6 @@ runtime: shiny_prerendered
 library(learnr)
 library(tidyverse)
 library(gapminder)
-
-top_10 <- c("United States", "United Kingdom", "Germany", "France",
-            "Japan", "Italy", "China", "India", "Canada", "Brazil")
 ```
 
 **Yue Hu's "Hello, R!" workshop series II**   

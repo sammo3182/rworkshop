@@ -1,0 +1,13 @@
+name: Quantitative_Analysis_with_R
+title: Quantitative_Analysis_with_R
+username:
+account: huyue
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 221364
+bundleId: 1008611
+url: https://huyue.shinyapps.io/Quantitative_Analysis_with_R/
+when: 1507036513.62262
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: RworkshopII_interactive.html|RworkshopII_interactive.Rmd

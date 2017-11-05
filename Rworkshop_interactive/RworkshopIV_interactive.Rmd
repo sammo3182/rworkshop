@@ -1,0 +1,249 @@
+---
+title: "Data Presentation"
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+
+```{r setup, include=FALSE}
+library(learnr)
+library(tidyverse)
+library(car)
+library(stargazer)
+
+mpg_lm <- lm(mpg ~ cyl + hp + wt, data = mtcars)
+```
+
+**Yue Hu's "Hello, R!" workshop series IV**   
+*Iowa Social Science Research Center (ISRC)*
+
+## Preface
+
+*Fall 2018*
+
+* A overview of R
+* Data manipulation (input/output, row/column selections, etc.)
+* Quantitative Analysis
+* _Basic Data Visualization_
+
+<br>
+
+Register other workshops in the [ISRC website](http://ppc.uiowa.edu/node/3608).
+
+
+## Data Glimpse
+
+Toy data: `gapminder` data, demographic statistics popularized by [Hans Rosling's TED talks](https://www.ted.com/talks/hans_rosling_shows_the_best_stats_you_ve_ever_seen?utm_campaign=tedspread--b&utm_medium=referral&utm_source=tedcomshare).
+Let's have a check of data structure and sample observations.
+
+```{r structure, exercise = TRUE}
+glimpse(mtcars)
+```
+
+## Model
+
+```{r model, exercise = TRUE}
+mpg_lm <- lm(mpg ~ cyl + hp + wt, data = mtcars)
+```
+
+
+## Tabulating
+There are over twenty packages for [table presentation](http://conjugateprior.org/2013/03/r-to-latex-packages-coverage/) in R. My favoriate three are `stargazer`, `xtable`, and `texreg`.
+
+(Sorry, but all of them are for **Latex** output)
+
+* `stargazer`: good for summary table and regular regression results
+* `texreg`: when some results can't be presented by `stargazer`, try `texreg` (e.g., MLM results.)
+* `xtable`: the most extensively compatible package, but need more settings to get a pretty output, most of which `stargazer` and `texreg` can automatically do for you.
+
+
+```{r table, exercise = TRUE}
+library(stargazer)
+
+stargazer(mpg_lm, type = "text", align = T, header = FALSE)
+```
+
+```{r table-solution}
+stargazer(mpg_lm, type = "text", align = T, header = FALSE,
+          title = "An Attracting Title",
+          dep.var.labels = "Miles/(US) gallon",
+          covariate.labels = c("Number of cylinders", "Gross horsepower", "Weight (1000 lbs)"), 
+          notes = "Adding anything you want readers to notice, such as the source of data and so on.")
+```
+
+## Printing Publishable Table
+
+```{r print, results='asis'}
+stargazer(mpg_lm, type = "html", align = T)
+```
+
+<br><br>
+
+* For Word users, click [here](http://www.r-statistics.com/2010/05/exporting-r-output-to-ms-word-with-r2wd-an-example-session/).
+
+
+## Data Visualization
+
+Well, numbers do not speak for themselves, how about...
+
+## R Plot Examples
+
+### Networks
+
+<div class="centered">
+<img src="http://mkweb.bcgsc.ca/embo/img/hiveplot-02.png" height="450"/>
+</div>
+
+### Maps
+
+<div class="center">
+<img src="http://spatial.ly/wp-content/uploads/2012/02/bike_ggplot-1024x676.png" height="600"/>
+</div>
+
+### Interactive plots
+
+<div class="center">
+<img src="http://i.imgur.com/ELEA9FP.gif" height="550"/>
+</div>
+
+### Too "fancy" ? Then...
+
+Dot-whisker coefficient plot:
+
+<div class="centered">
+<img src="http://fsolt.org/blog/dotwhisker1.jpg" height="530"/>
+</div>
+
+Or interaction plot:
+
+<div class="centered">
+<img src="http://fsolt.org/blog/interplot1.png" height="450"/>
+</div>
+
+## R Visualization
+
+* Basic plots: `plot()`.
+* Lattice plots: e.g., `ggplot()`.
+* Interactive plots: `shiny()`. (save for later)
+
+## Basic plot
+
+Pro:
+
+* Embedded in R
+* Good tool for <span style="color:purple">data exploration</span>. 
+* <span style="color:purple">Spatial</span> analysis and <span style="color:purple">3-D</span> plots.
+
+Con:
+
+* Not very pretty
+* Not very flexible
+
+### Example
+
+```{r basePlot}
+hist(mtcars$mpg)
+```
+
+### Saving the output
+
+* Compatible format:`.jpg`, `.png`, `.wmf`, `.pdf`, `.bmp`, and `postscript`.
+* Process: 
+      1. call the graphic device
+      2. plot
+      3. close the device
+
+```{r saving, eval = F}
+png("<working directory>/histgraph.png")
+hist(mtcars$mpg)
+dev.off()
+```
+
+## `ggplot`
+
+* Built by Hadley Wickham based on Leland Wilkinson's *Grammar of Graphics*.
+* It breaks the plot into components as <span style="color:purple">scales</span> and <span style="color:purple">layers</span>---increase the flexibility.<br><br><div class="centered">
+<img src="images/layers.png" height="450"/>
+</div>
+
+* To use `ggplot` function, one needs to install the package `ggplot2` first.
+
+### Example
+
+```{r gghist, exercise = TRUE}
+ggplot(mtcars, aes(x=mpg)) + 
+    geom_histogram(aes(y=..density..), binwidth=2, colour="black") 
+```
+
+```{r gghist-solution}
+## A little decoration
+
+ggplot(mtcars, aes(x=mpg)) + 
+    geom_histogram(aes(y=..density..), binwidth=2, colour="black", fill="purple") +
+    geom_density(alpha=.2, fill="blue")  + # Overlay with transparent density plot
+    theme_bw() + ggtitle("histogram with a Normal Curve") + 
+    xlab("Miles Per Gallon") + ylab("Density")
+```
+
+* `data`: The data that you want to visualise
+
+* `aes`: Aesthetic mappings
+describing how variables in the data are mapped to aesthetic attributes
+    + horizontal position (`x`)
+    + vertical position (`y`)
+    + colour
+    + size
+* `geoms`: Geometric objects that represent what you actually see on
+the plot
+    + points
+    + lines
+    + polygons
+    + bars
+* `theme`: background
+* `ggtitle`: plot caption
+* `xlab`, `ylab`: axes labels
+* Other parts you may see in some developed template
+    + `stats`: Statistics transformations
+    + `scales`: relate the data to the aesthetic
+    + `coord`: a coordinate system that describes how data coordinates are
+mapped to the plane of the graphic.
+    + `facet`: a faceting specification describes how to break up the data into sets.
+
+### "Descriptive Statistics"
+
+```{r facet, exercise = TRUE}
+library(dplyr)
+library(tidyr)
+
+df_desc <- select(mtcars, am, carb, cyl, gear,vs) %>% # select the variables
+  gather(var, value) # reshape the wide data to long data
+
+ggplot(data = df_desc, aes(x = as.factor(value))) + geom_bar() + 
+  facet_wrap(~ var, scales = "free", ncol = 3) + xlab("")
+```
+
+
+### Saving the output
+
+* `ggsave(<plot project>, "<name + type>")`:
+    + When the `<plot project>` is omitted, R will save the last presented plot. 
+    + There are additional arguments which users can use to adjust the size, path, scale, etc.
+    
+```{r eval = FALSE}
+saveThis <- ggplot(data = df_desc, aes(x = as.factor(value))) + geom_bar() + 
+  facet_wrap(~ var, scales = "free", ncol = 3) + xlab("")
+
+ggsave(saveThis)
+```
+
+
+## Done!
+
+```{r out.width = "90%", echo = FALSE}
+knitr::include_graphics("images/thatsit.gif")
+```
+
+Request these interactive slides from yue-hu-1@uiowa.edu.

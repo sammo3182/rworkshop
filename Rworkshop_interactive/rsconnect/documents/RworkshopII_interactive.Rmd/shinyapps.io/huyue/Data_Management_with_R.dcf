@@ -5,8 +5,9 @@ account: huyue
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 215256
-bundleId: 1007776
+bundleId: 1008594
 url: https://huyue.shinyapps.io/Data_Management_with_R/
-when: 1506989547.55402
+when: 1507035625.27085
 asMultiple: FALSE
 asStatic: FALSE
+ignoredFiles: RworkshopIII_interactive.html|RworkshopIII_interactive.Rmd

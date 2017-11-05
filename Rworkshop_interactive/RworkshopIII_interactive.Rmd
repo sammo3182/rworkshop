@@ -9,7 +9,10 @@ runtime: shiny_prerendered
 
 
 ```{r setup, include=FALSE}
-pacman::p_load(learnr, tidyverse, gapminder, car)
+library(learnr)
+library(tidyverse)
+library(gapminder)
+library(car)
 ```
 
 **Yue Hu's "Hello, R!" workshop series III**   
