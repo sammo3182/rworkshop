@@ -14,6 +14,7 @@ library(stargazer)
 library(broom)
 library(dotwhisker)
 library(interplot)
+library(magick)
 library(tidyverse)
 
 m1 <- lm(mpg ~ cyl + hp + wt, data = mtcars)
@@ -237,6 +238,33 @@ df_desc <- select(mtcars, am, carb, cyl, gear,vs) %>% # select the variables
 
 ggplot(data = df_desc, aes(x = as.factor(value))) + geom_bar() + 
   facet_wrap(~ var, scales = "free", ncol = 3) + xlab("")
+```
+
+### Doing something fun~
+
+```{r magic, message=FALSE, exercise = TRUE}
+library(magick)
+fig <- image_graph(width = 800, height = 600, res = 96)
+
+qplot(factor(cyl), data = mtcars, fill = factor(gear))
+
+frink <- image_read("https://jeroen.github.io/images/frink.png")
+
+fig %>%
+  image_rotate(10) %>%
+  image_implode(.6) %>%
+  image_composite(frink, offset = "+140+70") %>%
+  image_annotate("Visualizaaaaation~", size = 40, location = "+300+100", color = "navy")
+```
+
+
+```{r magic-solution}
+image_read("https://jeroen.github.io/images/banana.gif") %>%
+  image_apply( function(banana){
+    image_composite(fig, banana, offset = "+200+200")
+  }) %>%
+  image_resize("50%") %>%
+  image_animate()
 ```
 
 
