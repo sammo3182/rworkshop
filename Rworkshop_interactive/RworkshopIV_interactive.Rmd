@@ -101,7 +101,7 @@ Well, numbers do not speak for themselves, how about...
 ### Networks
 
 <div class="centered">
-<img src="http://datascienceeast.com/blog/wp-content/uploads/2017/01/Cluster-Network-2.png" height="600"/>
+<img src="images/hiveplot.png" height="450"/>
 </div>
 
 ### Maps

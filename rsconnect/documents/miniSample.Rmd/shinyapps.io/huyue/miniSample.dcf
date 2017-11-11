@@ -1,0 +1,13 @@
+name: miniSample
+title: miniSample
+username:
+account: huyue
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 234256
+bundleId: 1069869
+url: https://huyue.shinyapps.io/miniSample/
+when: 1510370566.46814
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: code.R|Data Management Using Stata.do|Data Management Using Stata.pdf|histgraph.jpg|Hu_Outline of R Workshop.aux|Hu_Outline of R Workshop.out|Hu_Outline of R Workshop.pdf|Hu_Outline of R Workshop.synctex.gz|Hu_Outline of R Workshop.tex|models.htm|networkAnalysis.Rmd|presentation.html|presentation.Rmd|README.md|RworkshopI.html|RworkshopI.Rmd|RworkshopII.html|RworkshopII.Rmd|RworkshopIII.html|RworkshopIII.Rmd|RworkshopIV.html|RworkshopIV.Rmd|RworkshopV.Rmd|time tracker.xlsx|timeTrace_hu.Rdata|timeTracer.R|feedback|images|presentation_files|reference|Rworkshop_interactive

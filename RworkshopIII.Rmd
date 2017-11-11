@@ -4,7 +4,7 @@ author: "Yue Hu's R Workshop Series II"
 output:
   ioslides_presentation:
     self_contained: yes
-    logo: image/logo.gif
+    logo: images/logo.gif
     transition: faster
     widescreen: yes
     slidy_presentation:
