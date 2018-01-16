@@ -1,0 +1,74 @@
+---
+title: "Geographic Data Visualization"
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(maps)
+library(mapdata)
+library(maptools)
+library(tidyverse)
+
+```
+
+**"Hello, R!" workshop series V**   
+*Iowa Social Science Research Center (ISRC)*
+
+## Preface
+
+* R Basics
+* Data Manipulation with R and STATA
+* Quantitative Analysis
+* Basic Data Visualization
+* **Geographic Data Visualization**
+* Multilevel Model with R and STATA
+* R Professionalization
+
+<br>
+
+Register other workshops in the [ISRC website](http://ppc.uiowa.edu/node/3608).
+
+
+## Today's Plan
+
+* Simple steps of creating maps with R
+* A intro to R map with `ggplot`
+* A intro to `ggmap`
+* ArcGIS basics for map building
+
+## Map with R
+
+* Draw the world map with only two commands:
+
+```{r world, exercise = TRUE}
+maps::map("world", 
+    fill = TRUE, # whether fill the regions
+    col = rainbow(20), # number of colors to be used
+    mar = c(0, 0, 0, 0)) # margin setting
+```
+
+## A Map of the United States
+
+```{r us, exercise = TRUE}
+maps::map("state", fill = TRUE, col = rainbow(20), mar = c(0, 0, 2, 0))
+```
+
+```{r us-solution}
+maps::map("state", region = c("iowa", "missouri", "illinois"), fill = TRUE, col = rainbow(3))
+
+maps::map("county", region = "iowa", fill = TRUE, col = rainbow(20))
+```
+
+`maps` package includes maps of Canada, France, Italy, New Zealand, and various types of maps of the U.S.
+
+## A Map of China
+
+```{r chinaRaw, exercise = TRUE}
+library(mapdata) # including China, Japan, and Pacific Centric World
+maps::map("china", fill = FALSE, col = "gray40")
+```
