@@ -1,129 +1,459 @@
 ---
 title: "Hello, R!"
-author: "Yue Hu's R Workshop Series I"
+subtitle: "ISRC R Workshop Series I"
+author: "Yue Hu<br>Department of Political Science<br>University of Iowa"
 output:
-  ioslides_presentation:
-    incremental: true
-    logo: image/logo.gif
-    self_contained: yes
-    slidy_presentation: null
-    transition: faster
-    widescreen: yes
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: ["styles.css", "default", "default-fonts", "font-awesome-4.7.0/css/font-awesome.css"]
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      # ratio: "16:9"
 ---
 
-# Preface
-## What are covered
+## ISRC R Workshop Series
+
+.center[<img src="images/isrc.png" height = 200 />]
+
+.pull-left[
 
 *Fall*
 
-* A overview of R
-* Data manipulation (input/output, row/column selections, etc.)
+* R Basic
+* Data Manipulation
 * Quantitative Analysis
 * Basic Data Visualization
+]
 
+.pull-right[
 
+*Spring*
 
-# An Overview of R
-## Why using R in your research?
-You can use R to:
+* R Basics (again)
+* Geographic Data Visualization
+* Multilevel Model
+* Professionalization
 
-* Do statistics and solve math problems
-* Edit codes in Excel, Python, C++, ...
-* Scrape data from texts, websites, databases, pdf...
-* Create presentation slides in pdf (as LaTex beamer) or html (as Markdown)
-* Create webpages
-* Write academic articles and save them in html, pdf, or word.
-* Write an academic artical or book (see e.g., [bookdown](https://bookdown.org/home/).)
+]
 
+--
 
+Check out other [fantastic workshops](http://ppc.uiowa.edu/node/3608) offered by us.
 
-## Why R rather than the others??
+---
 
-<div style="float: left; width: 50%;">
-* It's free!! 
-* It's developing!
-    + R is very compatible with new techniques
-    + e.g., Network analysis, spatial analysis with GIS, and text analysis with big data. 
-* It's multi-lingual!: <br><br>`"Hello 你好 здравствуйте"`
+## How to Get the Slides?
 
+All the slides are presented in my personal webpage:
 
-</div>
+1. Search "Yue Hu" in Google or directly type the webpage([sammo3182.github.io](https:\\sammo3182.github.io)) at any browser you prefer.
+1. Click "Teaching" tab in the upper-right corner.
+1. Find "Course: Hello, R: A Introduction To R, Iowa Social Science Research Center, University of Iowa" and click the "slides."
 
-<div style="float: right; width: 50%;">
-* It's popular!
-    + <img src="http://www.kdnuggets.com/images/top-analytics-data-science-machine-learning-software-2015-2017.jpg" height="290" width = "400"/>
-[KDnuggets Software Poll](http://www.kdnuggets.com/2017/05/poll-analytics-data-science-machine-learning-software-leaders.html)
-</div>
+.center[<img src="images/pageInstruction.png" height = 300 />]
 
+---
 
-## A Trade-Off of the Great Power
+## What's R?
 
-<div class="centered">
-  <img src=image/LearningCurve2.png height="400"/>
-  </div> Source: NYU Data Services.
+R is an .magenta[object-oriented] language and environment for .magenta[statistical] computing and graphics.
 
-## Software  installations 
-* Software installation (<span style="color:purple">Tip</span>)
-    + [![R](image/Rlogo.png)](https://www.r-project.org/)
-    + [![Rstudio](image/rStudioLogo.png)](https://www.rstudio.com/products/rstudio/download/preview/)
+--
 
-<div class="notes">
-Install R before Rstudio; so does in updating.
-Using the [Rstudio Daily Builds](https://dailies.rstudio.com/).
-</div>
+* .magenta[Object-oriented] system: Put things in to boxes and carry around.
 
-## Package installation and loading{.build}
-* Packages are "<span style="color:red">Apps</span>" for R. 
-    +  `install.packages(<package name>)`
-    +  `install_github("<repositary/package name>")`
-* Find instructions from package repositories:
-    + [An example](https://github.com/sammo3182/interplot)
-* Click the apps: Load the package
-    + `library(<package name>)`
-    + `require(<package name>)`
+--
 
-## RStudio{.flexbox .vcenter}
-<img src="image/rstudio.png" height="500" width = "900" />
+* Created for .magenta[statistics]:
+    + Built by statisticians and data scientists.
+    + Edit codes from Excel, STATA, Python, C++, ...
+    + Scrape data from texts, websites, databases, pdf...
+    + Create webpages (see, e.g., [`blogdown`](https://bookdown.org/yihui/blogdown/).)
+    + Write academic articles and save them in html, pdf, or word.
+    + Create presentation slides in pdf (as LaTex beamer), html (as Markdown).
+    + Write a book or dissertation (see e.g., [`bookdown`](https://bookdown.org/home/).)
 
+---
 
+## Why R?
 
-# Math and Basic Statistics with R
-## Set where to locate the data and store the results
+* FREE!!!
 
-<div style="float: left; width: 50%;">
+--
+
+* Developing
+    + `r nrow(available.packages())`+ packages.
+    + Compatible with new statistical and visualization techniques.
+    
+--
+
+* Popular
+
+--
+
+.center[<img src="images/rank.jpeg" height = 300 />]
+.pull-right[.small[[Source:  IEEE Spectrum ranking](https://spectrum.ieee.org/computing/software/the-2017-top-programming-languages)]]
+
+---
+
+## Hey, Python?
+
+.center[<img src="images/rank2.jpeg" height = 200 />]
+
+--
+
+* R vs. Python: "The war that never ends..."
+
+---
+
+## R vs. Python
+
+.pull-left[
+### R
+
+#### Advantages
+
+* Statistics
+* Visualization
+
+#### Inconvenience
+
+* Reading large-size (> 1G) data
+* Learning the codes
+]
+
+.pull-right[
+### Python
+
+#### Advantages
+
+* Machine learning
+* Big data manipulation
+
+#### Inconvenience
+
+* Setting up at certain platform
+* 2.7 vs. 3.5?
+* Checking the outcomes
+
+]
+
+---
+
+## R vs. STATA
+
+.pull-left[
+### R
+
+#### Advantages
+
+* Updating
+* Flexible
+* Multi-lingual
+
+#### Inconvenience
+
+* Linear-algebraic calculation
+* Programming
+
+]
+
+.pull-right[
+### STATA
+
+#### Advantages
+
+* Stable
+* Reliable
+
+#### Inconvenience
+
+* You use what you get
+* Poor visualization
+* Long updating schedule
+* EXPENSIVE: 
+    + Perpetual for students:	**$995** (new) / **$325** (updates) 
+
+]
+
+---
+
+## Let's start our journey!
+
+.center[<img src="images/begin.gif" height = 300 />]
+
+---
+
+## Program Installation
+
+.pull-left[
+### Core program
+
+[<img src="images/Rlogo.png" height = 300 />](https://www.r-project.org/)
+
+]
+
+--
+
+.pull-right[
+### Graphic User Interfaces (GUI)
+
+[<img src="images/rstudio.jpg" height = 300 />](https://www.rstudio.com/)
+
+]
+
+---
+
+## Package Installation
+
+.pull-left[
+
+* What's package?
+<img src="images/apps.jpeg" height = 300 />
+
+]
+
+--
+
+.pull-right[
+
+* Installing:
+
+`install.packages(<package name>)`
+
+`devtools::install_github("<repositary/package name>")`
+
+* "Clicking":
+
+`library(<package name>)`
+
+`require(<package name>)`
+
+]
+
+---
+
+## First-Time Using
+
+Set the working directory! Set the working directory! Set the working directory!
+
+.pull-left[
+
 * Always check or set the <span style="color:red">working directory</span> first
-    + `getwd()`
-    + `setwd("E:/R workshop/rworkshop")`
-</div>
 
-<div style="float: right; width: 50%;">
+```{r eval = FALSE}
+# find the current working directory
+getwd() 
+
+# Reset the working directory
+setwd("E:/R workshop/rworkshop") 
+```
+    
+]
+
+.pull-right[
+
 * Or click, click, and click in Rstudio
-    + <img src=image/wdSetting.png height = "300"/>
-</div>
+<img src=images/wdSetting.png height = "300"/>
 
 
-## Terms of R in plain English {.columns-2}
-* **Object**: packing things together and naming it
-* **Vector**: 
-    + Mathematics: a one-column matrix
-    + Practice: a single variable
-* **Factor**:
-    + A special vector
-    + Special for ordinal or mulinomial variable
-* **Matrix** vis-a-vis **Data frame**
-    + Matrix is a pile of numbers
-    + Data frame is a dataset
-    
-<p class="forceBreak"></p>  
+]
 
-* **Array**: a multi-dimension matrix
-    + <img src="image/array.gif" height="250"/>
-    + one-dimension array == vector
-    + two-dimension array == matrix
-* **Function**: a process to handle the object (`functionName(varLabel = varData)`)
-    
+---
 
-## Do math with R: Basic Functions
+## Terminology
+
+From linear algebra:
+
+--
+
+### Matrix
+
+.pull-left[
+
+<img src=images/matrix.gif height = "300"/>
+
+]
+
+--
+
+.pull-right[
+
+```{r}
+A <- matrix(-8:7, ncol = 4)
+A
+A[2, 3]
+```
+
+]
+
+---
+
+### Vector: 
+
+One-row / one-column matrix
+
+```{r}
+# Numeric
+c(1, 2, 3) # Integer
+c(1.5, -2.34, NA) #Double
+# Factor
+factor(c(1, 2, 2, 3), labels = c("Apple", "Pear", "Orange"))
+# Character
+c("R is hard.", "But I can learn.")
+```
+
+---
+
+```{r}
+# Time
+as.POSIXlt("2005-10-21 18:47:22")
+
+# Logic
+c(TRUE, TRUE, FALSE)
+```
+
+
+---
+
+### Data frame (tidy)
+
+A special matrix with observations in rows and variables in columns.
+
+```{r}
+knitr::kable(head(mtcars), format='html')
+```
+
+--
+
+.pull-left[
+```{r}
+mtcars[1,1]
+```
+]
+
+--
+
+.pull-right[
+```{r}
+mtcars$mpg[1]
+```
+
+]
+
+---
+
+### Array
+
+A multi-dimension matrix
+
+```{r}
+array(-9:9, dim = c(3,3,2)) 
+# three dimensions with 3, 3, and 2 elements in each dimension.
+```
+
+---
+
+### List
+
+A series of everything.
+
+```{r}
+aList <- list(c(1:5), letters[1:5])
+aList
+aList[[2]]
+```
+
+---
+
+## Functions
+
+.center[<img src=images/handShadow.gif height = "250"/>]
+
+--
+
+```{r}
+light <- function(finger){
+  {{shadow <- finger + 5}}
+}
+
+handShadow <- light(finger = 3)
+handShadow
+```
+
+---
+
+## Data Input and Output
+
+
+### Build-in functions
+
+```{r eval=FALSE}
+load("<FileName>.RData")
+
+df_rds <- readRDS("<FileName>.rds")
+df_txt <- read.table("<FileName>.txt")
+df_csv <- read.csv("<FileName>.csv")
+
+```
+
+
+---
+
+### Package functions
+
+```{r eval=FALSE}
+# SPSS, Stata, SAS
+library(haven)
+df_spss <- read_spss("<FileName>.sav")
+df_stata <- read_dta("<FileName>.dta") 
+df_sas <- read_sas("<FileName>.sas7bdat")  
+
+# Excel sheets
+library(readxl)
+df_excel <- read_excel("<FileName>.xls")
+df_excel2 <- read_excel("<FileName>.xlsx") 
+
+# JavaScript Object Notation 
+library(rjson)
+df_json <- fromJSON(file = "<FileName>.json" )
+
+# XML/Html
+df_xml <- xmlTreeParse("<url>")
+df_html <- readHTMLTable(url, which=3)
+
+```
+
+
+
+---
+
+## Data output
+
+* Save single object in a `.rds` file
+
+```{r eval = F}
+saveRDS(object, file = "./Data/mydata.Rdata")
+```
+
+* Save multip objects into an R dataset (`.RData`/`.rda`) 
+
+```{r eval = F}
+save(object, file = "./Data/mydata.Rdata")
+```
+
+* Save multip objects into a CSV sheet `.csv`
+
+```{r eval = F}
+write.csv(object, file = "mydata.csv")
+```
+
+
+---
+
+## Programming Basics: Math
 
 ```{r eval=FALSE}
 # basic math
@@ -145,154 +475,70 @@ x > z; x <= z
 ```
 
 
-## Common Data Type: Vector{.smaller}
-```{r}
-1:10  # numeric (integer/double)
-c("R", "workshop") # character
-3 == 5  # logical
-factor(1:3, levels = 1:3, labels = c("low", "medium", "high"))  # factor 
-```
-(<span style="color:purple">Tip</span>)
+---
 
-<div class="notes">
-The `factor` is a R *function*. Ususally, the first component ("`1:3`") of a R function is the  <span style="color:red">object</span>, the target this function is going to work on. The rest components ("`levels = 1:3, labels = c("low", "medium", "high")`") are <span style="color:red">arguments</span>, with which setting the special conditions the object is dealt.
-
-If you are not sure about the utility of certain arguments, ask R for help by `?`, e.g.,
-
-```{r eval=FALSE}
-?factor
-```
-</div>
-
-
-## Common Data Type: Dataset {.smaller}
-
-```{r}
-matrix(1:4, ncol = 2)  # matrix
-data.frame(x = 1:2, y = 3:4)  # data.frame
-list(c("one", "two"), c(3, 4)) # 2-D list
-```
-
-----
-```{r}
-array(c(1:8), dim = c(2, 2, 3)) # 3-D or n-D "list""
-```
-
-
-## Save data to an object
-```{r}
-x <- rep(c(.01, .05, .1), times = 2) # repeat 1:5 for twice
-df <- data.frame(x = 1:1, y = 3:4)
-list <- list(x, df)
-
-list # == print(list)
-```
-
-----
-
-Basic rules for object name:
+## Naming Objects
 
 * Don't start with numbers (WRONG: `1stday`)
+
+--
+
 * No special signs except for `.` and `-` (WRONG: `M&M`)
+
+--
+
 * Case sensitivity (`X != x`)
 
+--
+
+* Don't overwrite the build-in functions unless necessary (DON'T: `list <- c(1:5)`)
 
 
+---
 
-## Attributes of an object {.smaller .build}
-* Structure
+## Last Words
 
-```{r}
-str(df)
-```
+* Being aware of the learning curve
 
-* Unique values (<span style="color:purple">Tip</span>)
+.center[<img src=images/LearningCurve.png height="400"/>]
+.pull-right[.small[[Source: NYU Data Service](https://sites.google.com/a/nyu.edu/statistical-software-guide/summary)]]
 
-```{r}
-unique(df$x)
-```
-<div class="notes">
-What is the `$`?  It is used to call specific columns a data.frame. 
+---
 
-To call the components in a vector, we use "[]"
+* Preparing for unexpected troubles
 
 ```{r}
-x[3]
+testDF <- data.frame(x = c(1, 1, 1, NA, 4, 4),
+                     y = c(2, 2, 2, 2, 2, 2))
+testDF
 ```
 
-To call the components in a list, we use "[[]]"
+--
+
+```{r eval = FALSE}
+testDF$x[testDF$x < 4] <- testDF$y[testDF$x < 4]
+```
+
+```
+Error in testDF$x[testDF$x < 4] <- testDF$y[testDF$x < 4] * 0 : 
+  NAs are not allowed in subscripted assignments
+```
+
+--
 
 ```{r}
-list[[2]]
+testDF$x <- ifelse(testDF$x < 4, testDF$y, testDF$x)
+testDF$x 
 ```
 
-</div>
+---
 
-* Names
+* Sufficiently using online sources
 
-```{r}
-names(df)
-```
+.center[<img src=images/search.png height="400"/>]
 
-----
+---
 
-Length
+## That's It.
 
-```{r}
-length(x)
-```
-
-Class
-
-```{r}
-class(x);typeof(x)  # ; is used to write two commands in one line
-```
-
-
-## Detect the attributes
-Using `is.`
-
-```{r}
-x <-c(1, 2, NA, 4)
-is.numeric(x)
-is.na(x) # detect if x includes missing values
-```
-
-
-
-
-## Wrap up {.columns-2}
-
-* Set the working directory first: `setwd()`
-* Four types of data: numeric, character, logical, factor
-* Four types of datasets: matrix, data.frame, list, array
-* Save the things into an object by `<-`
-
-
-
-## See you then ~
-
-<div class = "centered">
-<img src="http://rescuethepresent.net/tomandjerry/files/2016/05/16-thanks.gif" height="500" />
-</div>
-
-
-## External Sources
-* My email: [yue-hu-1@uiowa.edu](mailto: yue-hu-1@uiowa.edu)
-
-* Workshops: http://ppc.uiowa.edu/node/3608
-* Consulting service: http://ppc.uiowa.edu/node/3385/
-* Q&A Blogs: 
-    + http://stackoverflow.com/questions/tagged/r
-    + https://stat.ethz.ch/mailman/listinfo/r-help
-
-* Blog for new stuffs: http://www.r-bloggers.com/
-
-* Graph Blogs:
-    + http://www.cookbook-r.com/Graphs/
-    + http://shiny.stat.ubc.ca/r-graph-catalog/
-
-
-
-
-
+.center[<img src="http://rescuethepresent.net/tomandjerry/files/2016/05/16-thanks.gif" height="500" />]

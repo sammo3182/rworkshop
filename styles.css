@@ -1,0 +1,31 @@
+
+.inverse h1{
+  font-size:300%;
+}
+
+.inverse h2{
+  font-size:200%;
+}
+
+/*Hide the page number in the title*/
+
+.title-slide .remark-slide-number {
+  display: none;
+}
+
+
+/*Colorful letters */
+
+.red{color: #FF0000;}
+
+.magenta{color: #FF00FF}
+
+.orange{color: #FF4500}
+
+/*Customize letter size*/
+
+.Huge {font-style: 400%}
+.huge {font-size: 300%}
+.Large { font-size: 200% } 
+.large { font-size: 150% }
+.small { font-size: 80% }
