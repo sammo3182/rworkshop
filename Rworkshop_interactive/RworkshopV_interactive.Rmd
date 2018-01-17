@@ -13,6 +13,7 @@ library(maps)
 library(mapdata)
 library(rgdal)
 library(broom)
+library(ggmap)
 library(tidyverse)
 
 ```
@@ -147,28 +148,11 @@ ggplot(china_map4,
 
 ```
 
+### Interactive version
+
 ```{r}
-groupDF <- select(china_map4, id, group) %>%
-  mutate_all(as.character) %>%
-    group_by(id)%>%
-  summarise(group = unique(group)[1]) 
-
-china_center <- coordinates(china_map1) %>%
-  tidy
-
-names(china_center) <- c("id", "x", "y")
-
-china_center <- left_join(china_center, groupDF) %>%
-  mutate(id = as.numeric(id)) %>%
-    right_join(china_map2)
-
-ggplot(china_map1, 
-       aes(x = long, # x axis
-           y = lat, # y axis
-           group = group)) + #boundary
-  geom_polygon(fill = 'beige') + # background
-	geom_path(color = "grey40") +
-  geom_point(aes(x ,y, group), data = china_center)
-
+library(ggmap)
+europe <- c(left = -12, bottom = 35, right = 30, top = 63)
+get_stamenmap(europe, zoom = 5) %>% ggmap()
 ```
 
