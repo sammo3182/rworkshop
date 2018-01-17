@@ -11,7 +11,8 @@ runtime: shiny_prerendered
 library(learnr)
 library(maps)
 library(mapdata)
-library(maptools)
+library(rgdal)
+library(broom)
 library(tidyverse)
 
 ```
@@ -68,7 +69,106 @@ maps::map("county", region = "iowa", fill = TRUE, col = rainbow(20))
 
 ## A Map of China
 
+### Basic Version
+
 ```{r chinaRaw, exercise = TRUE}
 library(mapdata) # including China, Japan, and Pacific Centric World
-maps::map("china", fill = FALSE, col = "gray40")
+maps::map("china", fill = FALSE, col = rainbow(20))
 ```
+
+### `ggplot` Version  <img src="images/ggplot2.png" height = 100, align="right" />
+
+`ggplot2` is a system for declaratively creating graphics, based on *The Grammar of Graphics*.
+It is the most popular graphing engine in R. 
+
+Building map with `ggplot2` needs specific shapefiles. 
+The **shapefile** format is a popular geospatial vector data format for geographic information system (GIS) software.
+
+#### Preparing the data
+
+```{r chinaGG}
+china_map1 <- rgdal::readOGR("Rworkshop_interactive/data/bou2_4p.shp")
+
+plotChina <- ggplot(china_map1, 
+       aes(x = long, # x axis
+           y = lat, # y axis
+           group = group)) + #boundary
+  geom_polygon(fill = 'beige') + # background
+	geom_path(color = "grey40") # outline
+
+plotChina
+```
+
+```{r chinaDF}
+Sys.setlocale("LC_CTYPE", "chinese")  # make sure Chinese characters well presented
+
+china_map2 <- china_map1@data %>%
+  mutate(id = seq(0:924)-1) # preparing for later merging
+head(china_map2)
+
+china_map3 <- broom::tidy(china_map1) %>%
+  mutate(id = as.numeric(id)) # preparing for later merging
+head(china_map3)
+
+china_map4 <- left_join(china_map2, china_map3)
+head(china_map4)
+```
+
+#### Building the map
+
+```{r chinaGGcol}
+ggplot(china_map4, aes(x = long, y = lat, group = group, fill = NAME)) +
+	geom_polygon() +
+  geom_path(color = 'grey40') + # The same as previous
+	scale_fill_manual(values = rainbow(33), guide = F) +
+	coord_map()
+```
+
+#### Presenting the data
+
+* Data input 
+
+```{r}
+popDF <- data.frame(NAME = c("北京市", "天津市", "河北省", "山西省", "内蒙古自治区", "辽宁省", "吉林省", "黑龙江省", "上海市", "江苏省", "浙江省", "安徽省", "福建省", "江西省", "山东省", "河南省", "湖北省",  "湖南省", "广东省", "广西壮族自治区", "海南省", "重庆市", "四川省", "贵州省", "云南省", "西藏自治区", "陕西省", "甘肃省", "青海省", "宁夏回族自治区", "新疆维吾尔自治区", "台湾省", "香港特别行政区"),
+           population = c(7355291, 3963604, 20813492, 10654162, 8470472, 15334912, 9162183,  13192935, 8893483, 25635291, 20060115, 19322432, 11971873, 11847841, 30794664, 26404973, 17253385, 19029894, 32222752, 13467663, 2451819, 10272559, 26383458, 10745630, 12695396, 689521, 11084516, 7113833, 1586635, 1945064, 6902850, 23193638, 7026400))
+
+china_map4 <- left_join(china_map4, popDF)
+head(china_map4)
+```
+
+* Data mapping
+```{r}
+ggplot(china_map4, 
+       aes(x = long, y = lat, group = group, 
+           fill = population)) + # Only changes
+	geom_path(color = "grey40") +
+  geom_polygon() +
+	coord_map()
+
+```
+
+```{r}
+groupDF <- select(china_map4, id, group) %>%
+  mutate_all(as.character) %>%
+    group_by(id)%>%
+  summarise(group = unique(group)[1]) 
+
+china_center <- coordinates(china_map1) %>%
+  tidy
+
+names(china_center) <- c("id", "x", "y")
+
+china_center <- left_join(china_center, groupDF) %>%
+  mutate(id = as.numeric(id)) %>%
+    right_join(china_map2)
+
+ggplot(china_map1, 
+       aes(x = long, # x axis
+           y = lat, # y axis
+           group = group)) + #boundary
+  geom_polygon(fill = 'beige') + # background
+	geom_path(color = "grey40") +
+  geom_point(aes(x ,y, group), data = china_center)
+
+```
+
