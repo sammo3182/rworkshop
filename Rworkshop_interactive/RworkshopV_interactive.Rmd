@@ -8,14 +8,15 @@ runtime: shiny_prerendered
 ---
 
 ```{r setup, include=FALSE}
+library(rmarkdown)
 library(learnr)
 library(maps)
 library(mapdata)
 library(rgdal)
 library(broom)
-library(ggmap)
+library(ggplot2)
+library(leaflet)
 library(tidyverse)
-
 ```
 
 **"Hello, R!" workshop series V**   
@@ -40,7 +41,6 @@ Register other workshops in the [ISRC website](http://ppc.uiowa.edu/node/3608).
 
 * Simple steps of creating maps with R
 * A intro to R map with `ggplot`
-* A intro to `ggmap`
 * ArcGIS basics for map building
 
 ## Map with R
@@ -74,7 +74,7 @@ maps::map("county", region = "iowa", fill = TRUE, col = rainbow(20))
 
 ```{r chinaRaw, exercise = TRUE}
 library(mapdata) # including China, Japan, and Pacific Centric World
-maps::map("china", fill = FALSE, col = rainbow(20))
+maps::map("china", fill = FALSE)
 ```
 
 ### `ggplot` Version  <img src="images/ggplot2.png" height = 100, align="right" />
@@ -88,7 +88,7 @@ The **shapefile** format is a popular geospatial vector data format for geograph
 #### Preparing the data
 
 ```{r chinaGG}
-china_map1 <- rgdal::readOGR("Rworkshop_interactive/data/bou2_4p.shp")
+china_map1 <- rgdal::readOGR("../Rworkshop_interactive/data/bou2_4p.shp")
 
 plotChina <- ggplot(china_map1, 
        aes(x = long, # x axis
@@ -125,9 +125,9 @@ ggplot(china_map4, aes(x = long, y = lat, group = group, fill = NAME)) +
 	coord_map()
 ```
 
-#### Presenting the data
+### Presenting the data
 
-* Data input 
+#### Data input 
 
 ```{r}
 popDF <- data.frame(NAME = c("北京市", "天津市", "河北省", "山西省", "内蒙古自治区", "辽宁省", "吉林省", "黑龙江省", "上海市", "江苏省", "浙江省", "安徽省", "福建省", "江西省", "山东省", "河南省", "湖北省",  "湖南省", "广东省", "广西壮族自治区", "海南省", "重庆市", "四川省", "贵州省", "云南省", "西藏自治区", "陕西省", "甘肃省", "青海省", "宁夏回族自治区", "新疆维吾尔自治区", "台湾省", "香港特别行政区"),
@@ -137,7 +137,7 @@ china_map4 <- left_join(china_map4, popDF)
 head(china_map4)
 ```
 
-* Data mapping
+#### Data mapping
 ```{r}
 ggplot(china_map4, 
        aes(x = long, y = lat, group = group, 
@@ -150,9 +150,8 @@ ggplot(china_map4,
 
 ### Interactive version
 
-```{r}
-library(ggmap)
-europe <- c(left = -12, bottom = 35, right = 30, top = 63)
-get_stamenmap(europe, zoom = 5) %>% ggmap()
+```{r interactive, exercise = TRUE}
+library(leaflet)
+leaflet() %>% addTiles() %>% setView(-91.536146, 41.661491, zoom = 17)
 ```
 
