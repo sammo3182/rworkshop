@@ -5,9 +5,9 @@ account: huyue
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 257873
-bundleId: 1180663
+bundleId: 1184439
 url: https://huyue.shinyapps.io/Geographic_Visualization_with_R/
-when: 1516233157.92964
+when: 1516456758.54842
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: RworkshopII_interactive.html|RworkshopII_interactive.Rmd|RworkshopIII_interactive.html|RworkshopIII_interactive.Rmd|RworkshopIV_interactive.html|RworkshopIV_interactive.Rmd|RworkshopIV_interactive_files/figure-html/interFactor-1.png|RworkshopIV_interactive_files/figure-html/interHist-1.png|RworkshopIV_interactive_files/figure-html/publishable-1.png

@@ -15,6 +15,7 @@ library(mapdata)
 library(rgdal)
 library(broom)
 library(ggplot2)
+library(REmap)
 library(leaflet)
 library(tidyverse)
 ```
@@ -150,8 +151,28 @@ ggplot(china_map4,
 
 ### Interactive version
 
+#### Mapping anywhere you want
+
 ```{r interactive, exercise = TRUE}
 library(leaflet)
 leaflet() %>% addTiles() %>% setView(-91.536146, 41.661491, zoom = 17)
+```
+
+#### Fancy mapping with packages
+
+* Vector Map
+
+```{r vecMap, exercise = TRUE}
+library(REmap)
+
+remap(demoC,title = "REmap",subtitle = "theme:Dark") %>%
+  plot
+```
+
+* Heat Map
+
+```{r heatMap, exercise = TRUE}
+remapH(sampleData(),minAlpha = 0.1,title = "Heat Map from REmap") %>%
+  plot
 ```
 
