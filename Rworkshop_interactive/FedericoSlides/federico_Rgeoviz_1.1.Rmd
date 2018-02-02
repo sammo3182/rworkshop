@@ -1,0 +1,600 @@
+---
+title: "Geographic Data Visualization (Federico)"
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+
+
+## Today's plan
+
+* create a choropleth map from a **shapefile** with `ggplot`
+* create a choropleth map from a **shapefile** with `ggmap`
+* create a point map from a **csv** file with `ggmap`
+
+
+
+## Create a choropleth map from a shapefile with ggplot
+
+Import relevant packages:
+
+```{r}
+library(rgdal)
+library(rgeos)
+library(maptools)
+library(ggmap)
+library(RColorBrewer)
+# library(raster)
+library(scales)
+library(classInt)
+```
+
+<br>
+
+Import the shapefile and look at fields/columns:
+```{r}
+IAshp <- readOGR(dsn=".", layer="iowa_income")
+names(IAshp)
+```
+
+<br>
+
+Other characteristics of the shapefile:
+```{r}
+
+# non-spatial data of the shapefile
+head(IAshp@data)
+
+#extent of the geometries (bounding box), 4 extreme coordinates
+IAshp@bbox
+
+#reference system
+IAshp@proj4string
+
+```
+
+<br>
+
+We need to fortify the shapefile, i.e. isolate the spatial part and transform it to a dataframe format:
+```{r}
+IAcounties <- fortify(IAshp, region='CountyFIPS')
+
+#number of rows and columns in the dataframe
+dim(IAcounties)
+
+```
+
+
+This is how the dataframe looks like:
+```{r}
+IAcounties  
+
+```
+
+
+Where are the non-spatial data in the original shapefile?
+They must be joined to the dataframe, using the ID column as key. In this case the FIPS code univocally identifies each county.
+```{r}
+IAcounties.df<- merge(IAcounties,IAshp@data, by.x="id", by.y="FIPS",all=TRUE)
+head(IAcounties.df)
+
+```
+
+
+Now that we have the shapefile content in a dataframe format, we can plot a map with `ggplot` functions.
+We are creating a **choropleth**, or thematic map. That means that features (counties) are colored according to an attribute. In this example, I choose 2016 household median income.
+Notice that in this case the attribute is already in the shapefile. To plot data from another source (e.g. csv, txt, R dataframe), you can use the merge function, as we did above, to merge those data into the dataframe from the shapefile.
+```{r}
+
+map <- ggplot() +
+  geom_polygon(data=IAcounties.df,
+               aes(x=long, y=lat, group=group, fill=IAcounties.df$X2016HHinc),
+               color='black', size=0.25) 
+map
+
+#quick check on min and max income
+min_inc <- min(IAshp@data$X2016HHinc)
+IAshp@data[IAshp@data$X2016HHinc == min_inc,]$COUNTY
+
+max_inc <- max(IAshp@data$X2016HHinc)
+IAshp@data[IAshp@data$X2016HHinc == max_inc,]$COUNTY
+
+```
+
+
+The default color ramp is not effective.
+Let's add a command to color the polygons the way we want:
+```{r}
+
+ 
+map <- ggplot() +
+  geom_polygon(data=IAcounties.df,
+               aes(x=long, y=lat, group=group, fill=IAcounties.df$X2016HHinc),
+               color='black', size=0.25) +
+  scale_fill_gradient(low='white', high='darkgreen')
+                      # breaks = pretty_breaks(n = 5),
+                      # guide = g)
+
+map
+
+
+```
+
+
+Finding a good color ramp may be difficult.
+Try [ColorBrewer](http://colorbrewer2.org/) to color maps.
+In R you can sue the functions from `RColorBrewer` package:
+
+* sequential palettes
+```{r}
+display.brewer.pal(5, "Blues")
+display.brewer.pal(5, "Oranges")
+display.brewer.pal(5, "YlOrBr")
+
+```
+
+* divergent palettes
+```{r}
+display.brewer.pal(5, "BrBG")
+display.brewer.pal(5, "PuOr")
+display.brewer.pal(5, "RdBu")
+display.brewer.pal(5, "RdYlGn") #not colorblind safe!
+
+```
+
+* qualitative palettes
+```{r}
+display.brewer.pal(5, "Accent")
+display.brewer.pal(5, "Set1")
+display.brewer.pal(5, "Pastel1") #same hues
+
+```
+
+
+Let's use the green palette from ColorBrewer:
+```{r}
+map <- ggplot() +
+  geom_polygon(data=IAcounties.df,
+               aes(x=long, y=lat, group=group, fill=IAcounties.df$X2016HHinc),
+               color='black', size=0.25) +
+  scale_fill_distiller(type='seq',
+                       direction=1,
+                       palette='Greens')
+map
+
+```
+
+
+It is hard to distinguish colors and tell what the corresponding value is.
+Limit the number of colors in the palette:
+```{r}
+colors <- brewer.pal(5, "Greens")
+map <- ggplot() +
+  geom_polygon(data=IAcounties.df,
+               aes(x=long, y=lat, group=group, fill=IAcounties.df$X2016HHinc),
+               color='black', size=0.25) +
+  scale_fill_brewer(type='seq',
+                    direction=1,
+                    palette="Greens") 
+map
+
+```
+
+
+It gives an error, because we use a discrete color ramp with a continuous sequence of income values. 
+In other words, we need to divide income into as many classes as colors.
+We can use classInt library to create income classes:
+```{r}
+classes <- classIntervals(IAcounties.df$X2016HHinc, 
+                          style='pretty'
+                          )
+classes
+
+#notice that min and max values are in the first and last classes
+min_inc
+max_inc
+
+
+
+```
+
+
+Classes and breaks are easy to understand, but there are too many classes
+Let's use quantile break system with a fixed number of classes.
+Counties are sorted by income, from lowest to highest:
+* first class contains the 20% counties with lowest income
+* second class contains the next 20% counties
+* ...
+* last class contains the 20% counties with highest income
+```{r}
+nclasses <- 5
+classes <- classIntervals(IAcounties.df$X2016HHinc, 
+                          nclasses,
+                          style='quantile',
+                          pal=brewer.pal(5, "Greens")
+                          )
+
+classes
+head(classes)
+
+```
+
+
+Assign the Green color in the corresponding class to county income
+```{r}
+colortable <- findColours(classes, 
+            pal = colors, 
+            under="<", 
+            over=">", 
+            between="-",
+            # digits = getOption("digits"), 
+            cutlabels=TRUE)
+
+```
+
+
+
+```{r, include=FALSE}
+#extract class index corresponding to geometries in the dataframe
+classindices <- findCols(classes)  #function of classInt
+head(classindices, 1000)
+typeof(classindices)
+
+#match class indices with Green color from discrete ramp
+for (class in unique(classindices)){
+  colcode[classindices == class] <- colors[class]
+}
+head(colcode, 1000)
+
+
+
+```
+
+
+And plot counties by household income class:
+```{r}
+map <- ggplot() +
+  geom_polygon(data=IAcounties.df,
+               aes(x=long, y=lat, group=group, fill=colortable), #changed the fill parameter
+               color='black', size=0.25) +
+  scale_fill_brewer(type='seq',
+                    # direction=1,
+                    palette = "Greens") 
+map
+
+```
+
+
+Much better!
+Add a title, reverse the scale and set the legend meaningfully
+```{r}
+#use class breaks to label each class
+classes$brks
+labels <- c(paste(classes$brks[1], '-', classes$brks[2]))
+for (i in 2:nclasses){
+  labels <- c(labels, c(paste(classes$brks[i], '-', classes$brks[i+1])))
+}
+labels
+
+#legend settings
+leg_discr <- guide_legend(title="income in USD",
+                          label.theme = element_text(family="sans", face="plain", size=10, angle=0),
+                          direction = "vertical",
+                          # label.position = "right",
+                          keywidth = 1.2,
+                          keyheight = 1.2,
+                          label.hjust = 0.0
+                          #draw.ulim = TRUE
+                          )
+
+
+map <- ggplot() +
+  ggtitle("Household median income in Iowa\n(2016 5-year ACS data)") +
+  geom_polygon(data=IAcounties.df,
+               aes(x=long, y=lat, group=group, fill=colortable),
+               color='black', size=0.25) +
+  scale_fill_brewer(type='seq',
+                    direction=-1,
+                    palette = "Greens",
+                    labels = rev(labels),
+                    guide = leg_discr
+                    ) +
+  theme(legend.title = element_text(family="sans", face="plain", size=11, angle=0))
+
+map
+```
+
+
+Here is an alternative classification, 3 classes, with top 20% and bottom 20% highlighted
+```{r}
+labels2 <- c("High (top 20%)", "Medium", "Low (bottom 20%)")
+nclasses2 <- 3
+breaks2 <- quantile(IAcounties.df$X2016HHinc, c(0,0.2,0.8,1))
+classes2 <- classIntervals(IAcounties.df$X2016HHinc, 
+                          nclasses2,
+                          style='fixed',
+                          fixedBreaks=breaks2
+                          )
+colors2 <- brewer.pal(nclasses2, "Oranges")
+colors2 <- c('#FEE6CE','#FDAE6B','#E6550D')
+colortable2 <- findColours(classes2, 
+            pal = colors2, 
+            under="<", 
+            over=">", 
+            between="-",
+            # digits = getOption("digits"), 
+            cutlabels=TRUE)
+
+map2 <- ggplot() +
+  ggtitle("Household median income in Iowa\n(2016 5-year ACS data)") +
+  geom_polygon(data=IAcounties.df,
+               aes(x=long, y=lat, group=group, fill=colortable2),
+               color='black', size=0.25) +
+  scale_fill_brewer(type='seq',
+                    direction=-1,
+                    palette = "Oranges",
+                    labels = labels2,
+                    guide = leg_discr
+                    )
+
+map2
+
+```
+
+
+The default background for ggplot is graph grid with axis. But we want a map, not a graph!
+*theme_void()* function creates an empty background:
+```{r}
+
+
+map <- ggplot() +
+  ggtitle("Household median income in Iowa\n(2016 5-year ACS data)") +
+  geom_polygon(data=IAcounties.df,
+               aes(x=long, y=lat, group=group, fill=colortable),
+               color='black', size=0.25) +
+  scale_fill_brewer(type='seq',
+                    direction=-1,
+                    palette = "Greens",
+                    labels = rev(labels),
+                    guide = leg_discr
+                    ) + 
+  theme_void() +
+  theme(legend.title = element_text(family="sans", face="plain", size=11, angle=0)) +
+  theme(plot.margin = unit(c(0.5,0.5,0.5,0.5),"cm"))
+map
+
+```
+
+
+We can save the map to a jpg file (at least 600 dpi resolution):
+```{r}
+ggsave(filename="../maps/hh_income_1.0.jpg", 
+       map,
+       width=15, height=9, units="cm",
+       dpi=600, 
+       device='jpg')
+
+
+```
+
+
+
+
+## Create a choropleth map from a **shapefile** with `ggmap`
+
+First, let's get a Google Map background using `ggmap` function *get_googlemap* (*get_map* would work too):
+```{r}
+backg <- get_googlemap(#center="iowa",
+                       center = c(-93.4,42), #get the coordinates by using previous option first
+                       zoom=7, 
+                       size=c(640,410),
+                       scale=2,
+                       #color='bw',
+                       maptype='roadmap'
+                       )
+ggmap(backg)
+
+```
+
+
+Now it is sufficient to plot the choropleth map on top.
+Notice that the functions are the same, the only difference is that we are using `ggmap` as first function, not `ggplot`.
+```{r}
+GMmap <- ggmap(backg) + 
+  ggtitle("Household median income in Iowa\n(2016 5-year ACS data)") +
+  geom_polygon(data=IAcounties.df,
+               aes(x=long, y=lat, group=group, fill=colortable),
+               color='black', size=0.25) +
+  scale_fill_brewer(type='seq',
+                    direction=-1,
+                    palette = "Greens",
+                    labels = rev(labels),
+                    guide = leg_discr
+                    ) + 
+  theme_void() +
+  theme(legend.title = element_text(family="sans", face="plain", size=11, angle=0)) +
+  theme(plot.margin = unit(c(0.5,0.5,0.5,0.5),"cm"))
+
+GMmap
+
+```
+
+
+No error in output, the legend is correct, but we cannot see anything...
+Google Maps uses geographic coordinates (longitude, latitude), whereas the shapefile we are using is in projected coordinates (North, East). We have to change the reference system, i.e. convert the shapefile from projected to geographic coordinates
+```{r}
+gIAshp <- spTransform(IAshp, CRS("+proj=longlat +datum=WGS84"))
+
+```
+
+
+We have to repeat the whole process again because the geometries are different. 
+Then we can plot and save:
+```{r}
+gIAcounties <- fortify(gIAshp, region='CountyFIPS')
+gIAcounties.df<- merge(gIAcounties,gIAshp@data, by.x="id", by.y="FIPS",all=TRUE)
+
+
+#change the legend to a horizontal bar and place it at the bottom
+gm_leg_discr <- guide_legend(title="income in USD",
+                             title.position = 'top',
+                             title.hjust = 0.5,
+                          label.theme = element_text(family="sans", face="plain", size=10, angle=0),
+                          direction = "horizontal",
+                          label.position = "top",
+                          keywidth = 5,
+                          keyheight = 0.5,
+                          label.hjust = 0.5
+                          #draw.ulim = TRUE
+                          )
+
+
+GMmap <- ggmap(backg,  darken = c(0.5, "white"))+
+  ggtitle("Household median income in Iowa\n(2016 5-year ACS data)") +
+  geom_polygon(data=gIAcounties.df,
+               aes(x=long, y=lat, group=group, fill=colcode),
+               color='black', size=0.25, alpha=0.7) +
+  scale_fill_brewer(type='seq',
+                    direction=-1,
+                    palette = "Greens",
+                    labels = rev(labels),
+                    guide = gm_leg_discr
+                    )
+
+#adjust the look
+GMmap <- GMmap + theme(legend.title = element_text(family="sans", face="bold", size=11, angle=0)) +
+  theme(plot.margin = unit(c(0.5,0.5,0.5,0.5),"cm")) +
+  theme(legend.position="bottom")
+
+#save the image
+ggsave(filename="../maps/hh_income_gm_1.0.jpg", 
+       GMmap,
+       width=15, height=12, units="cm",
+       dpi=600, device='jpg')
+
+GMmap
+
+```
+
+
+
+
+## create a point map from a **csv** file with `ggmap`
+
+We are going to use two air quality dataset downloaded from [EPA](www.epa.gov) website.
+These are the 2017 records of PM10 and ozone levels in Iowa.
+```{r}
+pm10 <- read.csv("iowa_pm10_2017_ad_viz_plotval_data.csv", sep = ",", header = TRUE)
+ozone <- read.csv("iowa_ozone_2017_ad_viz_plotval_data.csv", sep = ",", header = TRUE)
+head(pm10)
+```
+
+Each row represents a record by a station on a certain day.
+There is the date, the station ID, measured value, name of the area and/or county, and the most important thing, the coordinates. Without the coordinates we would not be able to map data, and we would need a shapefile.
+
+Let's get the background with `ggmap` and have a look at where the stations are:
+```{r}
+backg <- get_googlemap(#center="iowa",
+                       center = c(-93.4,42),
+                       zoom=7, 
+                       size=c(640,410),
+                       scale=2,
+                       #color='bw',
+                       maptype='terrain',
+                       darken = c(0.6, "white")
+                       )# %>%
+
+ggmap(backg) +
+  geom_point(data=pm10, mapping=aes(x=SITE_LONGITUDE, y=SITE_LATITUDE), color="red") +
+  geom_text(data=pm10, aes(x=SITE_LONGITUDE, y=SITE_LATITUDE, label=AQS_SITE_ID),
+            angle=0, hjust=0, color="red",
+            nudge_x=.0001, nudge_y=.0004, size=3.5)
+
+```
+
+The result is rough, because we have not removed duplicated and a station is plotted as many times as the number of records.
+
+We may want a statistical synthesis of the data, like the average pollution level at each site. We can rely on R for that. The idea is to create a table where each row corresponds to a station, by collapsing redundant information like station ID and coordinates, and calculating a statistics of the values.
+
+```{r}
+site_pm10 <- unique(pm10$AQS_SITE_ID)
+lat_pm10 <- unique(pm10$SITE_LATITUDE)
+lon_pm10 <- unique(pm10$SITE_LONGITUDE)
+
+
+site_oz <- unique(ozone$AQS_SITE_ID)
+lat_oz <- unique(ozone$SITE_LATITUDE)
+lon_oz <- unique(ozone$SITE_LONGITUDE)
+
+```
+
+Stations measuring pm10 and ozone are not necessarily the same, so we are actually creating two tables.
+
+We calculate the average and maximum pollutant concentration by site. *apply*-type functions allow us to do it with a single line of code rather than site by site.
+
+```{r}
+pm10_max <- tapply(pm10$Daily.Mean.PM10.Concentration, pm10$AQS_SITE_ID, max)
+pm10_avg <- tapply(pm10$Daily.Mean.PM10.Concentration, pm10$AQS_SITE_ID, mean)
+print(pm10_max)
+ozone_max <- tapply(ozone$Daily.Max.8.hour.Ozone.Concentration, ozone$AQS_SITE_ID, max)
+ozone_avg <- tapply(ozone$Daily.Max.8.hour.Ozone.Concentration, ozone$AQS_SITE_ID, mean)
+
+```
+
+
+Now we create the tables/dataframes with the necessary information to map:
+```{r}
+pm10_df <- data.frame(site, lat, lon, pm10_max, pm10_avg)
+ozone_df <- data.frame(site, lat, lon, ozone_max, ozone_avg)
+
+```
+
+
+So, like in the shapefile example, we must have a dataframe with a spatial part (coordinates and geometries) and a non-spatial (thematic?) part. Now we are ready to plot with `ggmap`:
+```{r}
+pm10_map <- ggmap(backg, legend = "topright", darken = c(0.5, "white")) +
+  geom_point(data=pm10_df, 
+             mapping=aes(x=lon, y=lat, fill=pm10_avg), 
+             color='black', 
+             shape=21, 
+             size=4, 
+             show.legend=TRUE) +
+  scale_fill_gradient2(low='blue', 
+                       mid="yellow", 
+                       high='red', 
+                       midpoint=mean(pm10_df$pm10_avg)+2*sd(pm10_df$pm10_avg), 
+                       space = "Lab", 
+                       guide = "colourbar")
+  # geom_text(data=df, aes(x=lon, y=lat, label=pm10_max),
+  #           angle=0, hjust=0, color="black",
+  #           nudge_x=.05, nudge_y=.05, size=3)
+
+oz_map <- ggmap(backg, legend = "topright", darken = c(0.5, "white")) +
+  geom_point(data=ozone_df, 
+             mapping=aes(x=lon, y=lat, fill=ozone_avg), 
+             color='black', 
+             shape=21, 
+             size=4, 
+             show.legend=TRUE) +
+  scale_fill_gradient2(low='blue', 
+                       mid="yellow", 
+                       high='red', 
+                       midpoint=mean(ozone_df$ozone_avg)+2*sd(ozone_df$ozone_avg),
+                       space = "Lab", 
+                       guide = "colourbar")
+
+#display maps
+pm10_map
+oz_map
+
+```
+
+The values are not normally distributed. For example, there is an outlier for pm10 average in Davenport. When using the default color ramp, that would color all other circles the same way. To mitigate skewness, I adjusted the position of the middle color in the ramp to be toward the outlier.
+
+You can practice with the maximum values and with the numerous coloring options.
+Or, you can map values in different ways. What if circle size is proportional to the pollution value? Is it effective to display pollution levels?
+
+

@@ -52,7 +52,7 @@ All the slides are presented in my personal webpage:
 1. Click "Teaching" tab in the upper-right corner.
 1. Find "Course: Hello, R: A Introduction To R, Iowa Social Science Research Center, University of Iowa" and click the "slides."
 
-.center[<img src="images/pageInstruction.png" height = 300 />]
+.center[<img src="images/pageInstruction.gif" height = 300 />]
 
 ---
 
@@ -256,7 +256,7 @@ setwd("E:/R workshop/rworkshop")
 .pull-right[
 
 * Or click, click, and click in Rstudio
-<img src=images/wdSetting.png height = "300"/>
+<img src=images/wdSetting.gif height = "300"/>
 
 
 ]
@@ -505,7 +505,7 @@ x > z; x <= z
 
 ---
 
-* Preparing for unexpected troubles
+### Preparing for .red[Unexpected] Troubles
 
 ```{r}
 testDF <- data.frame(x = c(1, 1, 1, NA, 4, 4),
@@ -524,18 +524,20 @@ Error in testDF$x[testDF$x < 4] <- testDF$y[testDF$x < 4] * 0 :
   NAs are not allowed in subscripted assignments
 ```
 
+---
+
+Sufficiently using online sources
+
+.center[<img src=images/search.png height="350"/>]
+
 --
+
+One Solution:
 
 ```{r}
 testDF$x <- ifelse(testDF$x < 4, testDF$y, testDF$x)
 testDF$x 
 ```
-
----
-
-* Sufficiently using online sources
-
-.center[<img src=images/search.png height="400"/>]
 
 ---
 
